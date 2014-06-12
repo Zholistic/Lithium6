@@ -171,9 +171,9 @@ for i=12:(length(radProfile(1,1:end-30))-1)
     
 end
 
-for i=1:(length(radialDensity(1,:))-20)
+for i=1:(length(radialDensity(1,:))-30)
   
-    Xm1BD(i) = (massL6 / (hbar^2))*(1/(radialDensity(1,i)^2)).*trapz(radialDensity(2,i:end-20),radialDensity(1,i:end-20),2);
+    Xm1BD(i) = (massL6 / (hbar^2))*(1/(radialDensity(1,i)^2)).*trapz(radialDensity(2,i:end-30),radialDensity(1,i:end-30),2);
     
 end
 
