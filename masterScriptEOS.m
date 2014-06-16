@@ -111,18 +111,24 @@ figure(203)
 plot(radProfile(2,:),radProfile(1,:));
 
 %Physical calculations:
+pixelLengthAvg = ((2^(1/2))*pixelLength + pixelLength)/2; %Radial average pixel length!
 omegaR = 2*pi*23.7; %Radial trapping frequency (23.7 Hz)
-radLength = radProfile(2,:).*pixelLength; %Pixel length in the hypotenuse?
+radLength = radProfile(2,:).*pixelLengthAvg; %Pixel length in the hypotenuse?
 radPotential = (massL6)*(0.5)*(((omegaR).*(radLength)).^2);
 radTemp = (radPotential./kB)./(10^-9);
 radProfile(1,:) = radProfile(1,:).*(10^12); %convert from um^-2 to m^-2 area
+
+%Ideal calculations:
+PIdeal = []; KIdeal = [];
+PIdeal = (pi*(hbar^2)/(2*massL6)).*(radProfile(1,12:end-30).^2);
+KIdeal = (massL6/(pi*(hbar^2))).*(1./(radProfile(1,12:end-30).^2));
 
 figure(204)
 plot(radTemp,radProfile(1,:),'.'); %density vs V(r) in nK
 
 
 %Re-bin the profile vs potential:
-nbins = 150; binMean = []; radialDensity = []; binStd = []; binEdges=[];
+nbins = 160; binMean = []; radialDensity = []; binStd = []; binEdges=[];
 binEdges = linspace(min(radPotential),max(radPotential),nbins+1);
 binLength = (max(radPotential)-min(radPotential))/(nbins+1);
 [h,whichBin] = histc(radPotential, binEdges);
@@ -158,22 +164,22 @@ X1 = []; X1BD = []; %BD = Binned Density
 %X1 = (-1)*(hbar^2 / massL6).*diff(radProfile(1,:));
 %X1 = (-1)*diff(radProfile(1,:));
 %X1 = (-1)*(hbar^2 / massL6).*gradient(radProfile(1,:),radPotential);
-X1 = (-1)*((hbar^2) / massL6).*gradient(radProfile(1,12:end-30),radPotential(12:end-30));
-X1BD = (-1)*((hbar^2) / massL6).*gradient(radialDensity(1,1:end-20),radialDensity(2,1:end-20));
+X1 = (-1)*((hbar^2) / massL6).*gradient(radProfile(1,10:end-20),radPotential(10:end-20));
+X1BD = (-1)*((hbar^2) / massL6).*gradient(radialDensity(1,1:end-25),radialDensity(2,1:end-25)); %gradient(y,x)
 
 %X_(-1):
 Xm1 = []; Xm1BD = []; %BD = Binned Density
 %for i=1:length(radProfile(1,:))
-for i=12:(length(radProfile(1,1:end-30))-1)
+for i=10:(length(radProfile(1,1:end-20))-1)
   
-    Xm1(i-11) = (massL6 / (hbar^2))*(1/(radProfile(1,i)^2)).*trapz(radPotential(i:end-30),radProfile(1,i:end-30)); %may be backwards
+    Xm1(i-9) = (massL6 / (hbar^2))*(1/(radProfile(1,i)^2)).*trapz(radPotential(i:end-20),radProfile(1,i:end-20)); %may be backwards
     %Xm1(i) = (1/(radProfile(1,i)^2)).*trapz(radProfile(1,i:end));
     
 end
 
-for i=1:(length(radialDensity(1,:))-20)
+for i=1:(length(radialDensity(1,:))-25)
   
-    Xm1BD(i) = (massL6 / (hbar^2))*(1/(radialDensity(1,i)^2)).*trapz(radialDensity(2,i:end-20),radialDensity(1,i:end-20),2);
+    Xm1BD(i) = (massL6 / (hbar^2))*(1/(radialDensity(1,i)^2)).*trapz(radialDensity(2,i:end-25),radialDensity(1,i:end-25),2); %trapz(x,y)
     
 end
 
@@ -199,21 +205,30 @@ plot(radLength,radProfile(1,:).*(10^-12)); grid on;
 title('Density vs Width at 880G'); xlabel('Width in m'); ylabel('Density n in um^2');
 
 figure(502)
-plot(KonK0,PonP0,'.');
+plot(PonP0,KonK0,'.');
+
+figure(512)
+plot(PonP0BD,KonK0BD,'.');
+title('Binned Density vs Potential');
+
 %%plot(KonK0(1:45),PonP0(1:45),'.');
 
 % figure(1000); plot(KonK0_972,PonP0_972,'.'); hold on; plot(KonK0_880,PonP0_880,'^'); plot(KonK0_833,PonP0_833,'s');
 
+%PonP0 = PonP0BD;
+%KonK0 = KonK0BD;
+
+
 %Re-bin the compressibility vs pressure:
-nbins = 50; binMean = []; binStd = []; binEdges=[];
-binEdges = linspace(min(KonK0),max(KonK0),nbins+1);
-binLength = (max(KonK0)-min(KonK0))/(nbins+1);
-[h,whichBin] = histc(KonK0, binEdges);
+nbins = 20; binMean = []; binStd = []; binEdges=[];
+binEdges = linspace(min(PonP0),max(PonP0),nbins+1);
+binLength = (max(PonP0)-min(PonP0))/(nbins+1);
+[h,whichBin] = histc(PonP0, binEdges);
 
 j=1; binCount = 1;
 for i = 1:nbins
     flagBinMembers = (whichBin == i);
-    binMembers     = PonP0(flagBinMembers);
+    binMembers     = KonK0(flagBinMembers);
     %what bins to exclude? NaN and really small values (less than 1)
     if ~isnan(mean(binMembers))
         binMean(j)     = mean(binMembers);
