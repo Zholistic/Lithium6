@@ -1,5 +1,5 @@
 function [ outputBinned ] = binMe( inputY, inputX, nbins )
-%Bins the array inputY on the domain inputX. Puts into nbins.
+%Bins the range array inputY on the domain array inputX. Puts into nbins.
 %Returns outputBinned of which outputBinned(1,:) is the range.
 %scans over NaN values.
 
@@ -12,7 +12,7 @@ j=1; binCount = 1;
 for i = 1:nbins
     flagBinMembers = (whichBin == i);
     binMembers     = inputY(flagBinMembers);
-    %what bins to exclude? NaN and really small values (less than 1)
+    %what bins to exclude? NaN
     if ~isnan(mean(binMembers))
         binMean(j)     = mean(binMembers);
         binStd(j)      = std(binMembers);
