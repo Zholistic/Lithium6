@@ -1,10 +1,10 @@
 %Script for generating the equation of state compressibility vs pressure
 %for the 60 low intensity\20 high intensity image sets. 
 
-%directory = 'C:\Data\140409_2D_EOS_972G_10us_0_5isat_1us_10Isat_60Low_20high_int_CutFromOtherFolder\';
+directory = 'C:\Data\140409_2D_EOS_972G_10us_0_5isat_1us_10Isat_60Low_20high_int_CutFromOtherFolder\';
 %directory = 'C:\Data\140411_2D_EOS_833G_10us_0_5isat_1us_10Isat_60Low_20high_int\';
-directory = 'C:\Data\140411_2D_EOS_880G_10us_0_5isat_1us_10Isat_60Low_20high_int\';
-date = '140411';
+%directory = 'C:\Data\140411_2D_EOS_880G_10us_0_5isat_1us_10Isat_60Low_20high_int\';
+date = '140409';
 camera = 'top';
 varstring = 'BField';
 pixelLength = 2.84e-6; %2.84 um topcam
@@ -110,23 +110,27 @@ radProfile = radAverage(lowIntRealAtomImg);
 figure(203)
 plot(radProfile(2,:),radProfile(1,:));
 
-%Physical calculations:
-pixelLengthAvg = ((2^(1/2))*pixelLength + pixelLength)/2; %Radial average pixel length!
+%-----%Physical calculations:%--------------------------------------------%
+%pixelLengthAvg = ((2^(1/2))*pixelLength + pixelLength)/2; %Radial average pixel length!
 omegaR = 2*pi*23.7; %Radial trapping frequency (23.7 Hz)
-radLength = radProfile(2,:).*pixelLengthAvg; %Pixel length in the hypotenuse?
+radLength = radProfile(2,:).*pixelLength; %Pixel length in the hypotenuse?
 radPotential = (massL6)*(0.5)*(((omegaR).*(radLength)).^2);
 radTemp = (radPotential./kB)./(10^-9);
 %radProfile(1,:) = radProfile(1,:)./(10^-12); %convert from um^-2 to m^-2 area
 %convert from pixel number to density at that pixel
 radProfile(1,:) = radProfile(1,:)./(10^-12); %convert from um^-2 to m^-2 area
 
+%fermi energy:
+ef = (pi*(hbar^2)*radProfile(1,1))/massL6;
+Temp = 1; %Temperature... Unknown... consider: 10nK = 10*10^(-9)
+alpha = ef/(kB*Temp);
+
 
 %Ideal calculations:
 PIdeal = []; KIdeal = [];
-PIdeal = (pi*(hbar^2)/(2*massL6)).*(radProfile(1,1:end-30).^2);
-KIdeal = (massL6/(pi*(hbar^2))).*(1./(radProfile(1,1:end-30).^2));
-K0 = (massL6/(pi*(hbar^2))).*(1./((radProfile(1,1)*(10^-12))/(pixelLengthAvg^2).^2)); %N/A density
-P0 = (pi*(hbar^2)/(2*massL6)).*(((radProfile(1,1)*(10^-12))/(pixelLengthAvg^2)).^2);
+%Center pixel atom number with N/A density...
+K0 = (massL6/(pi*(hbar^2))).*(1./((radProfile(1,1)*(10^-12))/(pixelLength^2).^2)); 
+P0 = (pi*(hbar^2)/(2*massL6)).*(((radProfile(1,1)*(10^-12))/(pixelLength^2)).^2);
 
 figure(204)
 plot(radTemp,radProfile(1,:),'.'); %density vs V(r) in nK
@@ -181,6 +185,14 @@ for i=10:(length(radProfile(1,1:end-20))-1)
     %Xm1(i) = (1/(radProfile(1,i)^2)).*trapz(radProfile(1,i:end));
     
 end
+
+%for i=10:(length(radProfile(1,1:end-30))-1)
+  
+%    Xm1(i-9) = (massL6 / (hbar^2))*(1/(radProfile(1,i)^2)).*(trapz(radPotential(i:end-30),radProfile(1,i:end-30)) ...
+%            + 2.*trapz(radPotential(9:i),radProfile(1,9:i))); %inf to -V, ie inf to V + 2*(V to 0)
+  
+    
+%end
 
 for i=1:(length(radialDensity(1,1:end-25)))
   
