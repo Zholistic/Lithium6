@@ -31,16 +31,32 @@ reLowIntValArray = reshape(lowIntValueArray, 1, length(lowIntValueArray(:,1))*le
 
 nbins = 100; binMean = [];
 binEdges = linspace(min(min(lowIntValueArray)),max(max(lowIntValueArray)),nbins+1);
-
+binLength = (max(max(lowIntValueArray))-min(min(lowIntValueArray)))/(nbins+1);
 [h,whichBin] = histc(reLowIntValArray, binEdges);
 
+%for i = 1:nbins
+%    flagBinMembers = (whichBin == i);
+%    binMembers     = reRatioArray(flagBinMembers);
+%    binMean(i)     = mean(binMembers);
+%end
+
+j=1; binCount = 1;
 for i = 1:nbins
     flagBinMembers = (whichBin == i);
     binMembers     = reRatioArray(flagBinMembers);
-    binMean(i)     = mean(binMembers);
+    %what bins to exclude? NaN
+    if ~isnan(mean(binMembers))
+        binMean(j)     = mean(binMembers);
+        %binStd(j)      = std(binMembers);
+        binLengths(j) = binCount*binLength;
+        j=j+1;
+        binCount = 1;
+    else
+        binCount = binCount +1;
+    end
 end
 
-binLength = (max(max(lowIntValueArray))-min(min(lowIntValueArray)))/(nbins+1);
+
 
 for i = 1:length(binMean)
     spectrumFunc(1,i) = binMean(i);
@@ -60,9 +76,9 @@ curvefitoptions = optimset('MaxFunEvals',100000,'MaxIter',50000,'Display','off')
 xs = spectrumFunc(2,startFit:end-1);
  coefs = lsqcurvefit(fg,p0,xs(:),spectrumFunc(1,startFit:end-1)',lb,ub,curvefitoptions);
 
-figure(300)
-plot(xs,fg(coefs,xs)); hold on; plot(spectrumFunc(2,startFit:end),spectrumFunc(1,startFit:end),'r');
-hold off;
+%figure(300)
+%plot(xs,fg(coefs,xs)); hold on; plot(spectrumFunc(2,startFit:end),spectrumFunc(1,startFit:end),'r');
+%hold off;
 
 %Now multiply the pixels by the appropriate factor:
 

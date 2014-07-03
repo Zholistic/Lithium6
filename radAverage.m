@@ -75,17 +75,33 @@ binLength = (max(max(rVectors))-min(min(rVectors)))/(nbins+1);
 
 [h,whichBin] = histc(reRVectors, binEdges);
 
+%for i = 1:nbins
+%    flagBinMembers = (whichBin == i);
+%    binMembers     = reQuarteredImageAverage(flagBinMembers);
+%    binMean(i)     = mean(binMembers);
+%end
+
+j=1; binCount = 1;
 for i = 1:nbins
     flagBinMembers = (whichBin == i);
     binMembers     = reQuarteredImageAverage(flagBinMembers);
-    binMean(i)     = mean(binMembers);
+    %what bins to exclude? NaN
+    if ~isnan(mean(binMembers))
+        binMean(j)     = mean(binMembers);
+        %binStd(j)      = std(binMembers);
+        binLengths(j) = binCount*binLength;
+        j=j+1;
+        binCount = 1;
+    else
+        binCount = binCount +1;
+    end
 end
 
 radialProfile = [];
 
 for i = 1:length(binMean)
     radialProfile(1,i) = binMean(i);
-    radialProfile(2,i) = i*binLength; %pixel vector
+    radialProfile(2,i) = sum(binLengths(1:i)); %pixel vector
 end
 
 profileOutput = radialProfile;
