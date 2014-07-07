@@ -18,6 +18,9 @@ end
 %Spike: center to center on
 pin = centers(:,1);
 
+%padbuffer
+padbuffer = 50;
+
 %Add buffer around each image:
 originalSize = [length(inputImgArray(1,:,1)), length(inputImgArray(:,1,1))]; %[x y]
 
@@ -25,15 +28,17 @@ buffedImgArray = []; buffedImgArrayPre = [];
 for i=1:length(inputImgArray(1,1,:))
     buffedImgArrayPre = [];
     shift(:,i) = pin - centers(:,i);
-    paddingpre = [30+shift(2,i) 30+shift(1,i)];%[y x] Padding depends on relative center
-    paddingpost = [30-shift(2,i) 30-shift(1,i)];
+    %paddingpre = [30+shift(2,i) 30+shift(1,i)];%[y x] Padding depends on relative center
+    %paddingpost = [30-shift(2,i) 30-shift(1,i)];
+    paddingpre = [padbuffer+shift(2,i) padbuffer+shift(1,i)];%[y x] Padding depends on relative center
+    paddingpost = [padbuffer-shift(2,i) padbuffer-shift(1,i)];
     buffedImgArrayPre(:,:) = padarray(inputImgArray(:,:,i),paddingpre,0,'pre'); %Adds a border to each image of zeros
     buffedImgArray(:,:,i) = padarray(buffedImgArrayPre(:,:),paddingpost,0,'post');
 end
 
 %Cut out final images:
 for i=1:length(buffedImgArray(1,1,:))
-    centeredImgArray(:,:,i) = buffedImgArray(30:30+originalSize(2)-1,30:30+originalSize(1)-1,i);  
+    centeredImgArray(:,:,i) = buffedImgArray(padbuffer:padbuffer+originalSize(2)-1,padbuffer:padbuffer+originalSize(1)-1,i);  
 end
 
 

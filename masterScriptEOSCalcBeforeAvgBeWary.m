@@ -155,7 +155,7 @@ figure(204)
 plot(radTemp,radProfile(1,:),'.'); %density vs V(r) in nK
 
 figure(205)
-plot(radTemp,radProfile(1,:),'.');
+plot(radPotential,radProfile(1,:),'.');
 
 
 %Re-bin the profile vs potential:
@@ -195,15 +195,15 @@ X1 = []; X1BD = []; %BD = Binned Density
 %X1 = (-1)*(hbar^2 / massL6).*diff(radProfile(1,:));
 %X1 = (-1)*diff(radProfile(1,:));
 %X1 = (-1)*(hbar^2 / massL6).*gradient(radProfile(1,:),radPotential);
-X1 = (-1)*((hbar^2) / massL6).*gradient(radProfile(1,10:end-20),radPotential(10:end-20));
+X1 = (-1)*((hbar^2) / massL6).*gradient(radProfile(1,10:end-30),radPotential(10:end-30));
 X1BD = (-1)*((hbar^2) / massL6).*gradient(radialDensity(1,1:end-25),radialDensity(2,1:end-25)); %gradient(y,x)
 
 %X_(-1):
 Xm1 = []; Xm1BD = []; %BD = Binned Density
 %for i=1:length(radProfile(1,:))
-for i=10:(length(radProfile(1,1:end-20))-1)
+for i=10:(length(radProfile(1,1:end-30))-1)
   
-    Xm1(i-9) = (massL6 / (hbar^2))*(1/(radProfile(1,i)^2)).*trapz(radPotential(i:end-20),radProfile(1,i:end-20)); %may be backwards
+    Xm1(i-9) = (massL6 / (hbar^2))*(1/((radProfile(1,i))^2)).*trapz(radPotential(i:end-30),radProfile(1,i:end-30)); %may be backwards
     %Xm1(i) = (1/(radProfile(1,i)^2)).*trapz(radProfile(1,i:end));
     
 end
@@ -267,6 +267,9 @@ KvsP = binMe(KonK0IB(1,:),PonP0IB(1,:),100);
 
 figure(503)
 plot(KvsP(2,:),KvsP(1,:),'.');
+
+%figure(504)
+%plot(KvsP(1,:),KvsP(2,:),'.');
 
 % figure(1000); plot(KvsP_972(2,:),KvsP_972(1,:),'.'); hold on; plot(KvsP_880(2,:),KvsP_880(1,:),'^'); plot(KvsP_833(2,:),KvsP_833(1,:),'s');
 %plot(Xm1BD,X1BD,'.'); axis([0 12 0 4]);

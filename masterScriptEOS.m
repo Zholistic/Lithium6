@@ -8,8 +8,8 @@ date = '140409';
 camera = 'top';
 varstring = 'BField';
 pixelLength = 2.84e-6; %2.84 um topcam
-massL6 = 9.988e-27; %9.988 x 10^-27 kg
-hbar = 1.05457e-34; %1.05457*10^-34 m^2 kg/s
+massL6 = 1e-26; %9.988 x 10^-27 kg
+hbar = 1.055e-34; %1.05457*10^-34 m^2 kg/s
 Isat = 135*10; %135*x us
 kB = 1.38e-23; %Boltzmanns constant m^2 kg s^-2 K^-1
 imgArrayFresh = [];  lowIntRealAtomImg = [];
@@ -124,12 +124,15 @@ radProfile(1,:) = radProfile(1,:)./(10^-12); %convert from um^-2 to m^-2 area
 %Ideal calculations:
 PIdeal = []; KIdeal = [];
 %Center pixel atom number with N/A density...
+%radProfile is in atoms/m^2
 K0 = (massL6/(pi*(hbar^2))).*(1./((radProfile(1,1)*(10^-12))/(pixelLength^2).^2)); 
-P0 = (pi*(hbar^2)/(2*massL6)).*(((radProfile(1,1)*(10^-12))/(pixelLength^2)).^2);
+%P0 = (pi*(hbar^2)/(2*massL6)).*(((radProfile(1,1)*(10^-12))/(pixelLength^2)).^2);
+P0 = (pi*(hbar^2)/(2*massL6)).*((radProfile(1,1)).^2);
+P = trapz(radPotential(5:end-20),radProfile(1,5:end-20));
+
 
 figure(204)
 plot(radTemp,radProfile(1,:),'.'); %density vs V(r) in nK
-
 
 %Re-bin the profile vs potential:
 nbins = 160; binMean = []; radialDensity = []; binStd = []; binEdges=[];

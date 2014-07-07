@@ -8,8 +8,8 @@ date = '140409';
 camera = 'top';
 varstring = 'BField';
 pixelLength = 2.84e-6; %2.84 um topcam
-massL6 = 9.988e-27; %9.988 x 10^-27 kg
-hbar = 1.05457e-34; %1.05457*10^-34 m^2 kg/s
+massL6 = 1e-26; %9.988 x 10^-27 kg
+hbar = 1.055e-34; %1.05457*10^-34 m^2 kg/s
 Isat = 135*10; %135*x us
 kB = 1.38e-23; %Boltzmanns constant m^2 kg s^-2 K^-1
 imgArrayFresh = [];  lowIntRealAtomImg = [];
@@ -44,11 +44,6 @@ end
 lowIntImage = centerAndAverage(imgArrayFresh(:,:,1:60));
 highIntImage = centerAndAverage(imgArrayFresh(:,:,61:end));
 
-%the centered low intensity images:
-lowIntImages = []; lowIntRealAtomImages = [];
-lowIntImages = centerImgArray(imgArrayFresh(:,:,1:60)); 
-
-
 lowIntImage = shiftToWingsZero(lowIntImage);
 highIntImage = shiftToWingsZero(highIntImage);
 
@@ -80,18 +75,6 @@ plot(highLowSpectrum(2,:),highLowSpectrum(1,:));
 lowIntRealAtomImg = convertToRealAtomNumber(highIntImage(ROIy,ROIx), lowIntImage(ROIy,ROIx));
 %lowIntRealAtomImg = convertToRealAtomNumber(highIntImage, lowIntImage);
 
-%Operations on the image set:
-NROIAtomsEachImage = []; radProfilesEI = []; NROIAtomsEachImageBeforeConvert = [];
-for i=1:length(lowIntImages(1,1,:))
-    lowIntImages(:,:,i) = shiftToWingsZero(lowIntImages(:,:,i));
-    lowIntRealAtomImages(:,:,i) = convertToRealAtomNumber(highIntImage(ROIy,ROIx), lowIntImages(ROIy,ROIx,i));
-    NROIAtomsEachImage(i) = sum(sum(lowIntRealAtomImages(:,:,i)));
-    NROIAtomsEachImageBeforeConvert(i) = sum(sum(lowIntImages(ROIy,ROIx,i)));
-    radProfilesEI(:,:,i) = radAverage(lowIntRealAtomImages(:,:,i));
-end
-    
-
-
 NROISum = sum(sum(lowIntImage(ROIy,ROIx)));
 %NROIAtoms = sum(sum(lowIntRealAtomImg(ROIy,ROIx)));
 NROIAtoms = sum(sum(lowIntRealAtomImg));
@@ -103,14 +86,12 @@ toCenter(:,:,1) = lowIntImage(ROIy,ROIx);
 toCenter(:,:,3) = lowIntRealAtomImg;
 centeredImages = centerImgArray(toCenter);
 
-highIntImage = [];
 highIntImage = centeredImages(:,:,2);
 lowIntImage = centeredImages(:,:,1);
 lowIntRealAtomImg = centeredImages(:,:,3);
 
 
 %Profiles:
-%200 is y, 201 is x:
 figure(200)
 hold on;
 plot(mean(lowIntImage(:,:),1));
@@ -125,11 +106,6 @@ plot(mean(highIntImage(:,:),2),'g');
 
 
 %Radial Profile:
-%Radially average each image, not the set:
-for i=length(lowIntRealAtomImages(1,1,:))
-end
-
-
 radProfile = radAverage(lowIntRealAtomImg);
 figure(203)
 plot(radProfile(2,:),radProfile(1,:));
@@ -148,14 +124,12 @@ radProfile(1,:) = radProfile(1,:)./(10^-12); %convert from um^-2 to m^-2 area
 %Ideal calculations:
 PIdeal = []; KIdeal = [];
 %Center pixel atom number with N/A density...
+%radProfile is in atoms/um^2
 K0 = (massL6/(pi*(hbar^2))).*(1./((radProfile(1,1)*(10^-12))/(pixelLength^2).^2)); 
 P0 = (pi*(hbar^2)/(2*massL6)).*(((radProfile(1,1)*(10^-12))/(pixelLength^2)).^2);
 
 figure(204)
 plot(radTemp,radProfile(1,:),'.'); %density vs V(r) in nK
-
-figure(205)
-plot(radPotential,radProfile(1,:),'.');
 
 
 %Re-bin the profile vs potential:
@@ -195,15 +169,15 @@ X1 = []; X1BD = []; %BD = Binned Density
 %X1 = (-1)*(hbar^2 / massL6).*diff(radProfile(1,:));
 %X1 = (-1)*diff(radProfile(1,:));
 %X1 = (-1)*(hbar^2 / massL6).*gradient(radProfile(1,:),radPotential);
-X1 = (-1)*((hbar^2) / massL6).*gradient(radProfile(1,10:end-30),radPotential(10:end-30));
+X1 = (-1)*((hbar^2) / massL6).*gradient(radProfile(1,10:end-20),radPotential(10:end-20));
 X1BD = (-1)*((hbar^2) / massL6).*gradient(radialDensity(1,1:end-25),radialDensity(2,1:end-25)); %gradient(y,x)
 
 %X_(-1):
 Xm1 = []; Xm1BD = []; %BD = Binned Density
 %for i=1:length(radProfile(1,:))
-for i=10:(length(radProfile(1,1:end-30))-1)
+for i=10:(length(radProfile(1,1:end-20))-1)
   
-    Xm1(i-9) = (massL6 / (hbar^2))*(1/((radProfile(1,i))^2)).*trapz(radPotential(i:end-30),radProfile(1,i:end-30)); %may be backwards
+    Xm1(i-9) = (massL6 / (hbar^2))*(1/(radProfile(1,i)^2)).*trapz(radPotential(i:end-20),radProfile(1,i:end-20)); %may be backwards
     %Xm1(i) = (1/(radProfile(1,i)^2)).*trapz(radProfile(1,i:end));
     
 end
@@ -234,11 +208,11 @@ PonP0Binned = binMe(PonP0BD(1:48),1:length(PonP0BD(1:48)),50);
 %Output plots:
 figure(500)
 plot(radTemp,radProfile(1,:).*(10^-12));
-title('Density vs Potential at 880G'); xlabel('Potential V(r) in nK'); ylabel('Density n in um^(-2)');
+title('Density vs Potential at 880G'); xlabel('Potential V(r) in nK'); ylabel('Density n in um^2');
     
 figure(501)
 plot(radLength,radProfile(1,:).*(10^-12)); grid on;
-title('Density vs Width at 880G'); xlabel('Width in m'); ylabel('Density n in um^(-2)');
+title('Density vs Width at 880G'); xlabel('Width in m'); ylabel('Density n in um^2');
 
 figure(502)
 plot(PonP0,KonK0,'.');
@@ -267,9 +241,6 @@ KvsP = binMe(KonK0IB(1,:),PonP0IB(1,:),100);
 
 figure(503)
 plot(KvsP(2,:),KvsP(1,:),'.');
-
-figure(504)
-plot(KvsP(1,:),KvsP(2,:),'.');
 
 % figure(1000); plot(KvsP_972(2,:),KvsP_972(1,:),'.'); hold on; plot(KvsP_880(2,:),KvsP_880(1,:),'^'); plot(KvsP_833(2,:),KvsP_833(1,:),'s');
 %plot(Xm1BD,X1BD,'.'); axis([0 12 0 4]);

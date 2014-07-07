@@ -67,7 +67,7 @@ end
 %Fit:
 fg = @(p,x)(p(1).*x + p(2)); %function to fit with
 p0 = [1 1.2];
-lb = [-2 0.9];
+lb = [-2 0.2];
 ub = [2 2];
 
 startFit = 40;
@@ -86,7 +86,8 @@ for i=1:length(lowIntImg(:,1))
     for j=1:length(lowIntImg(1,:))
        %What value to scale the pixel by?
        currPixel = lowIntImg(i,j);
-       scaleFact = fg(coefs,currPixel);
+       %scaleFact = fg(coefs,currPixel); <-- for variable scaling 
+       scaleFact = coefs(2); %constant scaling factor
        scaledImage(i,j) = currPixel*scaleFact;
     
     end
