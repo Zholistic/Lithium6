@@ -199,17 +199,16 @@ ToFit(:,1) = mean(Atoms2ODnn(140:170,:,1));
 %Fit:
 fg = @(p,x)(p(1).*x + p(2)); %function to fit with
 p0 = [0.0022 -0.5];
-lb = [0 -4];
+lb = [0.0001 -4];
 ub = [0.4 4];
 
 curvefitoptions = optimset('MaxFunEvals',100000,'MaxIter',50000,'Display','off');
 xs = 1:length(ToFit(:,1));
 coefs = lsqcurvefit(fg,p0,xs(:),ToFit(:,1),lb,ub,curvefitoptions);
 
-%if(coefs(1) > 0.35 || abs(coefs(2)) < 0.001)
-%    disp('check gradient correction');
-%    coefs
-%end
+if(coefs(1) > 0.35 || abs(coefs(2)) < 0.01)
+    disp('check gradient correction');
+end
 
 %Now subtract out value based on the gradient:
 

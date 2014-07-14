@@ -23,7 +23,9 @@ close all;
 %Build images from files:
 for i=1:length(fileLocList(:))
     
-    %Last 20 Images are at different Isat:
+    Isat = 10*135;
+    
+    %High Intensity images different isat:
     if(varData(i,1) > 5) %12 Isat, high intensity images
         Isat = 135;
     end
@@ -40,6 +42,12 @@ for i=1:length(imgArrayFresh(1,1,:))
         figure(i);
         imagesc(imgArrayFresh(:,:,i));        
     end
+end
+
+ROIy = 10:150; ROIx = 30:185; %Topcam looser region
+rawNums = [];
+for i=1:length(imgArrayFresh(1,1,:))
+    rawNums(i) = sum(sum(imgArrayFresh(ROIy,ROIx,i)));
 end
 
 lowIntImage = centerAndAverage(imgArrayFresh(:,:,51:end)); %works
@@ -107,6 +115,6 @@ plot(mean(highIntImage(:,:),2),'g');
 
 
 %Radial Profile:
-radProfile = radAverage(lowIntRealAtomImg);
+radProfile = radAverageBigSquare(lowIntRealAtomImg);
 figure(203)
 plot(radProfile(2,:),radProfile(1,:));

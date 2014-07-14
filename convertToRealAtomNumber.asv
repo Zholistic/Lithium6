@@ -76,9 +76,9 @@ curvefitoptions = optimset('MaxFunEvals',100000,'MaxIter',50000,'Display','off')
 xs = spectrumFunc(2,startFit:end-1);
  coefs = lsqcurvefit(fg,p0,xs(:),spectrumFunc(1,startFit:end-1)',lb,ub,curvefitoptions);
 
-%figure(312)
-%plot(xs,fg(coefs,xs)); hold on; plot(spectrumFunc(2,startFit:end),spectrumFunc(1,startFit:end),'r');
-%hold off;
+%figure(300)
+plot(xs,fg(coefs,xs)); hold on; plot(spectrumFunc(2,startFit:end),spectrumFunc(1,startFit:end),'r');
+hold off;
 
 %Now multiply the pixels by the appropriate factor:
 
@@ -86,8 +86,8 @@ for i=1:length(lowIntImg(:,1))
     for j=1:length(lowIntImg(1,:))
        %What value to scale the pixel by?
        currPixel = lowIntImg(i,j);
-       scaleFact = fg(coefs,currPixel); %<-- for variable scaling 
-       %scaleFact = coefs(2); %constant scaling factor
+       %scaleFact = fg(coefs,currPixel); <-- for variable scaling 
+       scaleFact = coefs(2); %constant scaling factor
        scaledImage(i,j) = currPixel*scaleFact;
     
     end

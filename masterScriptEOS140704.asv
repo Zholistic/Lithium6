@@ -23,7 +23,9 @@ close all;
 %Build images from files:
 for i=1:length(fileLocList(:))
     
-    %Last 20 Images are at different Isat:
+    Isat = 10*135;
+    
+    %High Intensity images different isat:
     if(varData(i,1) > 5) %12 Isat, high intensity images
         Isat = 135;
     end
@@ -41,6 +43,10 @@ for i=1:length(imgArrayFresh(1,1,:))
         imagesc(imgArrayFresh(:,:,i));        
     end
 end
+
+rawNums = [];
+for i=1:length(imgArrayFresh(1,1,:))
+    rawNums(i) = sum(sum(imgArrayFresh(ROIy,ROIx,i)))
 
 lowIntImage = centerAndAverage(imgArrayFresh(:,:,51:end)); %works
 highIntImage = centerAndAverage(imgArrayFresh(:,:,1:50));
@@ -93,13 +99,13 @@ lowIntRealAtomImg = centeredImages(:,:,3);
 
 
 %Profiles:
-figure(200)
+figure(206)
 hold on;
 plot(mean(lowIntImage(:,:),1));
 plot(mean(lowIntRealAtomImg(:,:),1),'r');
 plot(mean(highIntImage(:,:),1),'g');
 
-figure(201)
+figure(207)
 hold on;
 plot(mean(lowIntImage(:,:),2));
 plot(mean(lowIntRealAtomImg(:,:),2),'r');

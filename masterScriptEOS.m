@@ -21,7 +21,7 @@ close all;
 
 %Build images from files:
 for i=1:length(fileLocList(:))
-    
+    Isat = 10*135;
     %Last 20 Images are at different Isat:
     if(i>=length(fileLocList(:))-20)
         Isat = 135;
@@ -127,7 +127,7 @@ PIdeal = []; KIdeal = [];
 %radProfile is in atoms/m^2
 K0 = (massL6/(pi*(hbar^2))).*(1./((radProfile(1,1)*(10^-12))/(pixelLength^2).^2)); 
 %P0 = (pi*(hbar^2)/(2*massL6)).*(((radProfile(1,1)*(10^-12))/(pixelLength^2)).^2);
-P0 = (pi*(hbar^2)/(2*massL6)).*((radProfile(1,1)).^2);
+P0 = (pi*(hbar^2)/(2*massL6))*((radProfile(1,1))^2);
 P = trapz(radPotential(5:end-20),radProfile(1,5:end-20));
 
 
@@ -242,7 +242,7 @@ PonP0IB = binMe(PonP0,1:length(PonP0),60);
 KvsP = binMe(KonK0IB(1,:),PonP0IB(1,:),100);
 
 figure(503)
-plot(KvsP(2,:),KvsP(1,:),'.');
+plot(KvsP(1,:),KvsP(2,:),'.');
 
 % figure(1000); plot(KvsP_972(2,:),KvsP_972(1,:),'.'); hold on; plot(KvsP_880(2,:),KvsP_880(1,:),'^'); plot(KvsP_833(2,:),KvsP_833(1,:),'s');
 %plot(Xm1BD,X1BD,'.'); axis([0 12 0 4]);
