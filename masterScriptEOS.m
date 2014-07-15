@@ -224,8 +224,18 @@ plot(PonP0BD,KonK0BD,'.');
 title('Binned on Density Comp vs Pressure');
 
 figure(513)
-plot(PonP0Binned(1,:),KonK0Binned(1,:),'.');
+plot(KonK0Binned(1,:),PonP0Binned(1,:),'.');
 title('Binned on each of comp and pressure Comp vs Pressure');
+
+%Individual Bin for the comp/pressure bins:
+KonK0IBb = []; PonP0IBb = []; KvsPb = [];
+KonK0IBb = binMe(KonK0Binned(1,:),1:length(KonK0Binned(1,:)),60);
+PonP0IBb = binMe(PonP0Binned(1,:),1:length(PonP0Binned(1,:)),60);
+
+KvsPb = binMe(KonK0IBb(1,:),PonP0IBb(1,:),25);
+
+figure(504)
+plot(KvsPb(1,:),KvsPb(2,:),'.');
 
 %%plot(KonK0(1:45),PonP0(1:45),'.');
 
@@ -235,11 +245,11 @@ title('Binned on each of comp and pressure Comp vs Pressure');
 %KonK0 = KonK0Binned;
 
 %Individual Bin:
-KonK0IB = []; PonP0IB = [];
+KonK0IB = []; PonP0IB = []; KvsP = [];
 KonK0IB = binMe(KonK0,1:length(KonK0),60);
 PonP0IB = binMe(PonP0,1:length(PonP0),60);
 
-KvsP = binMe(KonK0IB(1,:),PonP0IB(1,:),100);
+KvsP = binMe(KonK0IB(1,:),PonP0IB(1,:),25);
 
 figure(503)
 plot(KvsP(1,:),KvsP(2,:),'.');
