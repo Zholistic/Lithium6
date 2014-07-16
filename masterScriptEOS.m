@@ -104,6 +104,13 @@ plot(mean(lowIntImage(:,:),2));
 plot(mean(lowIntRealAtomImg(:,:),2),'r');
 plot(mean(highIntImage(:,:),2),'g');
 
+%just plot a strip in the middle, not an average:
+figure(202)
+hold on;
+plot(lowIntImage(70,:));
+plot(lowIntRealAtomImg(70,:),'r');
+plot(highIntImage(70,:),'g');
+
 
 %Radial Profile:
 radProfile = radAverage(lowIntRealAtomImg);
