@@ -21,7 +21,7 @@ close all;
 
 %Build images from files:
 for i=1:length(fileLocList(:))
-    
+    Isat = 10*135;
     %Last 20 Images are at different Isat:
     if(i>=length(fileLocList(:))-20)
         Isat = 135;
@@ -104,6 +104,13 @@ plot(mean(lowIntImage(:,:),2));
 plot(mean(lowIntRealAtomImg(:,:),2),'r');
 plot(mean(highIntImage(:,:),2),'g');
 
+%just plot a strip in the middle, not an average:
+figure(202)
+hold on;
+plot(lowIntImage(70,:));
+plot(lowIntRealAtomImg(70,:),'r');
+plot(highIntImage(70,:),'g');
+
 
 %Radial Profile:
 radProfile = radAverage(lowIntRealAtomImg);
@@ -124,13 +131,21 @@ radProfile(1,:) = radProfile(1,:)./(10^-12); %convert from um^-2 to m^-2 area
 %Ideal calculations:
 PIdeal = []; KIdeal = [];
 %Center pixel atom number with N/A density...
-%radProfile is in atoms/um^2
+%radProfile is in atoms/m^2
 K0 = (massL6/(pi*(hbar^2))).*(1./((radProfile(1,1)*(10^-12))/(pixelLength^2).^2)); 
-P0 = (pi*(hbar^2)/(2*massL6)).*(((radProfile(1,1)*(10^-12))/(pixelLength^2)).^2);
+%P0 = (pi*(hbar^2)/(2*massL6)).*(((radProfile(1,1)*(10^-12))/(pixelLength^2)).^2);
+P0 = (pi*(hbar^2)/(2*massL6))*((radProfile(1,1))^2);
+%P0D = (pi*(hbar^2)/(2*massL6))*((radDensity(1,1))^2);
+%P = trapz(radPotential(5:end-20),radProfile(1,5:end-20));
+P = sum(radPotential(5:end-20))*trapz(radProfile(1,5:end-20));
+%PD = sum(radDensity(2,1:end-20))*trapz(radDensity(1,1:end-20));
+
 
 figure(204)
 plot(radTemp,radProfile(1,:),'.'); %density vs V(r) in nK
 
+figure(205)
+plot(radPotential(1:end-20),radProfile(1,1:end-20),'.'); %density vs V(r) in nK
 
 %Re-bin the profile vs potential:
 nbins = 160; binMean = []; radialDensity = []; binStd = []; binEdges=[];
@@ -160,6 +175,9 @@ radialDensity(1,i) = binMean(i);
 radialDensity(2,i) = sum(binLengths(1:i));
 end
 
+P0D = (pi*(hbar^2)/(massL6))*((radialDensity(1,1))^2);
+PD = trapz(radialDensity(2,1:end-20),radialDensity(1,1:end-20));
+
 figure(750)
 plot(radialDensity(2,:),radialDensity(1,:),'.');
 
@@ -169,22 +187,23 @@ X1 = []; X1BD = []; %BD = Binned Density
 %X1 = (-1)*(hbar^2 / massL6).*diff(radProfile(1,:));
 %X1 = (-1)*diff(radProfile(1,:));
 %X1 = (-1)*(hbar^2 / massL6).*gradient(radProfile(1,:),radPotential);
-X1 = (-1)*((hbar^2) / massL6).*gradient(radProfile(1,10:end-20),radPotential(10:end-20));
-X1BD = (-1)*((hbar^2) / massL6).*gradient(radialDensity(1,1:end-25),radialDensity(2,1:end-25)); %gradient(y,x)
+X1 = (-1)*((hbar^2) / massL6).*gradient(radProfile(1,8:end-20),radPotential(8:end-20));
+%diffF = diff(radialDensity(1,1:end-20))./diff(radialDensity(2,1:end-20));
+X1BD = (-1)*((hbar^2) / massL6).*gradient(radialDensity(1,1:end-30),radialDensity(2,1:end-30)); %gradient(y,x)
 
 %X_(-1):
 Xm1 = []; Xm1BD = []; %BD = Binned Density
 %for i=1:length(radProfile(1,:))
-for i=10:(length(radProfile(1,1:end-20))-1)
+for i=8:(length(radProfile(1,1:end-20))-1)
   
-    Xm1(i-9) = (massL6 / (hbar^2))*(1/(radProfile(1,i)^2)).*trapz(radPotential(i:end-20),radProfile(1,i:end-20)); %may be backwards
+    Xm1(i-7) = (massL6 / (hbar^2))*(1/(radProfile(1,i)^2)).*trapz(radPotential(i:end-20),radProfile(1,i:end-20)); %may be backwards
     %Xm1(i) = (1/(radProfile(1,i)^2)).*trapz(radProfile(1,i:end));
     
 end
 
-for i=1:(length(radialDensity(1,1:end-25)))
+for i=1:(length(radialDensity(1,1:end-30)))
   
-    Xm1BD(i) = (massL6 / (hbar^2))*(1/(radialDensity(1,i)^2)).*trapz(radialDensity(2,i:end-25),radialDensity(1,i:end-25),2); %trapz(x,y)
+    Xm1BD(i) = (massL6 / (hbar^2))*(1/(radialDensity(1,i)^2))*(sum(radialDensity(2,i:end-30))*trapz(radialDensity(1,i:end-30))); %trapz(x)*spacing
     
 end
 
@@ -199,31 +218,51 @@ PonP0BD = (2/pi).*Xm1BD;
 KonK0LBD = pi.*X1BD;
 KonK0BD = KonK0LBD(1:end);
 
+
+
 %Bin both the comp and pressure:
-KonK0Binned = []; PonP0Binned = [];
-KonK0Binned = binMe(KonK0BD(1:48),1:length(KonK0BD(1:48)),50);
-PonP0Binned = binMe(PonP0BD(1:48),1:length(PonP0BD(1:48)),50);
+%KonK0Binned = []; PonP0Binned = [];
+%KonK0Binned = binMe(KonK0BD(1:48),1:length(KonK0BD(1:48)),50);
+%PonP0Binned = binMe(PonP0BD(1:48),1:length(PonP0BD(1:48)),50);
 
 
 %Output plots:
-figure(500)
-plot(radTemp,radProfile(1,:).*(10^-12));
-title('Density vs Potential at 880G'); xlabel('Potential V(r) in nK'); ylabel('Density n in um^2');
+%figure(500)
+%plot(radTemp,radProfile(1,:).*(10^-12));
+%title('Density vs Potential at 880G'); xlabel('Potential V(r) in nK'); ylabel('Density n in um^2');
     
-figure(501)
-plot(radLength,radProfile(1,:).*(10^-12)); grid on;
-title('Density vs Width at 880G'); xlabel('Width in m'); ylabel('Density n in um^2');
+%figure(501)
+%plot(radLength,radProfile(1,:).*(10^-12)); grid on;
+%title('Density vs Width at 880G'); xlabel('Width in m'); ylabel('Density n in um^2');
 
-figure(502)
-plot(PonP0,KonK0,'.');
+%figure(502)
+%plot(KonK0,PonP0,'.');
 
 figure(512)
-plot(PonP0BD,KonK0BD,'.');
+plot(KonK0BD,PonP0BD,'.');
 title('Binned on Density Comp vs Pressure');
 
-figure(513)
-plot(PonP0Binned(1,:),KonK0Binned(1,:),'.');
-title('Binned on each of comp and pressure Comp vs Pressure');
+%figure(513)
+%plot(KonK0Binned(1,:),PonP0Binned(1,:),'.');
+%title('Binned on each of comp and pressure Comp vs Pressure');
+
+%Individual Bin for the comp/pressure bins:
+%KonK0IBb = []; PonP0IBb = []; KvsPb = [];
+%onK0IBb = binMe(KonK0Binned(1,:),1:length(KonK0Binned(1,:)),60);
+%PonP0IBb = binMe(PonP0Binned(1,:),1:length(PonP0Binned(1,:)),60);
+
+%loop to cut out low P/P0 values (less than 'cutoffPP0'):
+%cutoffPP0 = 0.8;
+%for i=lengthPonP0BD(1,:)
+%end
+
+
+KvsPb = [];
+KvsPb = binMe(PonP0BD(1,:),KonK0BD(1,:),25);
+
+figure(504)
+%plot(KvsPb(2,:),KvsPb(1,:),'.');
+errorbar(KvsPb(2,:),KvsPb(1,:),KvsPb(3,:),'.');
 
 %%plot(KonK0(1:45),PonP0(1:45),'.');
 
@@ -233,14 +272,14 @@ title('Binned on each of comp and pressure Comp vs Pressure');
 %KonK0 = KonK0Binned;
 
 %Individual Bin:
-KonK0IB = []; PonP0IB = [];
-KonK0IB = binMe(KonK0,1:length(KonK0),60);
-PonP0IB = binMe(PonP0,1:length(PonP0),60);
+%KonK0IB = []; PonP0IB = []; KvsP = [];
+%KonK0IB = binMe(KonK0,1:length(KonK0),60);
+%PonP0IB = binMe(PonP0,1:length(PonP0),60);
 
-KvsP = binMe(KonK0IB(1,:),PonP0IB(1,:),100);
+%KvsP = binMe(KonK0IB(1,:),PonP0IB(1,:),25);
 
-figure(503)
-plot(KvsP(2,:),KvsP(1,:),'.');
+%figure(503)
+%plot(KvsP(1,:),KvsP(2,:),'.');
 
 % figure(1000); plot(KvsP_972(2,:),KvsP_972(1,:),'.'); hold on; plot(KvsP_880(2,:),KvsP_880(1,:),'^'); plot(KvsP_833(2,:),KvsP_833(1,:),'s');
 %plot(Xm1BD,X1BD,'.'); axis([0 12 0 4]);

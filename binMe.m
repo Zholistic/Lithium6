@@ -28,6 +28,7 @@ end
 for i=1:length(binMean)
     finalBinned(1,i) = binMean(i);
     finalBinned(2,i) = sum(binLengths(1:i));
+    finalBinned(3,i) = binStd(i); %error on the bin sums
 end
 
 outputBinned = finalBinned;
