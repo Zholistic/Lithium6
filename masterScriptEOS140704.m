@@ -3,6 +3,7 @@
 
 %directory = 'C:\Data\140616_2D_EOS_972G_No_Hold\';
 directory = 'C:\Data\140704_2D_EOS_972G_15mv_evap\';
+%directory = 'C:\Data\140707_2D_EOS_972G_15mv_evap_2sechold\';
 %directory = 'C:\Data\140411_2D_EOS_833G_10us_0_5isat_1us_10Isat_60Low_20high_int\';
 %directory = 'C:\Data\140411_2D_EOS_880G_10us_0_5isat_1us_10Isat_60Low_20high_int\';
 date = '140704';
