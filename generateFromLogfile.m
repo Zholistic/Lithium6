@@ -41,7 +41,7 @@ end
 
 fileLocList = cell(TotalImages,1);
 prev = 0;
-j=0; k=0;
+j=0; k=0; picno = '0';
 
 %for loop to get information out of the logfile and load it into arrays:
 for i=1:(length(C)-1)
@@ -61,6 +61,7 @@ for i=1:(length(C)-1)
                 j = j+1;
                 filename = prev;
                 picno = ['_' filename(end-2:end)];
+                %picno = ['_' next];
                 fullname = [directory filename picno '.fts'];
                 %fullname = [directory filename '_001' '.fts'];
                 %ftsImg = imread(fullname);
@@ -102,6 +103,7 @@ for i=1:(length(C)-1)
         %logholdtime(ceil(i/(length(C)/TotalImages))) = str2num(next);
         varData(k,2) = dataset;
         varData(k,1) = str2num(next);
+        
     end
     
 end

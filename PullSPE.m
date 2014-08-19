@@ -49,6 +49,7 @@ k=1;
     if NoFrames==3
         ZBg(:,:)            =reshape(ImMat(2*(xDim*yDim)+1:end),xDim,yDim);
         RawImage(:,:,k)     =double(ZIm(:,:)-ZBg(:,:)); %RawImage already has background subtraction.
+        %medfilt2(ZBg,[3,3]);
         RawImageNoBgSub(:,:,k) =double(ZIm(:,:));
         RawBackg(:,:,k)     =double(ZBg(:,:));
     else
@@ -175,6 +176,7 @@ Atoms2ODnn = OD2;
 %Use a region (not in the cloud) to determine the noise character:
 JunkLeft = 20; JunkRight = 140; JunkTop = 140; JunkBottom = 180;
 PxAreaNumber = (JunkRight - JunkLeft)*(JunkBottom - JunkTop); %Number of pixels in junk area.
+
 
 
 AvgNoisePixel1 = sum(sum(OD1(JunkTop:JunkBottom,JunkLeft:JunkRight,1)))./PxAreaNumber; 

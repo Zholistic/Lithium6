@@ -16,7 +16,7 @@ function [ outputCoefs ] = gausFit1D( profileToFit )
     magicWidth = ceil((1/8)*length(profileToFit));
     
     p0 = [peak centerIndex magicWidth 1];
-    lb = [peak/2 centerIndex-magicWidth magicWidth/2 -magicWidth*2];
+    lb = [peak/2 centerIndex-magicWidth magicWidth/50 -magicWidth*2];
     ub = [peak*2 centerIndex+magicWidth magicWidth*2 magicWidth*2];
     
     %Fitting:
@@ -24,6 +24,11 @@ function [ outputCoefs ] = gausFit1D( profileToFit )
     curvefitoptions = optimset('MaxFunEvals',100000,'MaxIter',50000,'Display','off');
     xs = 1:length(profileToFit);
     [coefs,resnorm,r,exitflag,output,lambda,J] = lsqcurvefit(fg,p0,xs,profileToFit,lb,ub,curvefitoptions);
+    
+    if(length(coefs) ~= 4)
+        display('Error on gaus fit, coefs length incorrect');
+        coefs = [0 0 0 0];
+    end
     
     outputCoefs = coefs;
 

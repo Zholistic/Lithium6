@@ -6,7 +6,13 @@ if(raw)
     tempString = fileloc(1:end-7);
     number = fileloc(end-6:end-4);
     if(str2num(number(1)) == 0)
-        number = number(2:end);
+
+        if(str2num(number(2)) == 0)
+        number = number(3:end);
+        else
+            number = number(2:end);
+        end
+                
     end
     atomloc = [tempString 'atom' number '.fts'];
     beamloc = [tempString 'beam' number '.fts'];
@@ -14,6 +20,7 @@ if(raw)
     newImageAtom = imread(atomloc);
     newImageBeam = imread(beamloc);
     
+    %Isat Correction?
     newImage = (-1)*(newImageAtom - newImageBeam);
     
     %Noise cancellation, using two large strips above and below the cloud:

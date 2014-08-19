@@ -4,6 +4,7 @@ function [ outputBinned ] = binMe( inputY, inputX, nbins )
 %scans over NaN values.
 
 binMean = []; binStd = []; binEdges=[]; outputBinned = []; finalBinned = [];
+binLengths = []; binMembers = [];
 binEdges = linspace(min(inputX),max(inputX),nbins+1);
 binLength = (max(inputX)-min(inputX))/(nbins+1);
 [h,whichBin] = histc(inputX, binEdges);
@@ -19,6 +20,7 @@ for i = 1:nbins
         binLengths(j) = binCount*binLength;
         j=j+1;
         binCount = 1;
+        binMembers = [];
     else
         binCount = binCount +1;
     end
@@ -27,7 +29,7 @@ end
 
 for i=1:length(binMean)
     finalBinned(1,i) = binMean(i);
-    finalBinned(2,i) = sum(binLengths(1:i));
+    finalBinned(2,i) = min(inputX) - binLengths(1) + sum(binLengths(1:i));
     finalBinned(3,i) = binStd(i); %error on the bin sums
 end
 

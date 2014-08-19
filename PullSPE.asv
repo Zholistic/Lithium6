@@ -49,6 +49,7 @@ k=1;
     if NoFrames==3
         ZBg(:,:)            =reshape(ImMat(2*(xDim*yDim)+1:end),xDim,yDim);
         RawImage(:,:,k)     =double(ZIm(:,:)-ZBg(:,:)); %RawImage already has background subtraction.
+        medfilt2(ZBg,[3,3]);
         RawImageNoBgSub(:,:,k) =double(ZIm(:,:));
         RawBackg(:,:,k)     =double(ZBg(:,:));
     else
@@ -177,6 +178,7 @@ JunkLeft = 20; JunkRight = 140; JunkTop = 140; JunkBottom = 180;
 PxAreaNumber = (JunkRight - JunkLeft)*(JunkBottom - JunkTop); %Number of pixels in junk area.
 
 
+
 AvgNoisePixel1 = sum(sum(OD1(JunkTop:JunkBottom,JunkLeft:JunkRight,1)))./PxAreaNumber; 
 AvgNoisePixel2 = sum(sum(OD2(JunkTop:JunkBottom,JunkLeft:JunkRight,1)))./PxAreaNumber; 
 
@@ -199,16 +201,17 @@ ToFit(:,1) = mean(Atoms2ODnn(140:170,:,1));
 %Fit:
 fg = @(p,x)(p(1).*x + p(2)); %function to fit with
 p0 = [0.0022 -0.5];
-lb = [0.0001 -4];
+lb = [0 -4];
 ub = [0.4 4];
 
 curvefitoptions = optimset('MaxFunEvals',100000,'MaxIter',50000,'Display','off');
 xs = 1:length(ToFit(:,1));
 coefs = lsqcurvefit(fg,p0,xs(:),ToFit(:,1),lb,ub,curvefitoptions);
 
-if(coefs(1) > 0.35 || abs(coefs(2)) < 0.01)
-    disp('check gradient correction');
-end
+%if(coefs(1) > 0.35 || abs(coefs(2)) < 0.001)
+%    disp('check gradient correction');
+%    coefs
+%end
 
 %Now subtract out value based on the gradient:
 
