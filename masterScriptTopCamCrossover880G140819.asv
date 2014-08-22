@@ -1,7 +1,7 @@
-directory = 'C:\Data\140818_crossover_972G_Isat0p2_9p44usPulse_freq5p4kHz_insitu\';
-date = '140818';
+directory = 'C:\Data\140819_crossover_880G_Isat0p28_10usPulse_freq5p4kHz_insitu\';
+date = '140819';
 camera = 'top';
-varstring = 'motfet ';
+varstring = 'motfet';
 %varstring2 = 'Holdtime';
 pixelLength = 2.84e-6; %2.84 um topcam, 
 massL6 = 9.988e-27; %9.988 x 10^27 kg
@@ -52,12 +52,14 @@ imageArray = [];
 %    imageArray(:,:,i) = atom2Image(:,:,1);
 %end
 
+calibrationImages = 34;
+
 for i=1:length(fileLocList(:))
     
     Isat = 10*135;
     
     %High Intensity images different isat:
-    if(i > length(fileLocList(:))-20) %12 Isat, high intensity images
+    if(i > length(fileLocList(:))-calibrationImages) %12 Isat, high intensity images
         Isat = 135;  
     end
     
@@ -68,8 +70,8 @@ for i=1:length(fileLocList(:))
 end
 
 varDataLowIntensity = []; varDataHighIntensity = [];
-varDataLowIntensity = varData(1:380)';
-varDataHighIntensity = varData(381:end)';
+varDataLowIntensity = varData(1:end-calibrationImages,1);
+varDataHighIntensity = varData(end-calibrationImages+1:end,1);
 
 %Crop images:
 imageArrayC = []; imageArrayTC = []; imageArrayHighIntensityC = [];
@@ -81,16 +83,42 @@ CrossROIx = 30:185; %The cross is inside the region specified above.
 TightROIx = 30:185;
 TightROIy = 10:150;
 %Split into high and low intensity arrays
-imageArrayC = imageArray(ROIy,ROIx,1:380);
-imageArrayHighIntensityC = imageArray(ROIy,ROIx,381:end); 
-imageArrayTC = imageArray(TightROIy,TightROIx,1:380);
-imageArrayHighIntensityTC = imageArray(TightROIy,TightROIx,381:end); 
+imageArrayC = imageArray(ROIy,ROIx,1:end-calibrationImages);
+imageArrayHighIntensityC = imageArray(ROIy,ROIx,end-calibrationImages+1:end); 
+imageArrayTC = imageArray(TightROIy,TightROIx,1:end-calibrationImages);
+imageArrayHighIntensityTC = imageArray(TightROIy,TightROIx,end-calibrationImages+1:end); 
+
+%Atom Number correction:
+highIntImage = []; lowIntImage = [];
+%There are 2 high intensity images for this dataset:
+%0.89motfet:
+highIntImage(:,:,1) = centerAndAverage(imageArrayHighIntensityC(:,:,1:10));
+lowIntImage(:,:,1) = centerAndAverage(imageArrayC(:,:,332:336));
+%1.1motfet:
+highIntImage(:,:,2) = centerAndAverage(imageArrayHighIntensityC(:,:,10:end));
+lowIntImage(:,:,2) = centerAndAverage(imageArrayC(:,:,257:277));
+
+scaleFactor = [];
+spectrumFunc1 = []; spectrumFunc2 = [];
+spectrumFunc1 = makeSpectrumHL(highIntImage(:,:,1),lowIntImage(:,:,1));
+spectrumFunc2 = makeSpectrumHL(highIntImage(:,:,2),lowIntImage(:,:,2));
+
+scaleFactor(1) = mean(spectrumFunc1(1,45:75));
+scaleFactor(2) = mean(spectrumFunc2(1,40:85));
+
+finalScaleFactor = mean(scaleFactor);
+
+for i=1:length(imageArrayC(1,1,:))
+    imageArrayC(:,:,i) = imageArrayC(:,:,i).*finalScaleFactor;
+end
+
+
 
 %Radially averaged profiles:
-radProfiles = [];
+radProfiles = []; center = [];
 disp('Radially averaging...');
 for i=1:length(imageArrayC(1,1,:))
-    radProfiles(:,:,i) = radAverageBigSquare(imageArrayC(:,:,i));
+    [radProfiles(:,:,i),center(:,i)] = radAverageBigSquare(imageArrayC(:,:,i));
 end
 
 %Display every X image:
@@ -103,16 +131,12 @@ for i=1:length(imageArrayC(1,1,:))
 end
 end
 
-%Radially Average:
-%for i=1:length(imageArrayC)
-%radProfile = radAverageBigSquare(lowIntRealAtomImg);
-%figure(203)
-%plot(radProfile(2,:),radProfile(1,:));
 
 %%%%%Fit Gaussians:
 fg = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2)) + p(4));
+fgr = @(p,x)(p(1).*exp((-1).*((x).^2) ./ (2.*p(2).^2)));
 gcoefsX = []; gcoefsY = []; centers = []; gcoefsXi = []; gcoefsYi = [];
-sigmaX = []; sigmaY = []; shiftFactor = []; shiftFactorR = [];
+sigmaX = []; sigmaY = []; shiftFactor = []; shiftFactorR = []; gcoefsR = [];
 disp('Gaussian Fitting...');
 for i=1:length(imageArrayC(1,1,:))  
     %Initial Fit for zeroing:
@@ -149,6 +173,12 @@ for i=1:length(imageArrayC(1,1,:))
     if(mod(i,4) == 0)       
         figure(i);
         plot(fg(gcoefsY(:,i),1:180)); hold on; plot(mean(imageArrayC(:,CrossROIx,i),2),'r'); hold off;      
+    end
+end
+for i=1:length(imageArrayC(1,1,:))
+    if(mod(i,4) == 0)       
+        figure(i);
+        plot(fgr(gcoefsR(:,i),1:180)); hold on; plot(radProfiles(2,:,i),radProfiles(1,:,i),'r'); hold off;      
     end
 end
 end

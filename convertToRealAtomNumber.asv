@@ -93,6 +93,8 @@ for i=1:length(lowIntImg(:,1))
     end
 end
 
+
+
 convertedImage = scaledImage;
 scaleFactor = coefs(2);
 

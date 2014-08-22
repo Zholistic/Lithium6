@@ -48,8 +48,8 @@ k=1;
     ZIm(:,:)      =reshape(ImMat((xDim*yDim)+1:2*(xDim*yDim)),xDim,yDim);
     if NoFrames==3
         ZBg(:,:)            =reshape(ImMat(2*(xDim*yDim)+1:end),xDim,yDim);
+        ZBg = medfilt2(ZBg,[3,3]); %medfilt the background. COULD BE SLOW!
         RawImage(:,:,k)     =double(ZIm(:,:)-ZBg(:,:)); %RawImage already has background subtraction.
-        %medfilt2(ZBg,[3,3]);
         RawImageNoBgSub(:,:,k) =double(ZIm(:,:));
         RawBackg(:,:,k)     =double(ZBg(:,:));
     else

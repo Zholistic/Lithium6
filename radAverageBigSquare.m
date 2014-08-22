@@ -1,4 +1,4 @@
-function [profileOutput] = radAverageBigSquare(inputImage)
+function [profileOutput,center] = radAverageBigSquare(inputImage)
 %A function which takes a 2D image and radially averages. 
 %Returns the 1D profile of that image from center to edge. 
 
@@ -40,6 +40,7 @@ for i = 1:length(binMean)
 end
 
 profileOutput = radialProfile;
+center = cCenter;
 
 
 end

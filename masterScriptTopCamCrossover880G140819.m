@@ -1,7 +1,7 @@
-directory = 'C:\Data\140818_crossover_972G_Isat0p2_9p44usPulse_freq5p4kHz_insitu\';
-date = '140818';
+directory = 'C:\Data\140819_crossover_880G_Isat0p28_10usPulse_freq5p4kHz_insitu\';
+date = '140819';
 camera = 'top';
-varstring = 'motfet ';
+varstring = 'motfet';
 %varstring2 = 'Holdtime';
 pixelLength = 2.84e-6; %2.84 um topcam, 
 massL6 = 9.988e-27; %9.988 x 10^27 kg
@@ -52,12 +52,14 @@ imageArray = [];
 %    imageArray(:,:,i) = atom2Image(:,:,1);
 %end
 
+calibrationImages = 31;
+
 for i=1:length(fileLocList(:))
     
     Isat = 10*135;
     
     %High Intensity images different isat:
-    if(i > length(fileLocList(:))-20) %12 Isat, high intensity images
+    if(i > length(fileLocList(:))-calibrationImages) %12 Isat, high intensity images
         Isat = 135;  
     end
     
@@ -68,8 +70,8 @@ for i=1:length(fileLocList(:))
 end
 
 varDataLowIntensity = []; varDataHighIntensity = [];
-varDataLowIntensity = varData(1:380)';
-varDataHighIntensity = varData(381:end)';
+varDataLowIntensity = varData(1:end-calibrationImages,1);
+varDataHighIntensity = varData(end-calibrationImages+1:end,1);
 
 %Crop images:
 imageArrayC = []; imageArrayTC = []; imageArrayHighIntensityC = [];
@@ -81,16 +83,47 @@ CrossROIx = 30:185; %The cross is inside the region specified above.
 TightROIx = 30:185;
 TightROIy = 10:150;
 %Split into high and low intensity arrays
-imageArrayC = imageArray(ROIy,ROIx,1:380);
-imageArrayHighIntensityC = imageArray(ROIy,ROIx,381:end); 
-imageArrayTC = imageArray(TightROIy,TightROIx,1:380);
-imageArrayHighIntensityTC = imageArray(TightROIy,TightROIx,381:end); 
+imageArrayC = imageArray(ROIy,ROIx,1:end-calibrationImages);
+imageArrayHighIntensityC = imageArray(ROIy,ROIx,end-calibrationImages+1:end); 
+imageArrayTC = imageArray(TightROIy,TightROIx,1:end-calibrationImages);
+imageArrayHighIntensityTC = imageArray(TightROIy,TightROIx,end-calibrationImages+1:end); 
+
+%Atom Number correction:
+highIntImage = []; lowIntImage = [];
+%There are 3 high intensity images for this dataset:
+%0.81motfet:
+highIntImage(:,:,1) = centerAndAverage(imageArrayHighIntensityC(:,:,1:10));
+lowIntImage(:,:,1) = centerAndAverage(imageArrayC(:,:,386:390));
+%1.05motfet:
+highIntImage(:,:,2) = centerAndAverage(imageArrayHighIntensityC(:,:,11:21));
+lowIntImage(:,:,2) = centerAndAverage(imageArrayC(:,:,341:345));
+%1.27motfet:
+highIntImage(:,:,3) = centerAndAverage(imageArrayHighIntensityC(:,:,22:end));
+lowIntImage(:,:,3) = centerAndAverage(imageArrayC(:,:,175:189));
+
+scaleFactor = [];
+spectrumFunc1 = []; spectrumFunc2 = []; spectrumFunc3 = [];
+spectrumFunc1 = makeSpectrumHL(highIntImage(:,:,1),lowIntImage(:,:,1));
+spectrumFunc2 = makeSpectrumHL(highIntImage(:,:,2),lowIntImage(:,:,2));
+spectrumFunc3 = makeSpectrumHL(highIntImage(:,:,3),lowIntImage(:,:,3));
+
+scaleFactor(1) = mean(spectrumFunc1(1,40:85));
+scaleFactor(2) = mean(spectrumFunc2(1,52:70));
+scaleFactor(3) = mean(spectrumFunc3(1,57:87));
+
+finalScaleFactor = mean(scaleFactor);
+
+for i=1:length(imageArrayC(1,1,:))
+    imageArrayC(:,:,i) = imageArrayC(:,:,i).*finalScaleFactor;
+end
+
+
 
 %Radially averaged profiles:
-radProfiles = [];
+radProfiles = []; center = [];
 disp('Radially averaging...');
 for i=1:length(imageArrayC(1,1,:))
-    radProfiles(:,:,i) = radAverageBigSquare(imageArrayC(:,:,i));
+    [radProfiles(:,:,i),center(:,i)] = radAverageBigSquare(imageArrayC(:,:,i));
 end
 
 %Display every X image:
@@ -103,16 +136,12 @@ for i=1:length(imageArrayC(1,1,:))
 end
 end
 
-%Radially Average:
-%for i=1:length(imageArrayC)
-%radProfile = radAverageBigSquare(lowIntRealAtomImg);
-%figure(203)
-%plot(radProfile(2,:),radProfile(1,:));
 
 %%%%%Fit Gaussians:
 fg = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2)) + p(4));
+fgr = @(p,x)(p(1).*exp((-1).*((x).^2) ./ (2.*p(2).^2)));
 gcoefsX = []; gcoefsY = []; centers = []; gcoefsXi = []; gcoefsYi = [];
-sigmaX = []; sigmaY = []; shiftFactor = []; shiftFactorR = [];
+sigmaX = []; sigmaY = []; shiftFactor = []; shiftFactorR = []; gcoefsR = [];
 disp('Gaussian Fitting...');
 for i=1:length(imageArrayC(1,1,:))  
     %Initial Fit for zeroing:
@@ -149,6 +178,12 @@ for i=1:length(imageArrayC(1,1,:))
     if(mod(i,4) == 0)       
         figure(i);
         plot(fg(gcoefsY(:,i),1:180)); hold on; plot(mean(imageArrayC(:,CrossROIx,i),2),'r'); hold off;      
+    end
+end
+for i=1:length(imageArrayC(1,1,:))
+    if(mod(i,4) == 0)       
+        figure(i);
+        plot(fgr(gcoefsR(:,i),1:180)); hold on; plot(radProfiles(2,:,i),radProfiles(1,:,i),'r'); hold off;      
     end
 end
 end
@@ -215,6 +250,7 @@ stdDevWidthsY = stdDevWidthsY.*2; %full error on width
 stdDevWidthsX = stdDevWidthsX.*2;
 stdDevWidthsR = stdDevWidthsR.*2;
 
+%{
 figure(1);
 errorbar(pixelNumbers,widthsY,stdDevWidthsY/2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
     'Marker','o',...
@@ -229,6 +265,7 @@ errorbar(pixelNumbers,widthsX,stdDevWidthsX/2,'MarkerFaceColor',[0.6000000238418
     'Color',[0 0 1]);
 grid on;
 title('X Widths vs Atom Number');
+%}
 figure(3);
 errorbar(motFets,pixelNumbers,pixelNumbersStdDev/2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
     'Marker','o',...
@@ -264,7 +301,7 @@ errorbar(pixelNumbers,widthsX,stdDevWidthsX/2,'MarkerFaceColor',[0.6000000238418
     'LineStyle','none',...
     'Color',[0 0 1]);
 grid on;
-title('Y Widths vs Atom Number');
+title('X Widths vs Atom Number');
 hold on; plot(pixelCounts,gcoefsX(3,:)*2,'.r'); hold off;
 figure(8);
 errorbar(pixelNumbers,widthsR,stdDevWidthsR/2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
@@ -273,7 +310,21 @@ errorbar(pixelNumbers,widthsR,stdDevWidthsR/2,'MarkerFaceColor',[0.6000000238418
     'Color',[0 0 1]);
 grid on;
 title('R Widths vs Atom Number');
-hold on; plot(pixelCounts,gcoefsR(2,:)*2,'.r'); hold off;
+hold on; plot(pixelCounts,gcoefsR(2,:).*2,'.r'); hold off;
+figure(9);
+plot(log(pixelNumbers),log(widthsR),'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+    'Marker','o',...
+    'LineStyle','none',...
+    'Color',[0 0 1]);
+grid on;
+title('Log R Widths vs Log Atom Number');
+figure(10);
+plot(pixelNumbers,widthsR./(pixelNumbers.^0.25),'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+    'Marker','o',...
+    'LineStyle','none',...
+    'Color',[0 0 1]);
+grid on;
+title('R Widths vs Atom Number');
 
 
 

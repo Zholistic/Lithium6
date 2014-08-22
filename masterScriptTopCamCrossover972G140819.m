@@ -86,6 +86,31 @@ imageArrayHighIntensityC = imageArray(ROIy,ROIx,381:end);
 imageArrayTC = imageArray(TightROIy,TightROIx,1:380);
 imageArrayHighIntensityTC = imageArray(TightROIy,TightROIx,381:end); 
 
+%Atom Number correction:
+highIntImage = []; lowIntImage = [];
+%There are 2 high intensity images for this dataset:
+%0.89motfet:
+highIntImage(:,:,1) = centerAndAverage(imageArrayHighIntensityC(:,:,1:10));
+lowIntImage(:,:,1) = centerAndAverage(imageArrayC(:,:,332:336));
+%1.1motfet:
+highIntImage(:,:,2) = centerAndAverage(imageArrayHighIntensityC(:,:,10:end));
+lowIntImage(:,:,2) = centerAndAverage(imageArrayC(:,:,257:277));
+
+scaleFactor = [];
+spectrumFunc1 = []; spectrumFunc2 = [];
+spectrumFunc1 = makeSpectrumHL(highIntImage(:,:,1),lowIntImage(:,:,1));
+spectrumFunc2 = makeSpectrumHL(highIntImage(:,:,2),lowIntImage(:,:,2));
+
+scaleFactor(1) = mean(spectrumFunc1(1,45:75));
+scaleFactor(2) = mean(spectrumFunc2(1,40:85));
+
+finalScaleFactor = mean(scaleFactor);
+
+for i=1:length(imageArrayC(1,1,:))
+    imageArrayC(:,:,i) = imageArrayC(:,:,i).*finalScaleFactor;
+end
+
+
 %Radially averaged profiles:
 radProfiles = [];
 disp('Radially averaging...');
@@ -103,18 +128,14 @@ for i=1:length(imageArrayC(1,1,:))
 end
 end
 
-%Radially Average:
-%for i=1:length(imageArrayC)
-%radProfile = radAverageBigSquare(lowIntRealAtomImg);
-%figure(203)
-%plot(radProfile(2,:),radProfile(1,:));
 
 %%%%%Fit Gaussians:
 fg = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2)) + p(4));
 gcoefsX = []; gcoefsY = []; centers = []; gcoefsXi = []; gcoefsYi = [];
+gcoefsR = [];
 sigmaX = []; sigmaY = []; shiftFactor = []; shiftFactorR = [];
 disp('Gaussian Fitting...');
-for i=1:length(imageArrayC(1,1,:))  
+for i=1:length(imageArrayC(1,1,:))
     %Initial Fit for zeroing:
     gcoefsXi(:,i) = gausFit1D(mean(imageArrayC(CrossROIy,:,i),1)); %mean averages over y
     gcoefsYi(:,i) = gausFit1D(mean(imageArrayC(:,CrossROIx,i),2)); %mean averages over x
@@ -123,8 +144,7 @@ for i=1:length(imageArrayC(1,1,:))
     %Shift wings to zero:
     shiftFactor(i) = (gcoefsXi(4,i)+gcoefsYi(4,i))/2;
     imageArrayC(:,:,i) = imageArrayC(:,:,i) - shiftFactor(i);
-    
-    
+        
     %Refit:
     gcoefsX(:,i) = gausFit1D(mean(imageArrayC(CrossROIy,:,i),1)); %mean averages over y
     %Profile: plot(mean(imageArrayC(:,:,i),1))
@@ -215,6 +235,7 @@ stdDevWidthsY = stdDevWidthsY.*2; %full error on width
 stdDevWidthsX = stdDevWidthsX.*2;
 stdDevWidthsR = stdDevWidthsR.*2;
 
+%{
 figure(1);
 errorbar(pixelNumbers,widthsY,stdDevWidthsY/2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
     'Marker','o',...
@@ -229,6 +250,7 @@ errorbar(pixelNumbers,widthsX,stdDevWidthsX/2,'MarkerFaceColor',[0.6000000238418
     'Color',[0 0 1]);
 grid on;
 title('X Widths vs Atom Number');
+%}
 figure(3);
 errorbar(motFets,pixelNumbers,pixelNumbersStdDev/2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
     'Marker','o',...
@@ -264,7 +286,7 @@ errorbar(pixelNumbers,widthsX,stdDevWidthsX/2,'MarkerFaceColor',[0.6000000238418
     'LineStyle','none',...
     'Color',[0 0 1]);
 grid on;
-title('Y Widths vs Atom Number');
+title('X Widths vs Atom Number');
 hold on; plot(pixelCounts,gcoefsX(3,:)*2,'.r'); hold off;
 figure(8);
 errorbar(pixelNumbers,widthsR,stdDevWidthsR/2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
@@ -273,7 +295,21 @@ errorbar(pixelNumbers,widthsR,stdDevWidthsR/2,'MarkerFaceColor',[0.6000000238418
     'Color',[0 0 1]);
 grid on;
 title('R Widths vs Atom Number');
-hold on; plot(pixelCounts,gcoefsR(2,:)*2,'.r'); hold off;
+hold on; plot(pixelCounts,gcoefsR(2,:).*2,'.r'); hold off;
+figure(9);
+plot(log(pixelNumbers),log(widthsR),'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+    'Marker','o',...
+    'LineStyle','none',...
+    'Color',[0 0 1]);
+grid on;
+title('Log R Widths vs Log Atom Number');
+figure(11);
+plot(pixelNumbers,widthsR./(pixelNumbers.^0.25),'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+    'Marker','o',...
+    'LineStyle','none',...
+    'Color',[0 0 1]);
+grid on;
+title('R Widths vs Atom Number');
 
 
 

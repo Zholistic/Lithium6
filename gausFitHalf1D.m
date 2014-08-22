@@ -16,7 +16,7 @@ function [ outputCoefs ] = gausFitHalf1D( profileToFit, xs )
     magicWidth = ceil((1/3)*length(profileToFit));
     
     p0 = [peak magicWidth];
-    lb = [peak/2 magicWidth/2];
+    lb = [peak/2 magicWidth/10];
     ub = [peak*2 magicWidth*2];
     
     %Fitting:
