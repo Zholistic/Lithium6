@@ -118,12 +118,12 @@ for i=1:length(imageArrayC(1,1,:))
 end
 
 
-
 %Radially averaged profiles:
-radProfiles = []; center = [];
+radProfiles = []; radProfilesT = []; center = [];
 disp('Radially averaging...');
 for i=1:length(imageArrayC(1,1,:))
-    [radProfiles(:,:,i),center(:,i)] = radAverageBigSquare(imageArrayC(:,:,i));
+    [radProfilesT(:,:,i),center(:,i)] = radAverageBigSquare(imageArrayC(:,:,i));
+    radProfiles(:,:,i) = radProfilesT(:,1:end-20,i);
 end
 
 %Display every X image:
@@ -142,12 +142,14 @@ fg = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2)) + p(4));
 fgr = @(p,x)(p(1).*exp((-1).*((x).^2) ./ (2.*p(2).^2)));
 gcoefsX = []; gcoefsY = []; centers = []; gcoefsXi = []; gcoefsYi = [];
 sigmaX = []; sigmaY = []; shiftFactor = []; shiftFactorR = []; gcoefsR = [];
+sigmaR2p5 = []; gcoefsR2p5 = [];
 disp('Gaussian Fitting...');
 for i=1:length(imageArrayC(1,1,:))  
     %Initial Fit for zeroing:
     gcoefsXi(:,i) = gausFit1D(mean(imageArrayC(CrossROIy,:,i),1)); %mean averages over y
     gcoefsYi(:,i) = gausFit1D(mean(imageArrayC(:,CrossROIx,i),2)); %mean averages over x
     gcoefsR(:,i) = gausFitHalf1D(radProfiles(1,:,i),radProfiles(2,:,i));
+    gcoefsR2p5(:,i) = gausExp2p5FitHalf1D(radProfiles(1,:,i),radProfiles(2,:,i));
     
     %Shift wings to zero:
     shiftFactor(i) = (gcoefsXi(4,i)+gcoefsYi(4,i))/2;
@@ -164,6 +166,7 @@ for i=1:length(imageArrayC(1,1,:))
     sigmaX(:,i) = gcoefsX(3,i);
     sigmaY(:,i) = gcoefsY(3,i);
     sigmaR(:,i) = gcoefsR(2,i);
+    sigmaR2p5(:,i) = gcoefsR2p5(2,i);
 end
 
 %Display every X fit:
@@ -198,7 +201,7 @@ end
 
 %Sort varData:
 sortedVarData = []; indexs = []; sigmaRSort = [];
-sigmaXSort = []; sigmaYSort = [];
+sigmaXSort = []; sigmaYSort = []; sigmaR2p5Sort = [];
 [sortedVarData,indexs] = sort(varDataLowIntensity);
 %indexs(:,1) is a vector of the sort.
 
@@ -207,12 +210,14 @@ for i=1:length(sigmaX)
     sigmaYSort(i) = sigmaY(indexs(i));
     pixelCountsSort(i) = pixelCounts(indexs(i));
     sigmaRSort(i) = sigmaR(indexs(i));
+    sigmaR2p5Sort(i) = sigmaR2p5(indexs(i));
 end
 
 %Average over same motfet data points:
 j=1; runTotal = 0; motFets = []; widthsX = []; widthsY = [];
 stdDevWidthsX = []; stdDevWidthsY = []; pixelNumbers = [];
 pixelNumbersStdDev = []; sMomentX = []; sMomentY = [];
+widthsR2p5 = []; stdDevWidthsR2p5 = [];
 widthsR = []; stdDevWidthsR = [];
 sMomentXStdDev = []; sMomentYStdDev = [];
 for i=1:length(sortedVarData)
@@ -228,6 +233,9 @@ for i=1:length(sortedVarData)
         stdDevWidthsY(j) = std(sigmaYSort(i-runTotal:i));
         widthsR(j) = mean(sigmaRSort(i-runTotal:i));
         stdDevWidthsR(j) = std(sigmaRSort(i-runTotal:i));
+        widthsR2p5(j) = mean(sigmaR2p5Sort(i-runTotal:i));
+        stdDevWidthsR2p5(j) = std(sigmaR2p5Sort(i-runTotal:i));
+        
         motFets(j) = sortedVarData(i);
         pixelNumbers(j) = mean(pixelCountsSort(i-runTotal:i));
         pixelNumbersStdDev(j) = std(pixelCountsSort(i-runTotal:i));
@@ -244,11 +252,13 @@ end
 widthsX = widthsX.*2; %*2 to make it not the radius
 widthsY = widthsY.*2;
 widthsR = widthsR.*2;
+widthsR2p5 = widthsR2p5.*2;
 %stdDevWidthsY = stdDevWidthsY.*pixelLength.*2; %full error on width
 %stdDevWidthsX = stdDevWidthsX.*pixelLength.*2;
 stdDevWidthsY = stdDevWidthsY.*2; %full error on width
 stdDevWidthsX = stdDevWidthsX.*2;
 stdDevWidthsR = stdDevWidthsR.*2;
+stdDevWidthsR2p5 = stdDevWidthsR2p5.*2;
 
 %{
 figure(1);
@@ -325,7 +335,13 @@ plot(pixelNumbers,widthsR./(pixelNumbers.^0.25),'MarkerFaceColor',[0.60000002384
     'Color',[0 0 1]);
 grid on;
 title('R Widths vs Atom Number');
-
+figure(12);
+errorbar(pixelNumbers,widthsR2p5,stdDevWidthsR2p5./2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+    'Marker','o',...
+    'LineStyle','none',...
+    'Color',[0 0 1]);
+grid on;
+title('R Widths vs Atom Number, 2.5 exponent');
 
 
 

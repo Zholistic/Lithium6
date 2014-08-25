@@ -1,7 +1,7 @@
-directory = 'C:\Data\140818_crossover_972G_Isat0p2_9p44usPulse_freq5p4kHz_insitu\';
-date = '140818';
+directory = 'C:\Data\140822_crossover_920G_Isat0p3_10usPulse_freq5p4kHz_insitu\';
+date = '140822';
 camera = 'top';
-varstring = 'motfet ';
+varstring = 'motfet';
 %varstring2 = 'Holdtime';
 pixelLength = 2.84e-6; %2.84 um topcam, 
 massL6 = 9.988e-27; %9.988 x 10^27 kg
@@ -52,12 +52,15 @@ imageArray = [];
 %    imageArray(:,:,i) = atom2Image(:,:,1);
 %end
 
+calibrationImages = 30;
+
+disp('Building images...');
 for i=1:length(fileLocList(:))
     
     Isat = 10*135;
     
     %High Intensity images different isat:
-    if(i > length(fileLocList(:))-20) %12 Isat, high intensity images
+    if(i > length(fileLocList(:))-calibrationImages) %12 Isat, high intensity images
         Isat = 135;  
     end
     
@@ -68,8 +71,8 @@ for i=1:length(fileLocList(:))
 end
 
 varDataLowIntensity = []; varDataHighIntensity = [];
-varDataLowIntensity = varData(1:380)';
-varDataHighIntensity = varData(381:end)';
+varDataLowIntensity = varData(1:end-calibrationImages,1);
+varDataHighIntensity = varData(end-calibrationImages+1:end,1);
 
 %Crop images:
 imageArrayC = []; imageArrayTC = []; imageArrayHighIntensityC = [];
@@ -81,28 +84,33 @@ CrossROIx = 30:185; %The cross is inside the region specified above.
 TightROIx = 30:185;
 TightROIy = 10:150;
 %Split into high and low intensity arrays
-imageArrayC = imageArray(ROIy,ROIx,1:380);
-imageArrayHighIntensityC = imageArray(ROIy,ROIx,381:end); 
-imageArrayTC = imageArray(TightROIy,TightROIx,1:380);
-imageArrayHighIntensityTC = imageArray(TightROIy,TightROIx,381:end); 
+imageArrayC = imageArray(ROIy,ROIx,1:end-calibrationImages);
+imageArrayHighIntensityC = imageArray(ROIy,ROIx,end-calibrationImages+1:end); 
+imageArrayTC = imageArray(TightROIy,TightROIx,1:end-calibrationImages);
+imageArrayHighIntensityTC = imageArray(TightROIy,TightROIx,end-calibrationImages+1:end); 
 
 %Atom Number correction:
 highIntImage = []; lowIntImage = [];
-%There are 2 high intensity images for this dataset:
-%0.89motfet:
+%There are 3 high intensity images for this dataset:
+%0.77motfet:
 highIntImage(:,:,1) = centerAndAverage(imageArrayHighIntensityC(:,:,1:10));
-lowIntImage(:,:,1) = centerAndAverage(imageArrayC(:,:,332:336));
-%1.1motfet:
-highIntImage(:,:,2) = centerAndAverage(imageArrayHighIntensityC(:,:,10:end));
-lowIntImage(:,:,2) = centerAndAverage(imageArrayC(:,:,257:277));
+lowIntImage(:,:,1) = centerAndAverage(imageArrayC(:,:,386:390));
+%1.01motfet:
+highIntImage(:,:,2) = centerAndAverage(imageArrayHighIntensityC(:,:,11:21));
+lowIntImage(:,:,2) = centerAndAverage(imageArrayC(:,:,341:345));
+%1.23motfet:
+highIntImage(:,:,3) = centerAndAverage(imageArrayHighIntensityC(:,:,22:end));
+lowIntImage(:,:,3) = centerAndAverage(imageArrayC(:,:,175:189));
 
 scaleFactor = [];
-spectrumFunc1 = []; spectrumFunc2 = [];
+spectrumFunc1 = []; spectrumFunc2 = []; spectrumFunc3 = [];
 spectrumFunc1 = makeSpectrumHL(highIntImage(:,:,1),lowIntImage(:,:,1));
 spectrumFunc2 = makeSpectrumHL(highIntImage(:,:,2),lowIntImage(:,:,2));
+spectrumFunc3 = makeSpectrumHL(highIntImage(:,:,3),lowIntImage(:,:,3));
 
-scaleFactor(1) = mean(spectrumFunc1(1,45:75));
-scaleFactor(2) = mean(spectrumFunc2(1,40:85));
+scaleFactor(1) = mean(spectrumFunc1(1,40:85));
+scaleFactor(2) = mean(spectrumFunc2(1,52:70));
+scaleFactor(3) = mean(spectrumFunc3(1,57:87));
 
 finalScaleFactor = mean(scaleFactor);
 
@@ -132,21 +140,21 @@ end
 
 %%%%%Fit Gaussians:
 fg = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2)) + p(4));
+fgr = @(p,x)(p(1).*exp((-1).*((x).^2) ./ (2.*p(2).^2)));
 gcoefsX = []; gcoefsY = []; centers = []; gcoefsXi = []; gcoefsYi = [];
-gcoefsR = []; gcoefsR2p5 = []; sigmaR2p5 = [];
-sigmaX = []; sigmaY = []; shiftFactor = []; shiftFactorR = [];
+sigmaX = []; sigmaY = []; shiftFactor = []; shiftFactorR = []; gcoefsR = [];
 disp('Gaussian Fitting...');
-for i=1:length(imageArrayC(1,1,:))
+for i=1:length(imageArrayC(1,1,:))  
     %Initial Fit for zeroing:
     gcoefsXi(:,i) = gausFit1D(mean(imageArrayC(CrossROIy,:,i),1)); %mean averages over y
     gcoefsYi(:,i) = gausFit1D(mean(imageArrayC(:,CrossROIx,i),2)); %mean averages over x
     gcoefsR(:,i) = gausFitHalf1D(radProfiles(1,:,i),radProfiles(2,:,i));
-    gcoefsR2p5(:,i) = gausExp2p5FitHalf1D(radProfiles(1,:,i),radProfiles(2,:,i));
     
     %Shift wings to zero:
     shiftFactor(i) = (gcoefsXi(4,i)+gcoefsYi(4,i))/2;
     imageArrayC(:,:,i) = imageArrayC(:,:,i) - shiftFactor(i);
-        
+    
+    
     %Refit:
     gcoefsX(:,i) = gausFit1D(mean(imageArrayC(CrossROIy,:,i),1)); %mean averages over y
     %Profile: plot(mean(imageArrayC(:,:,i),1))
@@ -157,7 +165,6 @@ for i=1:length(imageArrayC(1,1,:))
     sigmaX(:,i) = gcoefsX(3,i);
     sigmaY(:,i) = gcoefsY(3,i);
     sigmaR(:,i) = gcoefsR(2,i);
-    sigmaR2p5(:,i) = gcoefsR2p5(2,i);
 end
 
 %Display every X fit:
@@ -174,6 +181,12 @@ for i=1:length(imageArrayC(1,1,:))
         plot(fg(gcoefsY(:,i),1:180)); hold on; plot(mean(imageArrayC(:,CrossROIx,i),2),'r'); hold off;      
     end
 end
+for i=1:length(imageArrayC(1,1,:))
+    if(mod(i,4) == 0)       
+        figure(i);
+        plot(fgr(gcoefsR(:,i),1:180)); hold on; plot(radProfiles(2,:,i),radProfiles(1,:,i),'r'); hold off;      
+    end
+end
 end
 
 %%%%%Atom numbers:
@@ -186,7 +199,7 @@ end
 
 %Sort varData:
 sortedVarData = []; indexs = []; sigmaRSort = [];
-sigmaXSort = []; sigmaYSort = []; sigmaR2p5Sort = [];
+sigmaXSort = []; sigmaYSort = [];
 [sortedVarData,indexs] = sort(varDataLowIntensity);
 %indexs(:,1) is a vector of the sort.
 
@@ -195,15 +208,14 @@ for i=1:length(sigmaX)
     sigmaYSort(i) = sigmaY(indexs(i));
     pixelCountsSort(i) = pixelCounts(indexs(i));
     sigmaRSort(i) = sigmaR(indexs(i));
-    sigmaR2p5Sort(i) = sigmaR2p5(indexs(i));
 end
 
 %Average over same motfet data points:
 j=1; runTotal = 0; motFets = []; widthsX = []; widthsY = [];
 stdDevWidthsX = []; stdDevWidthsY = []; pixelNumbers = [];
 pixelNumbersStdDev = []; sMomentX = []; sMomentY = [];
-widthsR = []; stdDevWidthsR = []; widthsR2p5 = [];
-sMomentXStdDev = []; sMomentYStdDev = []; stdDevWidthsR2p5 = [];
+widthsR = []; stdDevWidthsR = [];
+sMomentXStdDev = []; sMomentYStdDev = [];
 for i=1:length(sortedVarData)
     curr = sortedVarData(i);
     
@@ -217,9 +229,6 @@ for i=1:length(sortedVarData)
         stdDevWidthsY(j) = std(sigmaYSort(i-runTotal:i));
         widthsR(j) = mean(sigmaRSort(i-runTotal:i));
         stdDevWidthsR(j) = std(sigmaRSort(i-runTotal:i));
-        widthsR2p5(j) = mean(sigmaR2p5Sort(i-runTotal:i));
-        stdDevWidthsR2p5(j) = std(sigmaR2p5Sort(i-runTotal:i));
-        
         motFets(j) = sortedVarData(i);
         pixelNumbers(j) = mean(pixelCountsSort(i-runTotal:i));
         pixelNumbersStdDev(j) = std(pixelCountsSort(i-runTotal:i));
@@ -236,13 +245,11 @@ end
 widthsX = widthsX.*2; %*2 to make it not the radius
 widthsY = widthsY.*2;
 widthsR = widthsR.*2;
-widthsR2p5 = widthsR2p5.*2;
 %stdDevWidthsY = stdDevWidthsY.*pixelLength.*2; %full error on width
 %stdDevWidthsX = stdDevWidthsX.*pixelLength.*2;
 stdDevWidthsY = stdDevWidthsY.*2; %full error on width
 stdDevWidthsX = stdDevWidthsX.*2;
 stdDevWidthsR = stdDevWidthsR.*2;
-stdDevWidthsR2p5 = stdDevWidthsR2p5.*2;
 
 %{
 figure(1);
@@ -312,20 +319,13 @@ plot(log(pixelNumbers),log(widthsR),'MarkerFaceColor',[0.600000023841858 0.60000
     'Color',[0 0 1]);
 grid on;
 title('Log R Widths vs Log Atom Number');
-figure(11);
+figure(10);
 plot(pixelNumbers,widthsR./(pixelNumbers.^0.25),'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
     'Marker','o',...
     'LineStyle','none',...
     'Color',[0 0 1]);
 grid on;
 title('R Widths vs Atom Number');
-figure(12);
-plot(log(pixelNumbers),log(widthsR),'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
-    'Marker','o',...
-    'LineStyle','none',...
-    'Color',[0 0 1]);
-grid on;
-title('Log R Widths vs Log Atom Number');
 
 
 
