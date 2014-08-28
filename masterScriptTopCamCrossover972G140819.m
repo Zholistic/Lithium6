@@ -130,20 +130,31 @@ end
 end
 
 
-%%%%%Fit Gaussians:
+%%%%%Fit Functions:
+%gaussian with 4 variables:
 fg = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2)) + p(4));
+%gaussian with 2 variables (for radial profiles)
 fgr = @(p,x)(p(1).*exp((-1).*((x).^2) ./ (2.*p(2).^2)));
+%polylog order 1 function:
+fgp = @(p,x)(p(1).*log(1+exp((p(2)+(-1).*x.^2)./(p(3).^2))));
+%gaussian with 2 variables fixed 2.5 exponent:
 fgr2p5 = @(p,x)(p(1).*exp((-1).*((x).^(2.5)) ./ (2.*p(2).^(2.5))));
+%gaussian with 2 variables and fitted exponent:
+fgrfe = @(p,x)(p(1).*exp((-1).*((x).^(p(2))) ./ (2.*p(3).^(2.5)))); 
+
 gcoefsX = []; gcoefsY = []; centers = []; gcoefsXi = []; gcoefsYi = [];
-gcoefsR = []; gcoefsR2p5 = []; sigmaR2p5 = [];
+gcoefsR = []; gcoefsR2p5 = []; sigmaR2p5 = []; gcoefsPolyLog1 = [];
+gcoefsRFreeExp = [];
 sigmaX = []; sigmaY = []; shiftFactor = []; shiftFactorR = [];
-disp('Gaussian Fitting...');
+disp('Function Fitting...');
 for i=1:length(imageArrayC(1,1,:))
     %Initial Fit for zeroing:
     gcoefsXi(:,i) = gausFit1D(mean(imageArrayC(CrossROIy,:,i),1)); %mean averages over y
     gcoefsYi(:,i) = gausFit1D(mean(imageArrayC(:,CrossROIx,i),2)); %mean averages over x
     gcoefsR(:,i) = gausFitHalf1D(radProfiles(1,:,i),radProfiles(2,:,i));
-    gcoefsR2p5(:,i) = gausExp2p5FitHalf1D(radProfiles(1,:,i),radProfiles(2,:,i));
+    %gcoefsR2p5(:,i) = gausExp2p5FitHalf1D(radProfiles(1,:,i),radProfiles(2,:,i));
+    gcoefsPolyLog1(:,i) = polyLog1FitHalf1D(radProfiles(1,:,i),radProfiles(2,:,i));
+    %gcoefsRFreeExp(:,i) = gausFreeExpFitHalf1D(radProfiles(1,:,i),radProfiles(2,:,i));
     
     %Shift wings to zero:
     shiftFactor(i) = (gcoefsXi(4,i)+gcoefsYi(4,i))/2;
@@ -159,8 +170,27 @@ for i=1:length(imageArrayC(1,1,:))
     sigmaX(:,i) = gcoefsX(3,i);
     sigmaY(:,i) = gcoefsY(3,i);
     sigmaR(:,i) = gcoefsR(2,i);
-    sigmaR2p5(:,i) = gcoefsR2p5(2,i);
+    %sigmaR2p5(:,i) = gcoefsR2p5(2,i);
 end
+
+
+%%%%%Second moment of fit function:
+rvector = [];
+rvector = radProfiles(2,:,1);
+COMr = 0; %Center of mass is located at zero
+%for i=1:length(imageArrayTC(1,1,:))
+%        %Sum of Intensity*pixel location / sum of intensity
+%        COMx(i) = sum(mean(imageArrayTC(:,:,i),1).*xvector) / sum(mean(imageArrayTC(:,:,i),1));
+%end
+
+%Second moment direction
+SMomR = []; sigmaRsm = [];
+for i=1:length(radProfiles(1,1,:))
+    SMomR(i) = sum(fgp(gcoefsPolyLog1(:,i),rvector).*(rvector - COMr).^2) / sum(fgp(gcoefsPolyLog1(:,i),rvector));
+end
+
+sigmaRsm = sqrt(SMomR);
+
 
 %Display every X fit:
 if(0)
@@ -188,6 +218,18 @@ for i=1:length(imageArrayC(1,1,:))
         plot(fgr2p5(gcoefsR2p5(:,i),1:180),'g'); hold on; plot(fgr(gcoefsR(:,i),1:180)); plot(radProfiles(2,:,i),radProfiles(1,:,i),'r'); hold off;      
     end
 end
+for i=1:length(imageArrayC(1,1,:))
+    if(mod(i,6) == 0)       
+        figure(i);
+        plot(fgr(gcoefsR(:,i),1:180),'g'); hold on; plot(fgp(gcoefsPolyLog1(:,i),1:180)); plot(radProfiles(2,:,i),radProfiles(1,:,i),'r'); line([sigmaRsm(i) sigmaRsm(i)],[0 fgp(gcoefsPolyLog1(:,i),sigmaRsm(i))],'LineStyle','--','Color',[0.7 0.7 0.7]); hold off;      
+    end
+end
+for i=1:length(imageArrayC(1,1,:))
+    if(mod(i,6) == 0)       
+        figure(i);
+        plot(fgr(gcoefsR(:,i),1:180),'g'); hold on; plot(fgrfe(gcoefsRFreeExp(:,i),1:180)); plot(radProfiles(2,:,i),radProfiles(1,:,i),'r'); hold off;      
+    end
+end
 end
 
 %%%%%Atom numbers:
@@ -201,6 +243,7 @@ end
 %Sort varData:
 sortedVarData = []; indexs = []; sigmaRSort = [];
 sigmaXSort = []; sigmaYSort = []; sigmaR2p5Sort = [];
+sigmaRsmSort = [];
 [sortedVarData,indexs] = sort(varDataLowIntensity);
 %indexs(:,1) is a vector of the sort.
 
@@ -209,7 +252,8 @@ for i=1:length(sigmaX)
     sigmaYSort(i) = sigmaY(indexs(i));
     pixelCountsSort(i) = pixelCounts(indexs(i));
     sigmaRSort(i) = sigmaR(indexs(i));
-    sigmaR2p5Sort(i) = sigmaR2p5(indexs(i));
+    %sigmaR2p5Sort(i) = sigmaR2p5(indexs(i));
+    sigmaRsmSort(i) = sigmaRsm(indexs(i));
 end
 
 %Average over same motfet data points:
@@ -217,6 +261,7 @@ j=1; runTotal = 0; motFets = []; widthsX = []; widthsY = [];
 stdDevWidthsX = []; stdDevWidthsY = []; pixelNumbers = [];
 pixelNumbersStdDev = []; sMomentX = []; sMomentY = [];
 widthsR = []; stdDevWidthsR = []; widthsR2p5 = [];
+widthsPsm = []; stdDevWidthsPsm = [];
 sMomentXStdDev = []; sMomentYStdDev = []; stdDevWidthsR2p5 = [];
 for i=1:length(sortedVarData)
     curr = sortedVarData(i);
@@ -231,8 +276,10 @@ for i=1:length(sortedVarData)
         stdDevWidthsY(j) = std(sigmaYSort(i-runTotal:i));
         widthsR(j) = mean(sigmaRSort(i-runTotal:i));
         stdDevWidthsR(j) = std(sigmaRSort(i-runTotal:i));
-        widthsR2p5(j) = mean(sigmaR2p5Sort(i-runTotal:i));
-        stdDevWidthsR2p5(j) = std(sigmaR2p5Sort(i-runTotal:i));
+        %widthsR2p5(j) = mean(sigmaR2p5Sort(i-runTotal:i));
+        %stdDevWidthsR2p5(j) = std(sigmaR2p5Sort(i-runTotal:i));
+        widthsPsm(j) = mean(sigmaRsmSort(i-runTotal:i));
+        stdDevWidthsPsm(j) = std(sigmaRsmSort(i-runTotal:i));
         
         motFets(j) = sortedVarData(i);
         pixelNumbers(j) = mean(pixelCountsSort(i-runTotal:i));
@@ -250,13 +297,15 @@ end
 widthsX = widthsX.*2; %*2 to make it not the radius
 widthsY = widthsY.*2;
 widthsR = widthsR.*2;
-widthsR2p5 = widthsR2p5.*2;
+%widthsR2p5 = widthsR2p5.*2;
+widthsPsm = widthsPsm.*2;
 %stdDevWidthsY = stdDevWidthsY.*pixelLength.*2; %full error on width
 %stdDevWidthsX = stdDevWidthsX.*pixelLength.*2;
 stdDevWidthsY = stdDevWidthsY.*2; %full error on width
 stdDevWidthsX = stdDevWidthsX.*2;
 stdDevWidthsR = stdDevWidthsR.*2;
-stdDevWidthsR2p5 = stdDevWidthsR2p5.*2;
+%stdDevWidthsR2p5 = stdDevWidthsR2p5.*2;
+stdDevWidthsPsm = stdDevWidthsPsm.*2;
 
 %{
 figure(1);
@@ -333,15 +382,21 @@ plot(pixelNumbers,widthsR./(pixelNumbers.^0.25),'MarkerFaceColor',[0.60000002384
     'Color',[0 0 1]);
 grid on;
 title('R Widths vs Atom Number');
-figure(12);
-errorbar(pixelNumbers,widthsR2p5,stdDevWidthsR2p5./2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+%figure(12);
+%errorbar(pixelNumbers,widthsR2p5,stdDevWidthsR2p5./2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+%    'Marker','o',...
+%    'LineStyle','none',...
+%    'Color',[0 0 1]);
+%grid on;
+%title('R Widths vs Atom Number, 2.5 exponent');
+figure(13);
+errorbar(pixelNumbers,widthsPsm,stdDevWidthsPsm./2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
     'Marker','o',...
     'LineStyle','none',...
     'Color',[0 0 1]);
 grid on;
-title('R Widths vs Atom Number, 2.5 exponent');
-
-
+title('R Widths vs Atom Number, Second Moment of PolyLog Fit');
+hold on; plot(pixelCounts,sigmaRsm.*2,'.r'); hold off;
 
 
 
