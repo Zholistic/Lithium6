@@ -16,10 +16,11 @@ for i=1:length(inputImgArray(1,1,:))
 end
 
 %Spike: center to center on
+%TODO convert this to median of the centers array
 pin = centers(:,1);
 
 %padbuffer
-padbuffer = 50;
+padbuffer = 100;
 
 %Add buffer around each image:
 originalSize = [length(inputImgArray(1,:,1)), length(inputImgArray(:,1,1))]; %[x y]
@@ -41,15 +42,6 @@ for i=1:length(buffedImgArray(1,1,:))
     centeredImgArray(:,:,i) = buffedImgArray(padbuffer:padbuffer+originalSize(2)-1,padbuffer:padbuffer+originalSize(1)-1,i);  
 end
 
-
-%Debug code to refind centers:
-%for i=1:length(centeredImgArray(1,1,:))    
-    %gcoefsX(:,i) = gausFit1D(mean(centeredImgArray(:,:,i),1)); %mean averages over y
-    %gcoefsY(:,i) = gausFit1D(mean(centeredImgArray(:,:,i),2)); %mean averages over x
-    
-    %centersC(:,i) = [ceil(gcoefsX(2,i)), ceil(gcoefsY(2,i))]; %center = [x y]
-    %centers(:,i)
-%end
 
 outputImgArray = centeredImgArray;
 

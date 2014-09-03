@@ -18,7 +18,7 @@ function [ outputCoefs ] = polyLog1FitHalf1D( profileToFit, xs )
     
     p0 = [0.3 2856 12];
     lb = [0 500 1];
-    ub = [1 5000 35];
+    ub = [1.8 5000 35];
 
     
     %Fitting:
@@ -26,6 +26,13 @@ function [ outputCoefs ] = polyLog1FitHalf1D( profileToFit, xs )
     curvefitoptions = optimset('MaxFunEvals',100000,'MaxIter',50000,'Display','off');
     %xs = 1:length(profileToFit);
     [coefs,resnorm,r,exitflag,output,lambda,J] = lsqcurvefit(fg,p0,xs,profileToFit,lb,ub,curvefitoptions);
+   
+    if(coefs(1) == lb(1) | coefs(2) == lb(2) | coefs(3) == lb(3))
+        disp('Polylog fit hit lower bound!');
+    end
+    if(coefs(1) == ub(1) | coefs(2) == ub(2) | coefs(3) == ub(3))
+        disp('Polylog fit hit upper bound!');
+    end
     
     outputCoefs = coefs;
 

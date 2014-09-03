@@ -1,12 +1,13 @@
 %Script for generating the equation of state compressibility vs pressure
 %for the 60 low intensity\20 high intensity image sets. 
 
-%directory = 'C:\Data\140409_2D_EOS_972G_10us_0_5isat_1us_10Isat_60Low_20high_int_CutFromOtherFolder\';
-directory = 'C:\Data\140411_2D_EOS_833G_10us_0_5isat_1us_10Isat_60Low_20high_int\';
-%directory = 'C:\Data\140411_2D_EOS_880G_10us_0_5isat_1us_10Isat_60Low_20high_int\';
-date = '140411';
+%directory = 'C:\Data\140814_2D_EOS_972G_2D_evap_1p25v_10us_0p5isat_1us_10isat\';
+%directory = 'C:\Data\140814_2D_EOS_972G_2D_evap_1p25v_10us_0p5isat_1us_10isat_4sec_hold\';
+directory = 'C:\Data\140819_2D_EOS_880G_2D_evap_1p2v_10us_0p3isat_1us_10isat\';
+date = '140819';
 camera = 'top';
-varstring = 'BField';
+varstring = 'Isat';
+%varstring = 'isat'; %972G Datasets
 pixelLength = 2.84e-6; %2.84 um topcam
 massL6 = 1e-26; %9.988 x 10^-27 kg
 hbar = 1.055e-34; %1.05457*10^-34 m^2 kg/s
@@ -14,7 +15,7 @@ Isat = 135*10; %135*x us
 kB = 1.38e-23; %Boltzmanns constant m^2 kg s^-2 K^-1
 imgArrayFresh = [];  lowIntRealAtomImg = [];
 OD = 0; %optical density from SPE process function 1=OD, 0=WithSigma
-close all;
+close all; varData = [];
 
 %Get information from log file:
 [fileLocList,varData] = generateFromLogfile(directory,date,varstring,camera);
@@ -23,7 +24,7 @@ close all;
 for i=1:length(fileLocList(:))
     Isat = 10*135;
     %Last 20 Images are at different Isat:
-    if(i>=length(fileLocList(:))-20)
+    if(varData(i,1) > 0.6)
         Isat = 135;
     end
     
@@ -34,15 +35,17 @@ for i=1:length(fileLocList(:))
 end
 
 %Display every X image:
+if(0)
 for i=1:length(imgArrayFresh(1,1,:))
     if(mod(i,5) == 0)       
         figure(i);
         imagesc(imgArrayFresh(:,:,i));        
     end
 end
+end
 
-lowIntImage = centerAndAverage(imgArrayFresh(:,:,1:60));
-highIntImage = centerAndAverage(imgArrayFresh(:,:,61:end));
+lowIntImage = centerAndAverage(imgArrayFresh(:,:,1:200));
+highIntImage = centerAndAverage(imgArrayFresh(:,:,201:end));
 
 lowIntImage = shiftToWingsZero(lowIntImage);
 highIntImage = shiftToWingsZero(highIntImage);
@@ -69,16 +72,26 @@ imagesc(highIntImage);
 %ROIy = 50:110; ROIx = 70:145; %Good topcam region tightish
 ROIy = 10:150; ROIx = 30:185; %Topcam looser region
 
+spectrumFunc1 = makeSpectrumHL(highIntImage(ROIy,ROIx),lowIntImage(ROIy,ROIx));
+
 highLowSpectrum = makeSpectrumHL(highIntImage(ROIy,ROIx), lowIntImage(ROIy,ROIx));
-figure(102)
-plot(highLowSpectrum(2,:),highLowSpectrum(1,:));
-lowIntRealAtomImg = convertToRealAtomNumber(highIntImage(ROIy,ROIx), lowIntImage(ROIy,ROIx));
+if(0)
+    figure(102)
+    plot(highLowSpectrum(2,:),highLowSpectrum(1,:));
+end
+
+scaleFactor = mean(spectrumFunc1(1,40:80));
+
+lowIntRealAtomImg = lowIntImage(ROIy,ROIx).*scaleFactor;
+
+%lowIntRealAtomImg = convertToRealAtomNumber(highIntImage(ROIy,ROIx), lowIntImage(ROIy,ROIx));
 %lowIntRealAtomImg = convertToRealAtomNumber(highIntImage, lowIntImage);
 
 NROISum = sum(sum(lowIntImage(ROIy,ROIx)));
 %NROIAtoms = sum(sum(lowIntRealAtomImg(ROIy,ROIx)));
 NROIAtoms = sum(sum(lowIntRealAtomImg));
 
+if(0) %%%%%%----------%----------%
 %Center the images (again):
 toCenter = []; centeredImages = [];
 toCenter(:,:,2) = highIntImage(ROIy,ROIx);
@@ -110,14 +123,34 @@ hold on;
 plot(lowIntImage(70,:));
 plot(lowIntRealAtomImg(70,:),'r');
 plot(highIntImage(70,:),'g');
+end %%%%%%----------%----------%
 
 
 %Radial Profile:
-radProfile = radAverage(lowIntRealAtomImg);
+radProfile = []; center = [];
+%radProfile = radAverage(lowIntRealAtomImg);
+[radProfile,center] = radAverageBigSquare(lowIntRealAtomImg);
 figure(203)
-plot(radProfile(2,:),radProfile(1,:)); %Atoms per pixel... 
+plot(radProfile(2,:),radProfile(1,:)); %Atoms per pixel...
+
+%Shift wings to zero:
+offset = mean(radProfile(1,60:80));
+radProfile(1,:) = radProfile(1,:) - offset;
+
+%Polylog fit to profile:
+gcoefsPolyLog1 = [];
+fgp = @(p,x)(p(1).*log(1+exp((p(2)+(-1).*x.^2)./(p(3).^2))));
+gcoefsPolyLog1 = polyLog1FitHalf1D(radProfile(1,:),radProfile(2,:));
+
+if(0)
+    figure(203)
+    plot(radProfile(2,:),radProfile(1,:));
+    hold on;
+    plot(fgp(gcoefsPolyLog1,1:100),'r');
+end
 
 %Physical calculations:
+Temp = (2*pi*((hbar)^2)*(gcoefsPolyLog1(1)/(pixelLength^2)))/(massL6*kB);
 %pixelLengthAvg = ((2^(1/2))*pixelLength + pixelLength)/2; %Radial average pixel length!
 omegaR = 2*pi*23.7; %Radial trapping frequency (23.7 Hz)
 radLength = radProfile(2,:).*pixelLength; %Pixel length in the hypotenuse?
@@ -148,7 +181,7 @@ figure(205)
 plot(radPotential(1:end-20),radProfile(1,1:end-20),'.'); %density vs V(r) in nK
 
 %Re-bin the profile vs potential:
-nbins = 180; binMean = []; radialDensity = []; binStd = []; binEdges=[];
+nbins = 100; binMean = []; radialDensity = []; binStd = []; binEdges=[];
 binEdges = linspace(min(radPotential),max(radPotential),nbins+1);
 binLength = (max(radPotential)-min(radPotential))/(nbins+1);
 [h,whichBin] = histc(radPotential, binEdges);
@@ -172,7 +205,7 @@ end
 
 for i=1:length(binMean)
 radialDensity(1,i) = binMean(i);
-radialDensity(2,i) = min(radPotential)+sum(binLengths(1:i));
+radialDensity(2,i) = min(radPotential) - binLengths(1) +sum(binLengths(1:i));
 end
 
 P0D = (pi*(hbar^2)/(2*massL6))*((radialDensity(1,1))^2);
@@ -189,7 +222,7 @@ X1 = []; X1BD = []; %BD = Binned Density
 %X1 = (-1)*(hbar^2 / massL6).*gradient(radProfile(1,:),radPotential);
 X1 = (-1)*((hbar^2) / massL6).*gradient(radProfile(1,8:end-20),radPotential(8:end-20));
 %diffF = diff(radialDensity(1,1:end-20))./diff(radialDensity(2,1:end-20));
-X1BD = (-1)*((hbar^2) / massL6).*gradient(radialDensity(1,1:end-25),radialDensity(2,1:end-25)); %gradient(y,x)
+X1BD = (-1)*((hbar^2) / massL6).*gradient(radialDensity(1,1:end-22),radialDensity(2,1:end-22)); %gradient(y,x)
 
 %X_(-1):
 Xm1 = []; Xm1BD = []; %BD = Binned Density
@@ -201,9 +234,9 @@ for i=8:(length(radProfile(1,1:end-20))-1)
     
 end
 
-for i=1:(length(radialDensity(1,1:end-25)))
+for i=1:(length(radialDensity(1,1:end-22)))
   
-    Xm1BD(i) = (massL6 / (hbar^2))*(1/(radialDensity(1,i)^2))*trapz(radialDensity(2,i:end-25),radialDensity(1,i:end-25),2); %trapz(x)*spacing
+    Xm1BD(i) = (massL6 / (hbar^2))*(1/(radialDensity(1,i)^2))*trapz(radialDensity(2,i:end-22),radialDensity(1,i:end-22),2); %trapz(x)*spacing
     
 end
 
@@ -213,9 +246,16 @@ KonK0L = pi.*X1;
 KonK0 = KonK0L(1:end-1);
 
 %For Binned Density:
-PonP0BD = (2/pi).*Xm1BD(5:end-6);
-KonK0LBD = pi.*X1BD(5:end-6);
+PonP0BD = (2/pi).*Xm1BD(1:end-2);
+KonK0LBD = pi.*X1BD(1:end-2);
 KonK0BD = KonK0LBD(1:end);
+
+if(0)
+ figure(250);
+ plot(Xm1BD);
+ figure(251);
+ plot(X1BD);    
+end
 
 
 

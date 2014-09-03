@@ -1,5 +1,5 @@
-directory = 'C:\Data\140819_crossover_880G_Isat0p28_10usPulse_freq5p4kHz_insitu\';
-date = '140819';
+directory = 'C:\Data\140902_crossover_880G_Isat0p2_10usPulse_freq5kHz_insitu\';
+date = '140902';
 camera = 'top';
 varstring = 'motfet';
 %varstring2 = 'Holdtime';
@@ -52,14 +52,12 @@ imageArray = [];
 %    imageArray(:,:,i) = atom2Image(:,:,1);
 %end
 
-calibrationImages = 31;
-
 for i=1:length(fileLocList(:))
     
     Isat = 10*135;
     
     %High Intensity images different isat:
-    if(i > length(fileLocList(:))-calibrationImages) %12 Isat, high intensity images
+    if(0) %NO High intensity data for this run
         Isat = 135;  
     end
     
@@ -70,8 +68,8 @@ for i=1:length(fileLocList(:))
 end
 
 varDataLowIntensity = []; varDataHighIntensity = [];
-varDataLowIntensity = varData(1:end-calibrationImages,1);
-varDataHighIntensity = varData(end-calibrationImages+1:end,1);
+varDataLowIntensity = varData(:,1)';
+%varDataHighIntensity = varData(381:end)';
 
 %Crop images:
 imageArrayC = []; imageArrayTC = []; imageArrayHighIntensityC = [];
@@ -83,35 +81,34 @@ CrossROIx = 30:185; %The cross is inside the region specified above.
 TightROIx = 30:185;
 TightROIy = 10:150;
 %Split into high and low intensity arrays
-imageArrayC = imageArray(ROIy,ROIx,1:end-calibrationImages);
-imageArrayHighIntensityC = imageArray(ROIy,ROIx,end-calibrationImages+1:end); 
-imageArrayTC = imageArray(TightROIy,TightROIx,1:end-calibrationImages);
-imageArrayHighIntensityTC = imageArray(TightROIy,TightROIx,end-calibrationImages+1:end); 
+imageArrayC = imageArray(ROIy,ROIx,:);
+%imageArrayHighIntensityC = imageArray(ROIy,ROIx,381:end); 
+imageArrayTC = imageArray(TightROIy,TightROIx,:);
+%imageArrayHighIntensityTC = imageArray(TightROIy,TightROIx,381:end); 
 
+if(0)
 %Atom Number correction:
 highIntImage = []; lowIntImage = [];
-%There are 3 high intensity images for this dataset:
-%0.81motfet:
+%There are 0 high intensity images for this dataset:
+%0.89motfet:
 highIntImage(:,:,1) = centerAndAverage(imageArrayHighIntensityC(:,:,1:10));
-lowIntImage(:,:,1) = centerAndAverage(imageArrayC(:,:,386:390));
-%1.05motfet:
-highIntImage(:,:,2) = centerAndAverage(imageArrayHighIntensityC(:,:,11:21));
-lowIntImage(:,:,2) = centerAndAverage(imageArrayC(:,:,341:345));
-%1.27motfet:
-highIntImage(:,:,3) = centerAndAverage(imageArrayHighIntensityC(:,:,22:end));
-lowIntImage(:,:,3) = centerAndAverage(imageArrayC(:,:,175:189));
+lowIntImage(:,:,1) = centerAndAverage(imageArrayC(:,:,332:336));
+%1.1motfet:
+highIntImage(:,:,2) = centerAndAverage(imageArrayHighIntensityC(:,:,10:end));
+lowIntImage(:,:,2) = centerAndAverage(imageArrayC(:,:,257:277));
 
 scaleFactor = [];
-spectrumFunc1 = []; spectrumFunc2 = []; spectrumFunc3 = [];
+spectrumFunc1 = []; spectrumFunc2 = [];
 spectrumFunc1 = makeSpectrumHL(highIntImage(:,:,1),lowIntImage(:,:,1));
 spectrumFunc2 = makeSpectrumHL(highIntImage(:,:,2),lowIntImage(:,:,2));
-spectrumFunc3 = makeSpectrumHL(highIntImage(:,:,3),lowIntImage(:,:,3));
 
-scaleFactor(1) = mean(spectrumFunc1(1,40:85));
-scaleFactor(2) = mean(spectrumFunc2(1,52:70));
-scaleFactor(3) = mean(spectrumFunc3(1,57:87));
+scaleFactor(1) = mean(spectrumFunc1(1,45:75));
+scaleFactor(2) = mean(spectrumFunc2(1,40:85));
 
 finalScaleFactor = mean(scaleFactor);
+end
+
+finalScaleFactor = 1.3;
 
 for i=1:length(imageArrayC(1,1,:))
     imageArrayC(:,:,i) = imageArrayC(:,:,i).*finalScaleFactor;
@@ -253,11 +250,16 @@ for i=1:length(imageArrayC(1,1,:))
     pixelCounts(i) = sum(sum(imageArrayC(:,:,i)));
 end
 
+%%%%%Temperatures:
+TonTFs = [];
+for i=1:length(imageArrayC(1,1,:))
+    TonTFs(i) = 1/(log(1+exp(gcoefsPolyLog1(2,i)/gcoefsPolyLog1(3,i)^2)));
+end
 
 %Sort varData:
 sortedVarData = []; indexs = []; sigmaRSort = [];
 sigmaXSort = []; sigmaYSort = []; sigmaR2p5Sort = [];
-sigmaRsmSort = [];
+sigmaRsmSort = []; TonTFsSort = [];
 [sortedVarData,indexs] = sort(varDataLowIntensity);
 %indexs(:,1) is a vector of the sort.
 
@@ -268,6 +270,7 @@ for i=1:length(sigmaX)
     sigmaRSort(i) = sigmaR(indexs(i));
     %sigmaR2p5Sort(i) = sigmaR2p5(indexs(i));
     sigmaRsmSort(i) = sigmaRsm(indexs(i));
+    TonTFsSort(i) = TonTFs(indexs(i));
 end
 
 %Average over same motfet data points:
@@ -275,7 +278,7 @@ j=1; runTotal = 0; motFets = []; widthsX = []; widthsY = [];
 stdDevWidthsX = []; stdDevWidthsY = []; pixelNumbers = [];
 pixelNumbersStdDev = []; sMomentX = []; sMomentY = [];
 widthsR = []; stdDevWidthsR = []; widthsR2p5 = [];
-widthsPsm = []; stdDevWidthsPsm = [];
+widthsPsm = []; stdDevWidthsPsm = []; TonTFsm = []; stdDevTonTFsm = [];
 sMomentXStdDev = []; sMomentYStdDev = []; stdDevWidthsR2p5 = [];
 for i=1:length(sortedVarData)
     curr = sortedVarData(i);
@@ -294,6 +297,9 @@ for i=1:length(sortedVarData)
         %stdDevWidthsR2p5(j) = std(sigmaR2p5Sort(i-runTotal:i));
         widthsPsm(j) = mean(sigmaRsmSort(i-runTotal:i));
         stdDevWidthsPsm(j) = std(sigmaRsmSort(i-runTotal:i));
+        
+        TonTFsm(j) = mean(TonTFsSort(i-runTotal:i));
+        stdDevTonTFsm(j) = std(TonTFsSort(i-runTotal:i));
         
         motFets(j) = sortedVarData(i);
         pixelNumbers(j) = mean(pixelCountsSort(i-runTotal:i));
@@ -337,6 +343,7 @@ errorbar(pixelNumbers,widthsX,stdDevWidthsX/2,'MarkerFaceColor',[0.6000000238418
 grid on;
 title('X Widths vs Atom Number');
 %}
+if(0)
 figure(3);
 errorbar(motFets,pixelNumbers,pixelNumbersStdDev/2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
     'Marker','o',...
@@ -396,6 +403,7 @@ plot(pixelNumbers,widthsR./(pixelNumbers.^0.25),'MarkerFaceColor',[0.60000002384
     'Color',[0 0 1]);
 grid on;
 title('R Widths/N^{0.25} vs Atom Number');
+end
 %figure(12);
 %errorbar(pixelNumbers,widthsR2p5,stdDevWidthsR2p5./2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
 %    'Marker','o',...
@@ -412,15 +420,27 @@ grid on;
 title('R Widths vs Atom Number, Second Moment of PolyLog Fit');
 hold on; plot(pixelCounts,sigmaRsm.*2,'.r'); hold off;
 figure(14);
+plot(log10(pixelNumbers),log10(widthsPsm),'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+    'Marker','o',...
+    'LineStyle','none',...
+    'Color',[0 0 1]);
+grid on;
+title('Log10 R Widths vs Log10 Atom Number, Second Moment of PolyLog Fit');
+figure(15);
 plot(pixelNumbers,widthsPsm./(pixelNumbers.^0.25),'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
     'Marker','o',...
     'LineStyle','none',...
     'Color',[0 0 1]);
 grid on;
+hold on; plot(pixelCounts,(sigmaRsm.*2)./(pixelCounts.^(1/4)),'.r'); hold off;
 title('R Widths/N^{0.25} vs Atom Number, Second Moment of PolyLog Fit');
-
-
-
+figure(16);
+errorbar(pixelNumbers,TonTFsm,stdDevTonTFsm./2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+    'Marker','o',...
+    'LineStyle','none',...
+    'Color',[0 0 1]);
+grid on;
+title('TonTF vs Atom Number');
 
 
 

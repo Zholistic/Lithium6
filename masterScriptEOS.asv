@@ -2,9 +2,9 @@
 %for the 60 low intensity\20 high intensity image sets. 
 
 %directory = 'C:\Data\140409_2D_EOS_972G_10us_0_5isat_1us_10Isat_60Low_20high_int_CutFromOtherFolder\';
-directory = 'C:\Data\140411_2D_EOS_833G_10us_0_5isat_1us_10Isat_60Low_20high_int\';
+%directory = 'C:\Data\140411_2D_EOS_833G_10us_0_5isat_1us_10Isat_60Low_20high_int\';
 %directory = 'C:\Data\140411_2D_EOS_880G_10us_0_5isat_1us_10Isat_60Low_20high_int\';
-date = '140411';
+date = '140409';
 camera = 'top';
 varstring = 'BField';
 pixelLength = 2.84e-6; %2.84 um topcam

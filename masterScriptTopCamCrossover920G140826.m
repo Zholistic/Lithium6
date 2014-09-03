@@ -94,13 +94,13 @@ highIntImage = []; lowIntImage = [];
 %There are 3 high intensity images for this dataset:
 %0.77motfet:
 highIntImage(:,:,1) = centerAndAverage(imageArrayHighIntensityC(:,:,1:10));
-lowIntImage(:,:,1) = centerAndAverage(imageArrayC(:,:,427:431));
+lowIntImage(:,:,1) = centerAndAverage(imageArrayC(:,:,426:430));
 %1.01motfet:
 highIntImage(:,:,2) = centerAndAverage(imageArrayHighIntensityC(:,:,11:20));
-lowIntImage(:,:,2) = centerAndAverage(imageArrayC(:,:,367:371));
+lowIntImage(:,:,2) = centerAndAverage(imageArrayC(:,:,366:370));
 %1.23motfet:
 highIntImage(:,:,3) = centerAndAverage(imageArrayHighIntensityC(:,:,21:end));
-lowIntImage(:,:,3) = centerAndAverage(imageArrayC(:,:,206:220));
+lowIntImage(:,:,3) = centerAndAverage(imageArrayC(:,:,205:219));
 
 scaleFactor = [];
 spectrumFunc1 = []; spectrumFunc2 = []; spectrumFunc3 = [];
@@ -126,6 +126,13 @@ disp('Radially averaging...');
 for i=1:length(imageArrayC(1,1,:))
     [radProfilesT(:,:,i),center(:,i)] = radAverageBigSquare(imageArrayC(:,:,i));
     radProfiles(:,:,i) = radProfilesT(:,1:end-20,i);
+end
+
+%Shift wings of radial profiles to zero:
+shiftBy = [];
+for i=1:length(radProfiles(1,1,:))
+    shiftBy(i) = mean(radProfiles(1,55:75,i));
+    radProfiles(1,:,i) = radProfiles(1,:,i) - shiftBy(i);
 end
 
 %Display every X image:
@@ -390,7 +397,7 @@ plot(pixelNumbers,widthsR./(pixelNumbers.^0.25),'MarkerFaceColor',[0.60000002384
     'LineStyle','none',...
     'Color',[0 0 1]);
 grid on;
-title('R Widths vs Atom Number');
+title('R Widths/N^{0.25} vs Atom Number');
 %figure(12);
 %errorbar(pixelNumbers,widthsR2p5,stdDevWidthsR2p5./2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
 %    'Marker','o',...
@@ -406,5 +413,12 @@ errorbar(pixelNumbers,widthsPsm,stdDevWidthsPsm./2,'MarkerFaceColor',[0.60000002
 grid on;
 title('R Widths vs Atom Number, Second Moment of PolyLog Fit');
 hold on; plot(pixelCounts,sigmaRsm.*2,'.r'); hold off;
+figure(14);
+plot(pixelNumbers,widthsPsm./(pixelNumbers.^0.25),'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+    'Marker','o',...
+    'LineStyle','none',...
+    'Color',[0 0 1]);
+grid on;
+title('R Widths/N^{0.25} vs Atom Number, Second Moment of PolyLog Fit');
 
 

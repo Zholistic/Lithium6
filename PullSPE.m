@@ -201,8 +201,8 @@ ToFit(:,1) = mean(Atoms2ODnn(140:170,:,1));
 %Fit:
 fg = @(p,x)(p(1).*x + p(2)); %function to fit with
 p0 = [0.0022 -0.5];
-lb = [0 -4];
-ub = [0.4 4];
+lb = [0 -5];
+ub = [0.8 5];
 
 curvefitoptions = optimset('MaxFunEvals',100000,'MaxIter',50000,'Display','off');
 xs = 1:length(ToFit(:,1));

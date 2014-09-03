@@ -105,6 +105,7 @@ scaleFactor(1) = mean(spectrumFunc1(1,45:75));
 scaleFactor(2) = mean(spectrumFunc2(1,40:85));
 
 finalScaleFactor = mean(scaleFactor);
+finalScaleFactor972G = finalScaleFactor;
 
 for i=1:length(imageArrayC(1,1,:))
     imageArrayC(:,:,i) = imageArrayC(:,:,i).*finalScaleFactor;
@@ -117,6 +118,13 @@ disp('Radially averaging...');
 for i=1:length(imageArrayC(1,1,:))
     [radProfilesT(:,:,i),center(:,i)] = radAverageBigSquare(imageArrayC(:,:,i));
     radProfiles(:,:,i) = radProfilesT(:,1:end-20,i);
+end
+
+%Shift wings of radial profiles to zero:
+shiftBy = [];
+for i=1:length(radProfiles(1,1,:))
+    shiftBy(i) = mean(radProfiles(1,55:75,i));
+    radProfiles(1,:,i) = radProfiles(1,:,i) - shiftBy(i);
 end
 
 %Display every X image:
@@ -239,11 +247,16 @@ for i=1:length(imageArrayC(1,1,:))
     pixelCounts(i) = sum(sum(imageArrayC(:,:,i)));
 end
 
+%%%%%Temperatures:
+TonTFs = [];
+for i=1:length(imageArrayC(1,1,:))
+    TonTFs(i) = 1/(log(1+exp(gcoefsPolyLog1(2,i)/gcoefsPolyLog1(3,i)^2)));
+end
 
 %Sort varData:
 sortedVarData = []; indexs = []; sigmaRSort = [];
 sigmaXSort = []; sigmaYSort = []; sigmaR2p5Sort = [];
-sigmaRsmSort = [];
+sigmaRsmSort = []; TonTFsSort = [];
 [sortedVarData,indexs] = sort(varDataLowIntensity);
 %indexs(:,1) is a vector of the sort.
 
@@ -254,6 +267,7 @@ for i=1:length(sigmaX)
     sigmaRSort(i) = sigmaR(indexs(i));
     %sigmaR2p5Sort(i) = sigmaR2p5(indexs(i));
     sigmaRsmSort(i) = sigmaRsm(indexs(i));
+    TonTFsSort(i) = TonTFs(indexs(i));
 end
 
 %Average over same motfet data points:
@@ -261,7 +275,7 @@ j=1; runTotal = 0; motFets = []; widthsX = []; widthsY = [];
 stdDevWidthsX = []; stdDevWidthsY = []; pixelNumbers = [];
 pixelNumbersStdDev = []; sMomentX = []; sMomentY = [];
 widthsR = []; stdDevWidthsR = []; widthsR2p5 = [];
-widthsPsm = []; stdDevWidthsPsm = [];
+widthsPsm = []; stdDevWidthsPsm = []; TonTFsm = []; stdDevTonTFsm = [];
 sMomentXStdDev = []; sMomentYStdDev = []; stdDevWidthsR2p5 = [];
 for i=1:length(sortedVarData)
     curr = sortedVarData(i);
@@ -280,6 +294,9 @@ for i=1:length(sortedVarData)
         %stdDevWidthsR2p5(j) = std(sigmaR2p5Sort(i-runTotal:i));
         widthsPsm(j) = mean(sigmaRsmSort(i-runTotal:i));
         stdDevWidthsPsm(j) = std(sigmaRsmSort(i-runTotal:i));
+        
+        TonTFsm(j) = mean(TonTFsSort(i-runTotal:i));
+        stdDevTonTFsm(j) = std(TonTFsSort(i-runTotal:i));
         
         motFets(j) = sortedVarData(i);
         pixelNumbers(j) = mean(pixelCountsSort(i-runTotal:i));
@@ -381,7 +398,7 @@ plot(pixelNumbers,widthsR./(pixelNumbers.^0.25),'MarkerFaceColor',[0.60000002384
     'LineStyle','none',...
     'Color',[0 0 1]);
 grid on;
-title('R Widths vs Atom Number');
+title('R Widths/N^{0.25} vs Atom Number');
 %figure(12);
 %errorbar(pixelNumbers,widthsR2p5,stdDevWidthsR2p5./2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
 %    'Marker','o',...
@@ -397,6 +414,28 @@ errorbar(pixelNumbers,widthsPsm,stdDevWidthsPsm./2,'MarkerFaceColor',[0.60000002
 grid on;
 title('R Widths vs Atom Number, Second Moment of PolyLog Fit');
 hold on; plot(pixelCounts,sigmaRsm.*2,'.r'); hold off;
+figure(14);
+plot(log10(pixelNumbers),log10(widthsPsm),'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+    'Marker','o',...
+    'LineStyle','none',...
+    'Color',[0 0 1]);
+grid on;
+title('Log10 R Widths vs Log10 Atom Number, Second Moment of PolyLog Fit');
+figure(15);
+plot(pixelNumbers,widthsPsm./(pixelNumbers.^0.25),'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+    'Marker','o',...
+    'LineStyle','none',...
+    'Color',[0 0 1]);
+grid on;
+title('R Widths/N^{0.25} vs Atom Number, Second Moment of PolyLog Fit');
+figure(16);
+errorbar(pixelNumbers,TonTFsm,stdDevTonTFsm./2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+    'Marker','o',...
+    'LineStyle','none',...
+    'Color',[0 0 1]);
+grid on;
+title('TonTF vs Atom Number');
+
 
 
 
