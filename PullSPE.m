@@ -183,9 +183,10 @@ AvgNoisePixel1 = sum(sum(OD1(JunkTop:JunkBottom,JunkLeft:JunkRight,1)))./PxAreaN
 AvgNoisePixel2 = sum(sum(OD2(JunkTop:JunkBottom,JunkLeft:JunkRight,1)))./PxAreaNumber; 
 
 %AvgNoisePixel2
+%if(0) %Background subtraction off!
 Atoms1ODnn = OD1 - AvgNoisePixel1;
 Atoms2ODnn = OD2 - AvgNoisePixel2;
-
+%end
 
 if(debug)
     figure(5)
@@ -214,10 +215,11 @@ coefs = lsqcurvefit(fg,p0,xs(:),ToFit(:,1),lb,ub,curvefitoptions);
 %end
 
 %Now subtract out value based on the gradient:
-
+%if(0) %Gradient correction off!
 for i=1:length(Atoms2ODnn(:,1,1))
     Atoms2ODnn(i,:,1) = Atoms2ODnn(i,:,1) - fg(coefs,xs);
 end
+%end
     
 if(debug)
     figure(10)

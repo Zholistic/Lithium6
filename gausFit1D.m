@@ -8,11 +8,11 @@ function [ outputCoefs ] = gausFit1D( profileToFit )
     end
 
     %Function to fit with:
-    fg = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2)) + p(4)); 
+    fg1d = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2)) + p(4)); 
     
     %Initial guesses:
     peak = max(profileToFit); %Sensitive to highest value in array (problem if noise)
-    centerIndex = find(profileToFit == peak);
+    centerIndex = find(profileToFit == peak,1);
     magicWidth = ceil((1/8)*length(profileToFit));
     
     p0 = [peak centerIndex magicWidth 1];
@@ -23,7 +23,7 @@ function [ outputCoefs ] = gausFit1D( profileToFit )
     xs = [];
     curvefitoptions = optimset('MaxFunEvals',100000,'MaxIter',50000,'Display','off');
     xs = 1:length(profileToFit);
-    [coefs,resnorm,r,exitflag,output,lambda,J] = lsqcurvefit(fg,p0,xs,profileToFit,lb,ub,curvefitoptions);
+    [coefs,resnorm,r,exitflag,output,lambda,J] = lsqcurvefit(fg1d,p0,xs,profileToFit,lb,ub,curvefitoptions);
     
     if(length(coefs) ~= 4)
         display('Error on gaus fit, coefs length incorrect');

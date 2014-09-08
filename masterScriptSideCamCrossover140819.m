@@ -137,6 +137,7 @@ j=1; runTotal = 0; motFets = []; widthsX = []; widthsY = [];
 stdDevWidthsX = []; stdDevWidthsY = []; pixelNumbers = [];
 pixelNumbersStdDev = []; sMomentX = []; sMomentY = [];
 sMomentXStdDev = []; sMomentYStdDev = [];
+prev = -1;
 for i=1:length(sortedVarData)
     curr = sortedVarData(i,1);
     

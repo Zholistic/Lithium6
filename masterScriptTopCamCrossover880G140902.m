@@ -259,7 +259,7 @@ end
 %Sort varData:
 sortedVarData = []; indexs = []; sigmaRSort = [];
 sigmaXSort = []; sigmaYSort = []; sigmaR2p5Sort = [];
-sigmaRsmSort = []; TonTFsSort = [];
+sigmaRsmSort = []; TonTFsSort = []; imageArrayCSort = [];
 [sortedVarData,indexs] = sort(varDataLowIntensity);
 %indexs(:,1) is a vector of the sort.
 
@@ -271,6 +271,7 @@ for i=1:length(sigmaX)
     %sigmaR2p5Sort(i) = sigmaR2p5(indexs(i));
     sigmaRsmSort(i) = sigmaRsm(indexs(i));
     TonTFsSort(i) = TonTFs(indexs(i));
+    imageArrayCSort(:,:,i) = imageArrayC(:,:,indexs(i));  
 end
 
 %Average over same motfet data points:
@@ -280,6 +281,7 @@ pixelNumbersStdDev = []; sMomentX = []; sMomentY = [];
 widthsR = []; stdDevWidthsR = []; widthsR2p5 = [];
 widthsPsm = []; stdDevWidthsPsm = []; TonTFsm = []; stdDevTonTFsm = [];
 sMomentXStdDev = []; sMomentYStdDev = []; stdDevWidthsR2p5 = [];
+prev = sortedVarData(1); imageArrayAvgs = [];
 for i=1:length(sortedVarData)
     curr = sortedVarData(i);
     
@@ -301,7 +303,33 @@ for i=1:length(sortedVarData)
         TonTFsm(j) = mean(TonTFsSort(i-runTotal:i));
         stdDevTonTFsm(j) = std(TonTFsSort(i-runTotal:i));
         
-        motFets(j) = sortedVarData(i);
+        imageArrayAvgs(:,:,j) = centerAndAverage(imageArrayCSort(:,:,i-runTotal:i));
+        
+        motFets(j) = sortedVarData(i-runTotal);
+        pixelNumbers(j) = mean(pixelCountsSort(i-runTotal:i));
+        pixelNumbersStdDev(j) = std(pixelCountsSort(i-runTotal:i));
+        runTotal = 0;
+        j = j+1;
+    end
+    if( i == length(sortedVarData))
+        %Final run:
+        widthsX(j) = mean(sigmaXSort(i-runTotal:i));
+        stdDevWidthsX(j) = std(sigmaXSort(i-runTotal:i));
+        widthsY(j) = mean(sigmaYSort(i-runTotal:i));
+        stdDevWidthsY(j) = std(sigmaYSort(i-runTotal:i));
+        widthsR(j) = mean(sigmaRSort(i-runTotal:i));
+        stdDevWidthsR(j) = std(sigmaRSort(i-runTotal:i));
+        %widthsR2p5(j) = mean(sigmaR2p5Sort(i-runTotal:i));
+        %stdDevWidthsR2p5(j) = std(sigmaR2p5Sort(i-runTotal:i));
+        widthsPsm(j) = mean(sigmaRsmSort(i-runTotal:i));
+        stdDevWidthsPsm(j) = std(sigmaRsmSort(i-runTotal:i));
+        
+        TonTFsm(j) = mean(TonTFsSort(i-runTotal:i));
+        stdDevTonTFsm(j) = std(TonTFsSort(i-runTotal:i));
+        
+        imageArrayAvgs(:,:,j) = centerAndAverage(imageArrayCSort(:,:,i-runTotal:i));
+        
+        motFets(j) = sortedVarData(i-runTotal);
         pixelNumbers(j) = mean(pixelCountsSort(i-runTotal:i));
         pixelNumbersStdDev(j) = std(pixelCountsSort(i-runTotal:i));
         runTotal = 0;

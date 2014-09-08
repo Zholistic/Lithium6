@@ -53,10 +53,10 @@ end
 
 %Crop images:
 imageArrayC = []; imageArrayTC = [];
-CrossROIy = 10:150; 
-CrossROIx = 30:185;
-%CrossROIx = 80:290; %The cross is inside the region specified above.
-%CrossROIy = 78:96;
+ROIx = 400:780;
+ROIy = 500:675;
+CrossROIx = 80:290; %The cross is inside the region specified above.
+CrossROIy = 78:96;
 TightROIx = 510:670;
 TightROIy = 575:595;
 imageArrayC = imageArray(ROIy,ROIx,:);
@@ -77,7 +77,8 @@ end
 fg = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2)) + p(4));
 gcoefsX = []; gcoefsY = []; centers = []; gcoefsXi = []; gcoefsYi = [];
 sigmaX = []; sigmaY = []; shiftFactor = [];
-for i=1:length(imageArrayC(1,1,:))   
+disp('Gaussian Fitting...');
+for i=1:length(imageArrayC(1,1,:)) 
     %Initial Fit for zeroing:
     gcoefsXi(:,i) = gausFit1D(mean(imageArrayC(CrossROIy,:,i),1)); %mean averages over y
     gcoefsYi(:,i) = gausFit1D(mean(imageArrayC(:,CrossROIx,i),2)); %mean averages over x
@@ -136,6 +137,7 @@ j=1; runTotal = 0; motFets = []; widthsX = []; widthsY = [];
 stdDevWidthsX = []; stdDevWidthsY = []; pixelNumbers = [];
 pixelNumbersStdDev = []; sMomentX = []; sMomentY = [];
 sMomentXStdDev = []; sMomentYStdDev = [];
+prev = -1;
 for i=1:length(sortedVarData)
     curr = sortedVarData(i,1);
     
