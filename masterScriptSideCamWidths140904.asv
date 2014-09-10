@@ -65,8 +65,8 @@ ROIy = 500:675;
 %The cross is inside the region specified above. 
 %Can improve the error by tightening the Cross ROI up
 %for that particular dataset. 
-CrossROIx = 75:200; 
-CrossROIy = 65:100;
+CrossROIx = 75:215; 
+CrossROIy = 65:103;
 
 if(strcmp(date,'140907'))
     disp('140907 Data');

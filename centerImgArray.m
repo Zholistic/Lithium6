@@ -17,10 +17,10 @@ end
 
 %Spike: center to center on
 %TODO convert this to median of the centers array
-pin = centers(:,1);
+pin = centers(:,2);
 
 %padbuffer
-padbuffer = 100;
+padbuffer = 150;
 
 %Add buffer around each image:
 originalSize = [length(inputImgArray(1,:,1)), length(inputImgArray(:,1,1))]; %[x y]

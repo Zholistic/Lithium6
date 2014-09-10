@@ -1,5 +1,5 @@
-directory = 'C:\Data\140822_crossover_920G_Isat0p3_10usPulse_freq5p4kHz_insitu\';
-date = '140822';
+directory = 'C:\Data\140907_crossover_850G_Isat0p35_10usPulse_freq5kHz_insitu\';
+date = '140907';
 camera = 'top';
 varstring = 'motfet';
 %varstring2 = 'Holdtime';
@@ -52,15 +52,12 @@ imageArray = [];
 %    imageArray(:,:,i) = atom2Image(:,:,1);
 %end
 
-calibrationImages = 30;
-
-disp('Building images...');
 for i=1:length(fileLocList(:))
     
     Isat = 10*135;
     
     %High Intensity images different isat:
-    if(i > length(fileLocList(:))-calibrationImages) %12 Isat, high intensity images
+    if(0) %NO High intensity data for this run
         Isat = 135;  
     end
     
@@ -71,8 +68,8 @@ for i=1:length(fileLocList(:))
 end
 
 varDataLowIntensity = []; varDataHighIntensity = [];
-varDataLowIntensity = varData(1:end-calibrationImages,1);
-varDataHighIntensity = varData(end-calibrationImages+1:end,1);
+varDataLowIntensity = varData(:,1)';
+%varDataHighIntensity = varData(381:end)';
 
 %Crop images:
 imageArrayC = []; imageArrayTC = []; imageArrayHighIntensityC = [];
@@ -84,36 +81,34 @@ CrossROIx = 30:185; %The cross is inside the region specified above.
 TightROIx = 30:185;
 TightROIy = 10:150;
 %Split into high and low intensity arrays
-imageArrayC = imageArray(ROIy,ROIx,1:end-calibrationImages);
-imageArrayHighIntensityC = imageArray(ROIy,ROIx,end-calibrationImages+1:end); 
-imageArrayTC = imageArray(TightROIy,TightROIx,1:end-calibrationImages);
-imageArrayHighIntensityTC = imageArray(TightROIy,TightROIx,end-calibrationImages+1:end); 
+imageArrayC = imageArray(ROIy,ROIx,:);
+%imageArrayHighIntensityC = imageArray(ROIy,ROIx,381:end); 
+imageArrayTC = imageArray(TightROIy,TightROIx,:);
+%imageArrayHighIntensityTC = imageArray(TightROIy,TightROIx,381:end); 
 
+if(0)
 %Atom Number correction:
 highIntImage = []; lowIntImage = [];
-%There are 3 high intensity images for this dataset:
-%0.77motfet:
+%There are 0 high intensity images for this dataset:
+%0.89motfet:
 highIntImage(:,:,1) = centerAndAverage(imageArrayHighIntensityC(:,:,1:10));
-lowIntImage(:,:,1) = centerAndAverage(imageArrayC(:,:,426:430));
-%1.01motfet:
-highIntImage(:,:,2) = centerAndAverage(imageArrayHighIntensityC(:,:,11:20));
-lowIntImage(:,:,2) = centerAndAverage(imageArrayC(:,:,366:370));
-%1.23motfet:
-highIntImage(:,:,3) = centerAndAverage(imageArrayHighIntensityC(:,:,21:end));
-lowIntImage(:,:,3) = centerAndAverage(imageArrayC(:,:,205:219));
+lowIntImage(:,:,1) = centerAndAverage(imageArrayC(:,:,332:336));
+%1.1motfet:
+highIntImage(:,:,2) = centerAndAverage(imageArrayHighIntensityC(:,:,10:end));
+lowIntImage(:,:,2) = centerAndAverage(imageArrayC(:,:,257:277));
 
 scaleFactor = [];
-spectrumFunc1 = []; spectrumFunc2 = []; spectrumFunc3 = [];
+spectrumFunc1 = []; spectrumFunc2 = [];
 spectrumFunc1 = makeSpectrumHL(highIntImage(:,:,1),lowIntImage(:,:,1));
 spectrumFunc2 = makeSpectrumHL(highIntImage(:,:,2),lowIntImage(:,:,2));
-spectrumFunc3 = makeSpectrumHL(highIntImage(:,:,3),lowIntImage(:,:,3));
 
-scaleFactor(1) = mean(spectrumFunc1(1,50:82));
-scaleFactor(2) = mean(spectrumFunc2(1,55:70));
-scaleFactor(3) = mean(spectrumFunc3(1,60:70));
+scaleFactor(1) = mean(spectrumFunc1(1,45:75));
+scaleFactor(2) = mean(spectrumFunc2(1,40:85));
 
 finalScaleFactor = mean(scaleFactor);
-finalScaleFactor = 1.35; %No scaling due to on difference on these images (!?)
+end
+
+finalScaleFactor = 1.3;
 
 for i=1:length(imageArrayC(1,1,:))
     imageArrayC(:,:,i) = imageArrayC(:,:,i).*finalScaleFactor;
@@ -478,5 +473,12 @@ errorbar(pixelNumbers,TonTFsm,stdDevTonTFsm./2,'MarkerSize',3,...
     'Color',[0 0 1]);
 grid on;
 title('TonTF vs Atom Number');
+figure(17);
+plot(pixelNumbers,widthsPsm./(pixelNumbers.^0.21),'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+    'Marker','o',...
+    'LineStyle','none',...
+    'Color',[0 0 1]);
+grid on;
+
 
 
