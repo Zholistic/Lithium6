@@ -44,6 +44,27 @@ open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence
 handles(10) = gcf;
 end
 
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Radial_Log1050Bins.fig');
+handlesLog(1) = gcf;
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140916_sidecam_832p2G_Radial_Log1050Bins.fig');
+handlesLog(2) = gcf;
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_855G_Radial_Log1050Bins.fig');
+handlesLog(3) = gcf;
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_860G_Radial_Log1050Bins.fig');
+handlesLog(4) = gcf;
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_865G_Radial_Log1050Bins.fig');
+handlesLog(5) = gcf;
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140911_sidecam_880G_Radial_Log1050Bins.fig');
+handlesLog(6) = gcf;
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_900G_Radial_Log1050Bins.fig');
+handlesLog(7) = gcf;
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_920G_Radial_Log1050Bins.fig');
+handlesLog(8) = gcf;
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_950G_Radial_Log1050Bins.fig');
+handlesLog(9) = gcf;
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_972G_Radial_Log1050Bins.fig');
+handlesLog(10) = gcf;
+
 transverseImages = 3;
 open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140909_sidecam_TransverseWidth_5000_PixelNumber.fig');
 handlesTransverse(1) = gcf;
@@ -54,6 +75,8 @@ handlesTransverse(3) = gcf;
 
 xdatas = []; ydatas = [];
 xdatasT = []; ydatasT = [];
+xdatasLog10 = []; ydatasLog10 = [];
+
 for i=1:transverseImages
     axesObjsT = get(handlesTransverse(i), 'Children');  %axes handles
     dataObjsT = get(axesObjsT, 'Children'); %handles to low-level graphics objects
@@ -73,6 +96,15 @@ for i=1:imageNumber
     %zdata = get(dataObjs, 'ZData');
 end
 
+for i=1:imageNumber
+    axesObjsL = get(handlesLog(i), 'Children');  %axes handles
+    dataObjsL = get(axesObjsL, 'Children'); %handles to low-level graphics objects
+    objTypeL = get(dataObjsL, 'Type');  %type of low-level graphics object
+    xdatasLog10{i} = get(dataObjsL, 'XData');  %data from low-level grahics objects
+    ydatasLog10{i} = get(dataObjsL, 'YData');
+    %zdata = get(dataObjs, 'ZData');
+end
+
 %Correct for TOF issue:
 ydatas{4}{2} = ydatas{4}{2}.*1.0075;
 
@@ -87,6 +119,23 @@ for j=1:imageNumber
     colourShift1 = j/imageNumber;
     %colourShift2 = (1-i)/7;
     plot(xToPlot,yToPlot,'MarkerSize',3,...
+    'MarkerFaceColor',[colourShift1 colourShift1 1],...
+    'Marker','o',...
+    'LineStyle','--',...
+    'Color',[0 0 1]);
+end
+hold off;
+grid on;
+
+figure(101);
+hold on;
+for j=1:imageNumber
+    xToPlotL = xdatas{j};
+    yToPlotL = ydatas{j}  + (j-1)*0.5;
+    %i=8-j;
+    colourShift1 = j/imageNumber;
+    %colourShift2 = (1-i)/7;
+    plot(xToPlotL,yToPlotL,'MarkerSize',3,...
     'MarkerFaceColor',[colourShift1 colourShift1 1],...
     'Marker','o',...
     'LineStyle','--',...
@@ -119,6 +168,13 @@ zMatrix = [];
 for i=1:imageNumber
     padAmount = longest - length(ydatas{i}{2}(:));
     zMatrix(:,i) = padarray(ydatas{i}{2}(:),padAmount,NaN,'post');
+end
+
+padAmount = 0;
+zMatrixL = [];
+for i=1:imageNumber
+    padAmount = longest - length(ydatas{i}{2}(:));
+    zMatrixL(:,i) = padarray(ydatasL{i}(:),padAmount,NaN,'post');
 end
 
 %For cftool:
