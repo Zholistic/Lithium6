@@ -2,9 +2,11 @@
 directory = 'C:\Data\140904_transversewidth_600usTOF_Isat1e8_alpha0.6_atomnumber_10000\';
 directory = 'C:\Data\140907_2D_transversewidth_10k_atoms_750ms_ramp\';
 directory = 'C:\Data\140909_transversewidth_5k_atoms_750ms_ramp\';
+directory = 'C:\Data\140915_transversewidth_13p5k_atoms_750ms_ramp\';
 date = '140904';
 date = '140907';
 date = '140909';
+date = '140915';
 camera = 'sidecam';
 varstring = 'mag_field';
 varstring = 'magnetic_field';
@@ -171,6 +173,8 @@ pixelCounts = [];
 for i=1:length(imageArrayTC(1,1,:))
     pixelCounts(i) = sum(sum(imageArrayTC(:,:,i)));
 end
+
+
 
 
 %Sort varData:

@@ -1,5 +1,5 @@
-directory = 'C:\Data\140909_2d_transverse_crossover_850G_750ms_laser_ramp\';
-date = '140909';
+directory = 'C:\Data\140911_2d_transverse_crossover_880G_750ms_laser_ramp_ISAT1e6_alpha_1\';
+date = '140911';
 camera = 'sidecam';
 varstring = 'motfet';
 %varstring2 = 'Holdtime';
@@ -162,11 +162,10 @@ end
 pixelCounts(:) = varData(:,5)*0.42;
 
 
-if(0)
 %%%%%Culling of data points:
 keepMe = []; j = 1;
 for i=1:length(imageArrayC(1,1,:))
-    if((pixelCounts(i) < 15000 && sigmaY(i) > 5) || (pixelCounts(i) < 15000 && sigmaY(i) < 4) )
+    if((pixelCounts(i) < 20000 && sigmaY(i) > 5) || (pixelCounts(i) < 20000 && sigmaY < 4.1) )
         disp(['Discarded point number ' num2str(i)]);
     else
         keepMe(j) = i;
@@ -174,30 +173,14 @@ for i=1:length(imageArrayC(1,1,:))
     end    
 end
 
-imageArrayCTemp = []; sigmaXTemp = []; sigmaYTemp = []; pixelCountsTemp = [];
-sigmaRsmTemp = []; TonTFsTemp = []; varDataMainTemp = [];
 for i=1:length(keepMe)
-    imageArrayCTemp(:,:,i) = imageArrayC(:,:,keepMe(i));
-    sigmaXTemp(i) = sigmaX(keepMe(i));
-    sigmaYTemp(i) = sigmaY(keepMe(i));
-    pixelCountsTemp(i) = pixelCounts(keepMe(i));
-    sigmaRsmTemp(i) = sigmaRsm(keepMe(i));
-    TonTFsTemp(i) = TonTFs(keepMe(i));
-    varDataMainTemp(i) = varDataMain(keepMe(i));
+    imageArrayC = imageArrayC(:,:,keepMe(i));
+    sigmaX = sigmaX(keepMe(i));
+    sigmaY = sigmaY(keepMe(i));
+    pixelCounts = pixelCounts(keepMe(i));
+    sigmaRsm = sigmaRsm(keepMe(i));
+    TonTFs = TonTFs(keepMe(i));
 end
-imageArrayC = []; sigmaX  = []; sigmaY  = []; pixelCounts  = [];
-sigmaRsm  = []; TonTFs  = []; varDataMain = [];
-
-imageArrayC = imageArrayCTemp;
-sigmaX = sigmaXTemp;
-sigmaY = sigmaYTemp;
-pixelCounts = pixelCountsTemp;
-sigmaRsm = sigmaRsmTemp;
-TonTFs = TonTFsTemp;
-varDataMain = varDataMainTemp;
-end
-
-
 
 %Sort varData:
 indexs = [];
@@ -304,19 +287,19 @@ end
 %Bin on atom number instead of motfet averaging:
 %Raw arrays: sigmaX , sigmaY , pixelCounts, sigmaRsm, TonTFs, imageArrayC
 sigmaXbinA = []; 
-sigmaXbinA = binMe(sigmaX,pixelCounts,24);
+sigmaXbinA = binMe(sigmaX,pixelCounts,50);
 % errorbar(sigmaXbinA(2,:),sigmaXbinA(1,:),sigmaXbinA(3,:),'.');
 sigmaYbinA = [];
-sigmaYbinA = binMe(sigmaY,pixelCounts,24);
+sigmaYbinA = binMe(sigmaY,pixelCounts,50);
 % errorbar(sigmaYbinA(2,:),sigmaYbinA(1,:),sigmaYbinA(3,:),'.');
-[avgImagesBin, atomNumsBin] = binMeCenterAndAverage(imageArrayC,pixelCounts,24);
+[avgImagesBin, atomNumsBin] = binMeCenterAndAverage(imageArrayC,pixelCounts,50);
 
 %Fit functions to the averaged bin images:
 gcoefsXaBin = []; gcoefsYaBin = []; gcoefsYaBinError = []; gcoefsXaBinError = [];
 for i=1:length(avgImagesBin(1,1,:))
-    [gcoefsXaBin(:,i),gcoefsXaBinError(:,:,i)] = gausFit1DLockZero(mean(avgImagesBin(CrossROIy,:,i),1)); %mean averages over y
+    [gcoefsXaBin(:,i),gcoefsXaBinError(:,:,i)] = gausFit1D(mean(avgImagesBin(CrossROIy,:,i),1)); %mean averages over y
     %Profile: plot(mean(imageArrayC(:,:,i),1))
-    [gcoefsYaBin(:,i),gcoefsYaBinError(:,:,i)] = gausFit1DLockZero(mean(avgImagesBin(:,CrossROIx,i),2)); %mean averages over x
+    [gcoefsYaBin(:,i),gcoefsYaBinError(:,:,i)] = gausFit1D(mean(avgImagesBin(:,CrossROIx,i),2)); %mean averages over x
     %Profile: plot(mean(imageArrayC(:,:,i),2))       
 end
 
@@ -446,6 +429,7 @@ end
 %end
 hold off;
 end
+
 
 
 

@@ -1,4 +1,4 @@
-function [ outputBinned ] = binMe( inputY, inputX, nbins )
+function [ outputBinned ] = binMeIncNaN( inputY, inputX, nbins )
 %Bins the range array inputY on the domain array inputX. Puts into nbins.
 %Returns outputBinned of which outputBinned(1,:) is the range.
 %scans over NaN values.
@@ -6,16 +6,17 @@ function [ outputBinned ] = binMe( inputY, inputX, nbins )
 binMean = []; binStd = []; binEdges=[]; outputBinned = []; finalBinned = [];
 binEdgesR = [];
 binLengths = []; binMembers = [];
-binEdges = linspace(min(inputX),max(inputX),nbins+1);
-binLength = (max(inputX)-min(inputX))/(nbins);
+binsStart = 2000; binsEnd = 60000;
+binEdges = linspace(binsStart,binsEnd,nbins+1);
+binLength = (binsEnd-binsStart)/(nbins);
 [h,whichBin] = histc(inputX, binEdges);
 
 j=1; binCount = 1;
 for i = 1:nbins+1
     flagBinMembers = (whichBin == i);
     binMembers     = inputY(flagBinMembers);
-    %what bins to exclude? NaN
-    if ~isnan(binMembers)
+    %what bins to exclude? None
+    if(1)
         binMean(j)     = mean(binMembers);
         binStd(j)      = std(binMembers);
         binLengths(j) = binCount*binLength;
@@ -35,7 +36,7 @@ for i=1:length(binMean)
     %finalBinned(2,i) = min(inputX) - binLengths(1) + sum(binLengths(1:i)); 
     %offset half a binlength
     thisLength = binLengths(i);
-    finalBinned(2,i) = min(inputX) + (sum(binLengths(1:i))) - thisLength/2;    
+    finalBinned(2,i) = binsStart + (sum(binLengths(1:i))) - thisLength/2;    
     finalBinned(3,i) = binStd(i); %error on the bin sums
     finalBinned(4,i) = binEdgesR(i)+binLength;
 end

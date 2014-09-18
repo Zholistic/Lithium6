@@ -1,15 +1,16 @@
 %directory = 'C:\Data\140904_transversewidth_600usTOF_Isat1e8_alpha0.6_atomnumber_5000\';
 directory = 'C:\Data\140904_transversewidth_600usTOF_Isat1e8_alpha0.6_atomnumber_10000\';
 directory = 'C:\Data\140907_2D_transversewidth_10k_atoms_750ms_ramp\';
-directory = 'C:\Data\140909_transversewidth_5k_atoms_750ms_ramp\';
-directory = 'C:\Data\140909_transversewidth_5k_atoms_750ms_ramp\';
+%directory = 'C:\Data\140909_transversewidth_5k_atoms_750ms_ramp\';
+%directory = 'C:\Data\140915_transversewidth_13p5k_atoms_750ms_ramp\';
 date = '140904';
 date = '140907';
-date = '140909';
-date = '140915';
+%date = '140909';
+%date = '140915';
 camera = 'sidecam';
-varstring = 'mag_field';
-varstring = 'magnetic_field';
+varstring = 'mag_field'; %
+%varstring = 'magnetic_field';
+atomnum = 10000;
 %varstring2 = 'Holdtime';
 pixelLength = 2.84e-6; %2.84 um topcam, 
 massL6 = 9.988e-27; %9.988 x 10^27 kg
@@ -174,6 +175,9 @@ for i=1:length(imageArrayTC(1,1,:))
     pixelCounts(i) = sum(sum(imageArrayTC(:,:,i)));
 end
 
+%Pixel to Atom Correction:
+pixelCounts(:) = varData(:,5)*0.42;
+
 
 %Sort varData:
 [sortedVarData,indexs] = sort(varData);
@@ -235,10 +239,10 @@ for i=1:length(sortedVarData)
 end
 
 %convert to real units:
-widthsX = widthsX.*pixelLength.*2; %*2 to make it not the radius
-widthsY = widthsY.*pixelLength.*2; 
-stdDevWidthsY = stdDevWidthsY.*pixelLength.*2; %full error on width
-stdDevWidthsX = stdDevWidthsX.*pixelLength.*2;
+%widthsX = widthsX.*pixelLength.*2; %*2 to make it not the radius
+%widthsY = widthsY.*pixelLength.*2; 
+%stdDevWidthsY = stdDevWidthsY.*pixelLength.*2; %full error on width
+%stdDevWidthsX = stdDevWidthsX.*pixelLength.*2;
 
 sMomentY = sMomentY.*pixelLength.*2; %*2 to make it not the radius
 sMomentX = sMomentX.*pixelLength.*2; 
@@ -246,14 +250,17 @@ sMomentXStdDev = sMomentXStdDev.*pixelLength.*2; %full error on width
 sMomentYStdDev = sMomentYStdDev.*pixelLength.*2;
 
 figure(1);
-errorbar(magFields,widthsY,stdDevWidthsY/2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+h = errorbar(magFields,widthsY,stdDevWidthsY/2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
     'Marker','o',...
     'LineStyle','none',...
     'Color',[0 0 1]);
-hold on;
-%line([832.2 832.2],[0 0],'LineStyle','--','Color',[0.7 0.7 0.7]); 
-hold off;
 grid on;
+figname = [date '_' camera '_TransverseWidth_' num2str(atomnum) '_PixelNumber'];
+figdirectory = 'C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\';
+saveas(h,[figdirectory figname '.fig'],'fig');
+saveas(h,[figdirectory figname '.png'],'png');
+%line([832.2 832.2],[0 0],'LineStyle','--','Color',[0.7 0.7 0.7]); 
+
 figure(2);
 errorbar(magFields,widthsX,stdDevWidthsX/2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
     'Marker','o',...

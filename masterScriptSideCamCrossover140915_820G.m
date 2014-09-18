@@ -1,7 +1,9 @@
-directory = 'C:\Data\140909_2d_transverse_crossover_850G_750ms_laser_ramp\';
-date = '140909';
+directory = 'C:\Data\140915_2d_transverse_crossover_820G_750ms_laser_ramp_ISAT1e6_alpha_1\';
+date = '140915';
 camera = 'sidecam';
 varstring = 'motfet';
+magfield = '820G';
+bins = 50;
 %varstring2 = 'Holdtime';
 pixelLength = 2.84e-6; %2.84 um topcam, 
 massL6 = 9.988e-27; %9.988 x 10^27 kg
@@ -162,11 +164,10 @@ end
 pixelCounts(:) = varData(:,5)*0.42;
 
 
-if(0)
 %%%%%Culling of data points:
 keepMe = []; j = 1;
 for i=1:length(imageArrayC(1,1,:))
-    if((pixelCounts(i) < 15000 && sigmaY(i) > 5) || (pixelCounts(i) < 15000 && sigmaY(i) < 4) )
+    if((pixelCounts(i) < 12000 && sigmaY(i) > 5) || (pixelCounts(i) < 12000 && sigmaY(i) < 4.1) )
         disp(['Discarded point number ' num2str(i)]);
     else
         keepMe(j) = i;
@@ -174,30 +175,14 @@ for i=1:length(imageArrayC(1,1,:))
     end    
 end
 
-imageArrayCTemp = []; sigmaXTemp = []; sigmaYTemp = []; pixelCountsTemp = [];
-sigmaRsmTemp = []; TonTFsTemp = []; varDataMainTemp = [];
 for i=1:length(keepMe)
-    imageArrayCTemp(:,:,i) = imageArrayC(:,:,keepMe(i));
-    sigmaXTemp(i) = sigmaX(keepMe(i));
-    sigmaYTemp(i) = sigmaY(keepMe(i));
-    pixelCountsTemp(i) = pixelCounts(keepMe(i));
-    sigmaRsmTemp(i) = sigmaRsm(keepMe(i));
-    TonTFsTemp(i) = TonTFs(keepMe(i));
-    varDataMainTemp(i) = varDataMain(keepMe(i));
+    imageArrayC(:,:,i) = imageArrayC(:,:,keepMe(i));
+    sigmaX(i) = sigmaX(keepMe(i));
+    sigmaY(i) = sigmaY(keepMe(i));
+    pixelCounts(i) = pixelCounts(keepMe(i));
+    sigmaRsm(i) = sigmaRsm(keepMe(i));
+    TonTFs(i) = TonTFs(keepMe(i));
 end
-imageArrayC = []; sigmaX  = []; sigmaY  = []; pixelCounts  = [];
-sigmaRsm  = []; TonTFs  = []; varDataMain = [];
-
-imageArrayC = imageArrayCTemp;
-sigmaX = sigmaXTemp;
-sigmaY = sigmaYTemp;
-pixelCounts = pixelCountsTemp;
-sigmaRsm = sigmaRsmTemp;
-TonTFs = TonTFsTemp;
-varDataMain = varDataMainTemp;
-end
-
-
 
 %Sort varData:
 indexs = [];
@@ -304,12 +289,12 @@ end
 %Bin on atom number instead of motfet averaging:
 %Raw arrays: sigmaX , sigmaY , pixelCounts, sigmaRsm, TonTFs, imageArrayC
 sigmaXbinA = []; 
-sigmaXbinA = binMe(sigmaX,pixelCounts,24);
+sigmaXbinA = binMeIncNaN(sigmaX,pixelCounts,bins);
 % errorbar(sigmaXbinA(2,:),sigmaXbinA(1,:),sigmaXbinA(3,:),'.');
 sigmaYbinA = [];
-sigmaYbinA = binMe(sigmaY,pixelCounts,24);
+sigmaYbinA = binMeIncNaN(sigmaY,pixelCounts,bins);
 % errorbar(sigmaYbinA(2,:),sigmaYbinA(1,:),sigmaYbinA(3,:),'.');
-[avgImagesBin, atomNumsBin] = binMeCenterAndAverage(imageArrayC,pixelCounts,24);
+[avgImagesBin, atomNumsBin] = binMeCenterAndAverage(imageArrayC,pixelCounts,bins);
 
 %Fit functions to the averaged bin images:
 gcoefsXaBin = []; gcoefsYaBin = []; gcoefsYaBinError = []; gcoefsXaBinError = [];
@@ -419,7 +404,7 @@ errorbar(sigmaXbinA(2,:),sigmaXbinA(1,:),sigmaXbinA(3,:),'MarkerSize',3,...
     'Color',[0 0 1]);
 grid on;
 hold on; plot(pixelCounts,sigmaX,'.r'); hold off;
-figure(31);
+h = figure(31);
 errorbar(sigmaYbinA(2,:),sigmaYbinA(1,:),sigmaYbinA(3,:),'MarkerSize',3,...
     'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
     'Marker','o',...
@@ -427,6 +412,10 @@ errorbar(sigmaYbinA(2,:),sigmaYbinA(1,:),sigmaYbinA(3,:),'MarkerSize',3,...
     'Color',[0 0 1]);
 grid on;
 hold on; plot(pixelCountsSort,sigmaYSort,'.r'); hold off;
+figname = [date '_' camera '_' magfield '_Tight_' num2str(bins) 'Bins'];
+figdirectory = 'C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\';
+saveas(h,[figdirectory figname '.fig'],'fig');
+saveas(h,[figdirectory figname '.png'],'png');
 
 if(0)
 %Binning Debug!:

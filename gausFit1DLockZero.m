@@ -1,4 +1,4 @@
-function [ outputCoefs, outputCoefError ] = gausFit1D( profileToFit )
+function [ outputCoefs, outputCoefError ] = gausFit1DLockZero( profileToFit )
 %Takes a 1D array profile with gaussian shape and fits using lsqcurvefit.
 %Returns the co-efficients of the fit.
 
@@ -8,7 +8,7 @@ function [ outputCoefs, outputCoefError ] = gausFit1D( profileToFit )
     end
 
     %Function to fit with:
-    fg1d = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2)) + p(4)); 
+    fg1d = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2))); 
     
     %Initial guesses:
     magicWidth = ceil((1/8)*length(profileToFit));
@@ -16,9 +16,9 @@ function [ outputCoefs, outputCoefError ] = gausFit1D( profileToFit )
     centerIndex = find(profileToFit == peak,1);
     
     
-    p0 = [peak centerIndex magicWidth 1];
-    lb = [peak/2 centerIndex-magicWidth magicWidth/50 -magicWidth*2];
-    ub = [peak*2 centerIndex+magicWidth magicWidth*2 magicWidth*2];
+    p0 = [peak centerIndex magicWidth];
+    lb = [peak/2 centerIndex-magicWidth magicWidth/50];
+    ub = [peak*2 centerIndex+magicWidth magicWidth*2];
     
     %Fitting:
     xs = [];
@@ -26,9 +26,9 @@ function [ outputCoefs, outputCoefError ] = gausFit1D( profileToFit )
     xs = 1:length(profileToFit);
     [coefs,resnorm,r,exitflag,output,lambda,J] = lsqcurvefit(fg1d,p0,xs,profileToFit,lb,ub,curvefitoptions);
     
-    if(length(coefs) ~= 4)
+    if(length(coefs) ~= 3)
         display('Error on gaus fit, coefs length incorrect');
-        coefs = [0 0 0 0];
+        coefs = [0 0 0];
     end
     
     outputCoefs = coefs;

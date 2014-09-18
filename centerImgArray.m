@@ -17,7 +17,7 @@ end
 
 %Spike: center to center on
 %TODO convert this to median of the centers array
-pin = centers(:,2);
+pin = centers(:,1);
 
 %padbuffer
 padbuffer = 150;

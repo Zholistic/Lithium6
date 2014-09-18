@@ -60,7 +60,7 @@ imageArrayC = []; imageArrayTC = [];
 ROIx = 400:780;
 ROIy = 500:675;
 CrossROIx = 80:290; %The cross is inside the region specified above.
-CrossROIy = 65:100;
+CrossROIy = 78:96;
 TightROIx = 510:670;
 TightROIy = 575:595;
 imageArrayC = imageArray(ROIy,ROIx,:);
@@ -79,7 +79,6 @@ end
 
 %%%%%Fit Gaussians:
 fg = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2)) + p(4));
-fglz = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2)));
 %polylog order 1 function:
 fgp = @(p,x)(p(1).*log(1+exp((p(2)+(-1).*x.^2)./(p(3).^2))));
 gcoefsX = []; gcoefsY = []; centers = []; gcoefsXi = []; gcoefsYi = [];
@@ -95,9 +94,9 @@ for i=1:length(imageArrayC(1,1,:))
     imageArrayC(:,:,i) = imageArrayC(:,:,i) - shiftFactor(i);
     
     %Refit:
-    gcoefsX(:,i) = gausFit1DLockZero(mean(imageArrayC(CrossROIy,:,i),1)); %mean averages over y
+    gcoefsX(:,i) = gausFit1D(mean(imageArrayC(CrossROIy,:,i),1)); %mean averages over y
     %Profile: plot(mean(imageArrayC(:,:,i),1))
-    gcoefsY(:,i) = gausFit1DLockZero(mean(imageArrayC(:,CrossROIx,i),2)); %mean averages over x
+    gcoefsY(:,i) = gausFit1D(mean(imageArrayC(:,CrossROIx,i),2)); %mean averages over x
     %Profile: plot(mean(imageArrayC(:,:,i),2))
     
     centers(:,i) = [ceil(gcoefsX(2,i)), ceil(gcoefsY(2,i))]; %center = [x y]
@@ -149,8 +148,6 @@ for i=1:length(imageArrayC(1,1,:))
 end
 end
 
-
-
 %%%%%Atom numbers:
 %Tight ROI array:
 pixelCounts = [];
@@ -158,45 +155,7 @@ for i=1:length(imageArrayC(1,1,:))
     pixelCounts(i) = sum(sum(imageArrayC(:,:,i)));
 end
 
-%Pixel to Atom Correction:
-pixelCounts(:) = varData(:,5)*0.42;
-
-
-if(0)
-%%%%%Culling of data points:
-keepMe = []; j = 1;
-for i=1:length(imageArrayC(1,1,:))
-    if((pixelCounts(i) < 15000 && sigmaY(i) > 5) || (pixelCounts(i) < 15000 && sigmaY(i) < 4) )
-        disp(['Discarded point number ' num2str(i)]);
-    else
-        keepMe(j) = i;
-        j = j+1;
-    end    
-end
-
-imageArrayCTemp = []; sigmaXTemp = []; sigmaYTemp = []; pixelCountsTemp = [];
-sigmaRsmTemp = []; TonTFsTemp = []; varDataMainTemp = [];
-for i=1:length(keepMe)
-    imageArrayCTemp(:,:,i) = imageArrayC(:,:,keepMe(i));
-    sigmaXTemp(i) = sigmaX(keepMe(i));
-    sigmaYTemp(i) = sigmaY(keepMe(i));
-    pixelCountsTemp(i) = pixelCounts(keepMe(i));
-    sigmaRsmTemp(i) = sigmaRsm(keepMe(i));
-    TonTFsTemp(i) = TonTFs(keepMe(i));
-    varDataMainTemp(i) = varDataMain(keepMe(i));
-end
-imageArrayC = []; sigmaX  = []; sigmaY  = []; pixelCounts  = [];
-sigmaRsm  = []; TonTFs  = []; varDataMain = [];
-
-imageArrayC = imageArrayCTemp;
-sigmaX = sigmaXTemp;
-sigmaY = sigmaYTemp;
-pixelCounts = pixelCountsTemp;
-sigmaRsm = sigmaRsmTemp;
-TonTFs = TonTFsTemp;
-varDataMain = varDataMainTemp;
-end
-
+pixelCounts(:) = varData(:,5);
 
 
 %Sort varData:
@@ -204,9 +163,9 @@ indexs = [];
 [sortedVarData,indexs] = sort(varDataMain);
 %indexs(:,1) is a vector of the sort.
 pixelCountsSort = []; sigmaXSort = []; sigmaYSort = [];
-TonTFsSort = []; imageArrayCSort = [];
-sigmaRsmSort = []; TonTFsSort = [];
+sigmaRsmSort = []; TonTFsSort = []; imageArrayCSort = [];
 
+sigmaRsmSort = []; TonTFsSort = [];
 for i=1:length(sigmaX)
     sigmaXSort(i) = sigmaX(indexs(i));
     sigmaYSort(i) = sigmaY(indexs(i));
@@ -301,34 +260,6 @@ widthsYavgError(i) = widthsYavg(i) - gcoefsYaError(3,1,i);
 widthsXavgError(i) = widthsXavg(i) - gcoefsXaError(3,1,i);
 end
 
-%Bin on atom number instead of motfet averaging:
-%Raw arrays: sigmaX , sigmaY , pixelCounts, sigmaRsm, TonTFs, imageArrayC
-sigmaXbinA = []; 
-sigmaXbinA = binMe(sigmaX,pixelCounts,24);
-% errorbar(sigmaXbinA(2,:),sigmaXbinA(1,:),sigmaXbinA(3,:),'.');
-sigmaYbinA = [];
-sigmaYbinA = binMe(sigmaY,pixelCounts,24);
-% errorbar(sigmaYbinA(2,:),sigmaYbinA(1,:),sigmaYbinA(3,:),'.');
-[avgImagesBin, atomNumsBin] = binMeCenterAndAverage(imageArrayC,pixelCounts,24);
-
-%Fit functions to the averaged bin images:
-gcoefsXaBin = []; gcoefsYaBin = []; gcoefsYaBinError = []; gcoefsXaBinError = [];
-for i=1:length(avgImagesBin(1,1,:))
-    [gcoefsXaBin(:,i),gcoefsXaBinError(:,:,i)] = gausFit1DLockZero(mean(avgImagesBin(CrossROIy,:,i),1)); %mean averages over y
-    %Profile: plot(mean(imageArrayC(:,:,i),1))
-    [gcoefsYaBin(:,i),gcoefsYaBinError(:,:,i)] = gausFit1DLockZero(mean(avgImagesBin(:,CrossROIx,i),2)); %mean averages over x
-    %Profile: plot(mean(imageArrayC(:,:,i),2))       
-end
-
-widthsYavgBin = gcoefsYaBin(3,:);
-widthsXavgBin = gcoefsXaBin(3,:);
-
-widthsYavgBinError = []; widthsXavgBinError = [];
-for i=1:length(widthsYavgBin)
-widthsYavgBinError(i) = widthsYavgBin(i) - gcoefsYaBinError(3,1,i);
-widthsXavgBinError(i) = widthsXavgBin(i) - gcoefsXaBinError(3,1,i);
-end
-
 %convert to real units:
 %widthsX = widthsX.*pixelLength.*2; %*2 to make it not the radius
 %widthsY = widthsY.*pixelLength.*2; 
@@ -382,7 +313,7 @@ errorbar(pixelNumbers,TonTFsm,stdDevTonTFsm./2,'MarkerSize',3,...
 grid on;
 title('TonTF vs Pixel Number');
 figure(20)
-errorbar(pixelNumbers,widthsYavg,widthsYavgError,'MarkerSize',3,...
+plot(pixelNumbers,widthsYavg,'MarkerSize',3,...
     'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
     'Marker','o',...
     'LineStyle','--',...
@@ -390,62 +321,13 @@ errorbar(pixelNumbers,widthsYavg,widthsYavgError,'MarkerSize',3,...
 grid on;
 hold on; plot(pixelCountsSort,sigmaYSort,'.r'); hold off;
 figure(21)
-errorbar(pixelNumbers,widthsXavg,widthsXavgError,'MarkerSize',3,...
+plot(pixelNumbers,widthsXavg,'MarkerSize',3,...
     'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
     'Marker','o',...
     'LineStyle','--',...
     'Color',[0 0 1]);
 grid on;
-figure(25)
-errorbar(atomNumsBin,widthsYavgBin,widthsYavgBinError,'MarkerSize',3,...
-    'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
-    'Marker','o',...
-    'LineStyle','--',...
-    'Color',[0 0 1]);
-grid on;
-hold on; plot(pixelCountsSort,sigmaYSort,'.r'); hold off;
-figure(26)
-errorbar(atomNumsBin,widthsXavgBin,widthsXavgBinError,'MarkerSize',3,...
-    'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
-    'Marker','o',...
-    'LineStyle','--',...
-    'Color',[0 0 1]);
-grid on;
-figure(30);
-errorbar(sigmaXbinA(2,:),sigmaXbinA(1,:),sigmaXbinA(3,:),'MarkerSize',3,...
-    'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
-    'Marker','o',...
-    'LineStyle','--',...
-    'Color',[0 0 1]);
-grid on;
-hold on; plot(pixelCounts,sigmaX,'.r'); hold off;
-figure(31);
-errorbar(sigmaYbinA(2,:),sigmaYbinA(1,:),sigmaYbinA(3,:),'MarkerSize',3,...
-    'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
-    'Marker','o',...
-    'LineStyle','--',...
-    'Color',[0 0 1]);
-grid on;
-hold on; plot(pixelCountsSort,sigmaYSort,'.r'); hold off;
 
-if(0)
-%Binning Debug!:
-figure(50);
-errorbar(sigmaYbinA(2,:),sigmaYbinA(1,:),sigmaYbinA(3,:),'MarkerSize',3,...
-    'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
-    'Marker','o',...
-    'LineStyle','--',...
-    'Color',[0 0 1]);
-grid on;
-hold on; plot(pixelCountsSort,sigmaYSort,'.r'); 
-for i=1:length(sigmaYbinA(4,:))
-line([sigmaYbinA(4,i) sigmaYbinA(4,i)],[min(sigmaYbinA(1,:)) max(sigmaYbinA(1,:))],'LineStyle','--','Color',[0.7 0.7 0.7]); 
-end
-%for i=1:length(binEdge)
-%line([binEdge(i) binEdge(i)],[min(sigmaYbinA(1,:)) max(sigmaYbinA(1,:))],'LineStyle','--','Color',[0.1 0.8 0.1]); 
-%end
-hold off;
-end
 
 
 
