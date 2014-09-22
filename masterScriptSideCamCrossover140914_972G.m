@@ -3,7 +3,7 @@ date = '140914';
 camera = 'sidecam';
 varstring = 'motfet';
 magfield = '972G';
-bins = 50;
+bins = 36;
 %varstring2 = 'Holdtime';
 pixelLength = 2.84e-6; %2.84 um topcam, 
 massL6 = 9.988e-27; %9.988 x 10^27 kg
@@ -400,7 +400,7 @@ errorbar(atomNumsBin,widthsYavgBin,widthsYavgBinError,'MarkerSize',3,...
     'Color',[0 0 1]);
 grid on;
 hold on; plot(pixelCountsSort,sigmaYSort,'.r'); hold off;
-figname = [date '_' camera '_' magfield '_Radial_' num2str(bins) 'Bins_BinAvg'];
+figname = [date '_' camera '_' magfield '_Tight_' num2str(bins) 'Bins_BinAvg'];
 figdirectory = 'C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\';
 saveas(h,[figdirectory figname '.fig'],'fig');
 saveas(h,[figdirectory figname '.png'],'png');
@@ -411,7 +411,7 @@ errorbar(atomNumsBin,widthsXavgBin,widthsXavgBinError,'MarkerSize',3,...
     'LineStyle','--',...
     'Color',[0 0 1]);
 grid on;
-figname = [date '_' camera '_' magfield '_Tight_' num2str(bins) 'Bins_BinAvg'];
+figname = [date '_' camera '_' magfield '_Radial_' num2str(bins) 'Bins_BinAvg'];
 figdirectory = 'C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\';
 saveas(h,[figdirectory figname '.fig'],'fig');
 saveas(h,[figdirectory figname '.png'],'png');

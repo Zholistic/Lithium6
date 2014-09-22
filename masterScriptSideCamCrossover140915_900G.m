@@ -3,7 +3,7 @@ date = '140915';
 camera = 'sidecam';
 varstring = 'motfet';
 magfield = '900G';
-bins = 50;
+bins = 36;
 %varstring2 = 'Holdtime';
 pixelLength = 2.84e-6; %2.84 um topcam, 
 massL6 = 9.988e-27; %9.988 x 10^27 kg
@@ -165,6 +165,7 @@ pixelCounts(:) = varData(:,5)*0.42;
 
 
 %%%%%Culling of data points:
+if(0)
 keepMe = []; j = 1;
 for i=1:length(imageArrayC(1,1,:))
     if((pixelCounts(i) < 12000 && sigmaY(i) > 5) || (pixelCounts(i) < 12000 && sigmaY(i) < 4.1) )
@@ -175,6 +176,7 @@ for i=1:length(imageArrayC(1,1,:))
     end    
 end
 
+
 for i=1:length(keepMe)
     imageArrayC(:,:,i) = imageArrayC(:,:,keepMe(i));
     sigmaX(i) = sigmaX(keepMe(i));
@@ -182,6 +184,7 @@ for i=1:length(keepMe)
     pixelCounts(i) = pixelCounts(keepMe(i));
     sigmaRsm(i) = sigmaRsm(keepMe(i));
     TonTFs(i) = TonTFs(keepMe(i));
+end
 end
 
 %Sort varData:
@@ -294,15 +297,23 @@ sigmaXbinA = binMeIncNaN(sigmaX,pixelCounts,bins);
 sigmaYbinA = [];
 sigmaYbinA = binMeIncNaN(sigmaY,pixelCounts,bins);
 % errorbar(sigmaYbinA(2,:),sigmaYbinA(1,:),sigmaYbinA(3,:),'.');
-[avgImagesBin, atomNumsBin] = binMeCenterAndAverage(imageArrayC,pixelCounts,bins);
+[avgImagesBin, atomNumsBin] = binMeCenterAndAverageIncNaN(imageArrayC,pixelCounts,bins);
 
 %Fit functions to the averaged bin images:
 gcoefsXaBin = []; gcoefsYaBin = []; gcoefsYaBinError = []; gcoefsXaBinError = [];
 for i=1:length(avgImagesBin(1,1,:))
-    [gcoefsXaBin(:,i),gcoefsXaBinError(:,:,i)] = gausFit1DLockZero(mean(avgImagesBin(CrossROIy,:,i),1)); %mean averages over y
-    %Profile: plot(mean(imageArrayC(:,:,i),1))
-    [gcoefsYaBin(:,i),gcoefsYaBinError(:,:,i)] = gausFit1DLockZero(mean(avgImagesBin(:,CrossROIx,i),2)); %mean averages over x
-    %Profile: plot(mean(imageArrayC(:,:,i),2))       
+    if(avgImagesBin(1,1,i) == 40000)
+        %no image to fit to in this bin
+        gcoefsXaBin(:,i) = [NaN NaN NaN];
+        gcoefsXaBinError(:,:,i) = ones([3 2]).*0;
+        gcoefsYaBin(:,i) = [NaN NaN NaN];
+        gcoefsYaBinError(:,:,i) = ones([3 2]).*0;
+    else
+        [gcoefsXaBin(:,i),gcoefsXaBinError(:,:,i)] = gausFit1DLockZero(mean(avgImagesBin(CrossROIy,:,i),1)); %mean averages over y
+        %Profile: plot(mean(imageArrayC(:,:,i),1))
+        [gcoefsYaBin(:,i),gcoefsYaBinError(:,:,i)] = gausFit1DLockZero(mean(avgImagesBin(:,CrossROIx,i),2)); %mean averages over x
+        %Profile: plot(mean(imageArrayC(:,:,i),2))
+    end
 end
 
 widthsYavgBin = gcoefsYaBin(3,:);
@@ -310,8 +321,8 @@ widthsXavgBin = gcoefsXaBin(3,:);
 
 widthsYavgBinError = []; widthsXavgBinError = [];
 for i=1:length(widthsYavgBin)
-widthsYavgBinError(i) = widthsYavgBin(i) - gcoefsYaBinError(3,1,i);
-widthsXavgBinError(i) = widthsXavgBin(i) - gcoefsXaBinError(3,1,i);
+    widthsYavgBinError(i) = widthsYavgBin(i) - gcoefsYaBinError(3,1,i);
+    widthsXavgBinError(i) = widthsXavgBin(i) - gcoefsXaBinError(3,1,i);
 end
 
 %convert to real units:
@@ -381,7 +392,7 @@ errorbar(pixelNumbers,widthsXavg,widthsXavgError,'MarkerSize',3,...
     'LineStyle','--',...
     'Color',[0 0 1]);
 grid on;
-figure(25)
+h = figure(25);
 errorbar(atomNumsBin,widthsYavgBin,widthsYavgBinError,'MarkerSize',3,...
     'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
     'Marker','o',...
@@ -389,13 +400,21 @@ errorbar(atomNumsBin,widthsYavgBin,widthsYavgBinError,'MarkerSize',3,...
     'Color',[0 0 1]);
 grid on;
 hold on; plot(pixelCountsSort,sigmaYSort,'.r'); hold off;
-figure(26)
+figname = [date '_' camera '_' magfield '_Radial_' num2str(bins) 'Bins_BinAvg'];
+figdirectory = 'C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\';
+saveas(h,[figdirectory figname '.fig'],'fig');
+saveas(h,[figdirectory figname '.png'],'png');
+h = figure(26);
 errorbar(atomNumsBin,widthsXavgBin,widthsXavgBinError,'MarkerSize',3,...
     'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
     'Marker','o',...
     'LineStyle','--',...
     'Color',[0 0 1]);
 grid on;
+figname = [date '_' camera '_' magfield '_Tight_' num2str(bins) 'Bins_BinAvg'];
+figdirectory = 'C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\';
+saveas(h,[figdirectory figname '.fig'],'fig');
+saveas(h,[figdirectory figname '.png'],'png');
 h = figure(30);
 errorbar(sigmaXbinA(2,:),sigmaXbinA(1,:),sigmaXbinA(3,:),'MarkerSize',3,...
     'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
@@ -450,6 +469,3 @@ end
 %end
 hold off;
 end
-
-
-
