@@ -285,8 +285,8 @@ widthsXavg = gcoefsXa(3,:);
 
 widthsYavgError = []; widthsXavgError = [];
 for i=1:length(widthsYavg)
-widthsYavgError(i) = widthsYavg(i) - gcoefsYaError(3,1,i);
-widthsXavgError(i) = widthsXavg(i) - gcoefsXaError(3,1,i);
+    widthsYavgError(i) = widthsYavg(i) - gcoefsYaError(3,1,i);
+    widthsXavgError(i) = widthsXavg(i) - gcoefsXaError(3,1,i);
 end
 
 %Bin on atom number instead of motfet averaging:
@@ -297,7 +297,17 @@ sigmaXbinA = binMeIncNaN(sigmaX,pixelCounts,bins);
 sigmaYbinA = [];
 sigmaYbinA = binMeIncNaN(sigmaY,pixelCounts,bins);
 % errorbar(sigmaYbinA(2,:),sigmaYbinA(1,:),sigmaYbinA(3,:),'.');
-[avgImagesBin, atomNumsBin] = binMeCenterAndAverageIncNaN(imageArrayC,pixelCounts,bins);
+xElementsCell = [];
+[avgImagesBin, atomNumsBin, xElementsCell] = binMeCenterAndAverageIncNaN(imageArrayC,pixelCounts,bins);
+
+%Error on the atom numbers:
+atomStdErrors = []; atomMeans = [];
+for i=1:length(xElementsCell)
+   atomStdErrors(i) =  std(pixelCounts(xElementsCell{i}));   
+   atomMeans(i) = mean(pixelCounts(xElementsCell{i}));
+end
+
+
 
 %Fit functions to the averaged bin images:
 gcoefsXaBin = []; gcoefsYaBin = []; gcoefsYaBinError = []; gcoefsXaBinError = [];
@@ -393,25 +403,28 @@ errorbar(pixelNumbers,widthsXavg,widthsXavgError,'MarkerSize',3,...
     'Color',[0 0 1]);
 grid on;
 h = figure(25);
-errorbar(atomNumsBin,widthsYavgBin,widthsYavgBinError,'MarkerSize',3,...
+errorbar(atomMeans,widthsYavgBin,widthsYavgBinError,'MarkerSize',3,...
     'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
     'Marker','o',...
     'LineStyle','--',...
     'Color',[0 0 1]);
 grid on;
-hold on; plot(pixelCountsSort,sigmaYSort,'.r'); hold off;
-figname = [date '_' camera '_' magfield '_Radial_' num2str(bins) 'Bins_BinAvg'];
+hold on; 
+plot(pixelCountsSort,sigmaYSort,'.r'); 
+plot(atomStdErrors);
+hold off;
+figname = [date '_' camera '_' magfield '_Tight_' num2str(bins) 'Bins_BinAvg'];
 figdirectory = 'C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\';
 saveas(h,[figdirectory figname '.fig'],'fig');
 saveas(h,[figdirectory figname '.png'],'png');
 h = figure(26);
-errorbar(atomNumsBin,widthsXavgBin,widthsXavgBinError,'MarkerSize',3,...
+errorbar(atomMeans,widthsXavgBin,widthsXavgBinError,'MarkerSize',3,...
     'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
     'Marker','o',...
     'LineStyle','--',...
     'Color',[0 0 1]);
 grid on;
-figname = [date '_' camera '_' magfield '_Tight_' num2str(bins) 'Bins_BinAvg'];
+figname = [date '_' camera '_' magfield '_Radial_' num2str(bins) 'Bins_BinAvg'];
 figdirectory = 'C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\';
 saveas(h,[figdirectory figname '.fig'],'fig');
 saveas(h,[figdirectory figname '.png'],'png');

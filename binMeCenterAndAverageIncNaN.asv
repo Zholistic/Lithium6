@@ -13,16 +13,22 @@ binEdges = linspace(binsStart,binsEnd,nbins+1);
 binLength = (binsEnd-binsStart)/(nbins);
 [h,whichBin] = histc(inputX, binEdges);
 
-j=1; binCount = 1;
+mj=1; binCount = 1;
 for i = 1:nbins+1
     flagBinMembers = (whichBin == i);
+    for l=1:length(flagBinMembers)
+        if (flagBinMembers(l) == 1)
+            xBinMembers{i}(m) = l;
+            m = m+1;
+        end
+    end
     binMembers     = imgArray(:,:,flagBinMembers);
     %what bins to exclude? Nothing
     if (1)
         if ~isempty(binMembers)
             binMean(:,:,j) = centerAndAverage(binMembers);
         else
-            binMean(:,:,j) = ones([]).*(-1);
+            binMean(:,:,j) = ones([length(imgArray(:,1,1)) length(imgArray(1,:,1))]).*(40000);
         end
         %binStd(j)      = std(binMembers);
         binLengths(j) = binCount*binLength;
@@ -42,7 +48,8 @@ for i=1:length(binMean(1,1,:))
     %finalBinned(2,i) = binsStart - binLengths(1) + sum(binLengths(1:i)); 
     %offset half a binlength
     thisLength = binLengths(i);
-    xOutput(i) = binsStart + (sum(binLengths(1:i))) - thisLength/2;    
+    xOutput(i) = binsStart + (sum(binLengths(1:i))) - thisLength/2;
+    xBinMembers{i} = [];
     %finalBinned(3,i) = binStd(i); %error on the bin sums
     %finalBinned(4,i) = binEdgesR(i)+binLength;
 end

@@ -47,25 +47,25 @@ end
 
 
 %Radial is Tight in this dataset!!!!!!!! Whoops
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Radial_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Tight_36Bins_BinAvg.fig');
 handlesBin36CA(1) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140916_sidecam_832p2G_Radial_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140916_sidecam_832p2G_Tight_36Bins_BinAvg.fig');
 handlesBin36CA(2) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_855G_Radial_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_855G_Tight_36Bins_BinAvg.fig');
 handlesBin36CA(3) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_860G_Radial_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_860G_Tight_36Bins_BinAvg.fig');
 handlesBin36CA(4) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_865G_Radial_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_865G_Tight_36Bins_BinAvg.fig');
 handlesBin36CA(5) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140911_sidecam_880G_Radial_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140911_sidecam_880G_Tight_36Bins_BinAvg.fig');
 handlesBin36CA(6) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_900G_Radial_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_900G_Tight_36Bins_BinAvg.fig');
 handlesBin36CA(7) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_920G_Radial_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_920G_Tight_36Bins_BinAvg.fig');
 handlesBin36CA(8) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_950G_Radial_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_950G_Tight_36Bins_BinAvg.fig');
 handlesBin36CA(9) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_972G_Radial_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_972G_Tight_36Bins_BinAvg.fig');
 handlesBin36CA(10) = gcf;
 
 open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Radial_Log1050Bins.fig');
@@ -110,25 +110,25 @@ handlesRadial(9) = gcf;
 open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_972G_Radial_50Bins.fig');
 handlesRadial(10) = gcf;
 
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Tight_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Radial_36Bins_BinAvg.fig');
 handlesRadialBin36CA(1) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140916_sidecam_832p2G_Tight_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140916_sidecam_832p2G_Radial_36Bins_BinAvg.fig');
 handlesRadialBin36CA(2) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_855G_Tight_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_855G_Radial_36Bins_BinAvg.fig');
 handlesRadialBin36CA(3) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_860G_Tight_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_860G_Radial_36Bins_BinAvg.fig');
 handlesRadialBin36CA(4) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_865G_Tight_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_865G_Radial_36Bins_BinAvg.fig');
 handlesRadialBin36CA(5) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140911_sidecam_880G_Tight_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140911_sidecam_880G_Radial_36Bins_BinAvg.fig');
 handlesRadialBin36CA(6) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_900G_Tight_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_900G_Radial_36Bins_BinAvg.fig');
 handlesRadialBin36CA(7) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_920G_Tight_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_920G_Radial_36Bins_BinAvg.fig');
 handlesRadialBin36CA(8) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_950G_Tight_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_950G_Radial_36Bins_BinAvg.fig');
 handlesRadialBin36CA(9) = gcf;
-open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_972G_Tight_36Bins_BinAvg.fig');
+open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_972G_Radial_36Bins_BinAvg.fig');
 handlesRadialBin36CA(10) = gcf;
 
 transverseImages = 3;
@@ -161,6 +161,7 @@ for i=1:imageNumber
     objType = get(dataObjs, 'Type');  %type of low-level graphics object
     xdatas{i} = get(dataObjs, 'XData');  %data from low-level grahics objects
     ydatas{i} = get(dataObjs, 'YData');
+    ldatas{i} = get(dataObjs(3),'Ldata');
     %zdata = get(dataObjs, 'ZData');
 end
 
@@ -183,14 +184,13 @@ for i=1:imageNumber
 end
 
 %Correct for TOF issue:
-ydatas{4}{2} = ydatas{4}{2}.*1.0075;
-
+ydatas{4}{3} = ydatas{4}{3}.*1.0075;
 
 figure(100);
 hold on;
 for j=1:imageNumber
-    xToPlot = xdatas{j}{2};
-    yToPlot = ydatas{j}{2}  + (j-1)*0.5;
+    xToPlot = xdatas{j}{3};
+    yToPlot = ydatas{j}{3}  + (j-1)*0.5;
     %i=8-j;
     colourShift1 = j/imageNumber;
     %colourShift2 = (1-i)/7;
@@ -227,7 +227,7 @@ for j=1:imageNumber
     %xToPlotAR = xdatasR{j}{2};
     %yToPlotAR = ydatasR{j}{2}./ydatas{j}{2}  + (j-1)*1;
     xToPlotAR = xdatasR{j};
-    yToPlotAR = ydatasR{j}./ydatas{j}{2}  + (j-1)*1;
+    yToPlotAR = ydatasR{j}./ydatas{j}{3}  + (j-1)*1;
     %i=8-j;
     colourShift1 = j/imageNumber;
     %colourShift2 = (1-i)/7;
@@ -241,13 +241,17 @@ hold off;
 grid on;
 
 figure(301);
-hold on; coefsLF = [];
+hold on; coefsLF = []; coefsLFs = [];
 for j=1:imageNumber
+if(0)
     xToPlotAR = []; yToPlotAR = [];
     %xToPlotAR = xdatasR{j}{2};
     %yToPlotAR = ydatas{j}{2}./ydatasR{j}{2}  + (j-1)*0.05;
-    xToPlotAR = xdatasR{j};
-    yToPlotAR = ydatas{j}{2}./ydatasR{j}  + (j-1)*0.05;
+    xToPlotARt = xdatasR{j};
+    yToPlotARt = ydatas{j}{3}./ydatasR{j}  + (j-1)*0.05;
+    
+    yToPlotAR = log10(yToPlotARt);
+    xToPlotAR = log10(xToPlotARt);
     %i=8-j;
     colourShift1 = j/imageNumber;
     %colourShift2 = (1-i)/7;    
@@ -259,20 +263,81 @@ for j=1:imageNumber
     ub = [.1 0.6];
     if(1)
         fgl = @(p,x)(0.*x + p(1));
-        p0 = 0.3;
-        lb = 0.15;
-        ub = 0.6;
+        p0 = -0.3;
+        lb = -1;
+        ub = -0.1;
     end
     curvefitoptions = optimset('MaxFunEvals',100000,'MaxIter',50000,'Display','off');
     %xs = 1:length(xToPlotAR);
     [coefsLF(:,j),resnorm,r,exitflag,output,lambda,J] = lsqcurvefit(fgl,p0,xToPlotAR(end-20:end),inpaint_nans(yToPlotAR(end-20:end)),lb,ub,curvefitoptions);
 
+    
+    %Line fit to < 10000:
+    fgls = @(p,x)(p(1).*x + p(2)); 
+    p0s = [-.1 -0.3];
+    lbs = [-.3 -1];
+    ubs = [0 0];
+    curvefitoptions = optimset('MaxFunEvals',100000,'MaxIter',50000,'Display','off');
+    %xs = 1:length(xToPlotAR);
+    [coefsLFs(:,j),resnorm,r,exitflag,output,lambda,J] = lsqcurvefit(fgls,p0s,xToPlotAR(1:6),inpaint_nans(yToPlotAR(1:6)),lbs,ubs,curvefitoptions);
+       
+    
     plot(xToPlotAR,inpaint_nans(yToPlotAR(:)),'MarkerSize',3,...
     'MarkerFaceColor',[colourShift1 colourShift1 1],...
     'Marker','o',...
     'LineStyle','--',...
     'Color',[0 0 1]);
     plot(xToPlotAR,fgl(coefsLF(:,j),xToPlotAR),'r');
+    plot(xToPlotAR,fgls(coefsLFs(:,j),xToPlotAR),'g');
+    end
+end
+hold off;
+grid on;
+
+figure(301);
+hold on; coefsLF = []; coefsLFs = [];
+for j=1:imageNumber
+
+    xToPlot = []; yToPlot = [];
+    %xToPlotAR = xdatasR{j}{2};
+    %yToPlotAR = ydatas{j}{2}./ydatasR{j}{2}  + (j-1)*0.05;
+    xToPlot = xdatas{j}{3};
+    yToPlot = ydatas{j}{3};
+    
+    %Line fit to > 30000:
+    fgl = @(p,x)(p(1).*x + p(2)); 
+    p0 = [0 0.3];
+    lb = [-.1 0.15];
+    ub = [.1 0.6];
+    if(1)
+        fgl = @(p,x)(0.*x + p(1));
+        p0 = -0.3;
+        lb = -1;
+        ub = -0.1;
+    end
+    curvefitoptions = optimset('MaxFunEvals',100000,'MaxIter',50000,'Display','off');
+    %xs = 1:length(xToPlotAR);
+    %[coefsLF(:,j),resnorm,r,exitflag,output,lambda,J] = lsqcurvefit(fgl,p0,xToPlotAR(end-20:end),inpaint_nans(yToPlotAR(end-20:end)),lb,ub,curvefitoptions);
+
+    
+    %Line fit to < 10000:
+    fgls = @(p,x)(p(1).*x + p(2)); 
+    p0s = [-.1 -0.3];
+    lbs = [-.3 -1];
+    ubs = [0 0];
+    curvefitoptions = optimset('MaxFunEvals',100000,'MaxIter',50000,'Display','off');
+    %xs = 1:length(xToPlotAR);
+    %[coefsLFs(:,j),resnorm,r,exitflag,output,lambda,J] = lsqcurvefit(fgls,p0s,xToPlotAR(1:6),inpaint_nans(yToPlotAR(1:6)),lbs,ubs,curvefitoptions);
+       
+    
+    figure(j);
+    plot(xToPlot,yToPlot,'MarkerSize',3,...
+    'MarkerFaceColor',[colourShift1 colourShift1 1],...
+    'Marker','o',...
+    'LineStyle','--',...
+    'Color',[0 0 1]);
+    %plot(xToPlot,fgl(coefsLF(:,j),xToPlot),'r');
+    %plot(xToPlot,fgls(coefsLFs(:,j),xToPlot),'g');
 end
 hold off;
 grid on;
@@ -296,6 +361,38 @@ end
 hold off;
 grid on;
 
+
+%figure(105);
+hold on;
+k=1;
+for j=[2 5 9]
+    k = k+1;
+    xToPlot = xdatas{j}{3};
+    %yToPlot = ydatas{j}{2}  + (3-(k-1))*0.5;
+    yToPlot = ydatas{j}{3};
+    errorY = ldatas{j};
+    errorX = ydatas{j}{1};
+    %i=8-j;
+    colourShift1 = j/imageNumber;
+    %colourShift2 = (1-i)/7;
+    if(0)
+    %plot(xToPlot,yToPlot,'MarkerSize',3,...
+    %'MarkerFaceColor',[colourShift1 colourShift1 1],...
+    %'Marker','o',...
+    %'LineStyle','--',...
+    %'Color',[0 0 1]);
+    end
+    if( j == 2 )
+        plotErrorLines(xToPlot,yToPlot + 0.3,errorX,errorY,1,1000, [1 0 0],'^');
+    elseif( j == 5 )
+        plotErrorLines(xToPlot,yToPlot,errorX,errorY,1,1000, [0 0.5 0],'square');
+    else
+        plotErrorLines(xToPlot,yToPlot - 0.7,errorX,errorY,1,1000, [0 0 1],'o');
+    end
+end
+hold off;
+grid on;
+
 %zMat = [];
 %zMatsC = [];
 %for i=1:imageNumber
@@ -310,16 +407,16 @@ grid on;
 %longest ydata array?
 longest = 0;
 for i=1:imageNumber
-    if( length(ydatas{i}{2}(:)) > longest)
-        longest = length(ydatas{i}{2}(:));
+    if( length(ydatas{i}{3}(:)) > longest)
+        longest = length(ydatas{i}{3}(:));
     end
 end
 
 padAmount = 0;
 zMatrix = [];
 for i=1:imageNumber
-    padAmount = longest - length(ydatas{i}{2}(:));
-    zMatrix(:,i) = padarray(ydatas{i}{2}(:),padAmount,NaN,'post');
+    padAmount = longest - length(ydatas{i}{3}(:));
+    zMatrix(:,i) = padarray(ydatas{i}{3}(:),padAmount,NaN,'post');
 end
 
 padAmount = 0;
@@ -340,17 +437,17 @@ end
 %For cftool:
 if(bins == 50)
 end
-prof820 = ydatas{1}{2}(:);
-prof832 = ydatas{2}{2}(:);
-prof855 = ydatas{3}{2}(:);
-prof860 = ydatas{4}{2}(:);
-prof865 = ydatas{5}{2}(:);
-prof880 = ydatas{6}{2}(:);
-prof900 = ydatas{7}{2}(:);
-prof920 = ydatas{8}{2}(:);
-prof950 = ydatas{9}{2}(:);
-prof972 = ydatas{10}{2}(:);
-profx = xdatas{2}{2};
+prof820 = ydatas{1}{3}(:);
+prof832 = ydatas{2}{3}(:);
+prof855 = ydatas{3}{3}(:);
+prof860 = ydatas{4}{3}(:);
+prof865 = ydatas{5}{3}(:);
+prof880 = ydatas{6}{3}(:);
+prof900 = ydatas{7}{3}(:);
+prof920 = ydatas{8}{3}(:);
+prof950 = ydatas{9}{3}(:);
+prof972 = ydatas{10}{3}(:);
+profx = xdatas{2}{3};
 
 elbowsN2D = [profx(1) profx(3) profx(8) profx(9) profx(10) profx(11) profx(14) profx(14) profx(18) profx(16)];
 widthElbowsN2D = [prof820(1) prof832(3) prof855(8) prof860(9) prof865(10) prof880(11) prof900(14) prof920(14) prof950(18) prof972(16)];
@@ -363,7 +460,7 @@ N2D = @(x)(0.0512.*x.^2 - 138.49.*x + 124322);
 figure(200);
 hold on;
 
-yToPlot = xdatas{2}{2};
+yToPlot = xdatas{2}{3};
 xToPlot = magVector;
 zToPlot = zMatrix;
 
@@ -375,7 +472,7 @@ grid on;
 
 fields = [];
 for j=1:imageNumber
-   for i=1:length(ydatas{j}{2})
+   for i=1:length(ydatas{j}{3})
    fields(i,j) = magVector(j);
    end 
 
@@ -385,7 +482,9 @@ end
 figure(201);
 hold on;
 
-yToPlot = xdatas{4}{2};
+%%TODO: remove inpaint_nans here...
+%need to oversubscribe the points to account for atom number discrepancies...
+yToPlot = inpaint_nans(xdatas{4}{3});
 xToPlot = magVector;
 zToPlot = zMatrix;
 
@@ -408,7 +507,7 @@ plot3(xdatasT{3}(13:end),yLocT3.*1.2,ydatasT{3}(13:end),'MarkerFaceColor',[1 0 0
     'LineStyle','--',...
     'Color',[1 0 0]);
 for i=1:imageNumber
-    plot3(fields(:,i),xdatas{i}{2},ydatas{i}{2},'MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor',[0.5 0.5 0.5],...
+    plot3(fields(:,i),xdatas{i}{3},ydatas{i}{3},'MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor',[0.5 0.5 0.5],...
     'Marker','.',...
     'LineWidth',1,...
     'LineStyle','--',...

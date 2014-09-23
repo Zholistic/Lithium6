@@ -1,0 +1,43 @@
+function [ handleG ] = plotErrorLines( xArray, yArray, xError, yError, argXY, fignumber )
+
+
+
+if(argXY == 0)
+    %only yError:
+    handleG = figure(fignumber);
+    plot(xArray,yArray,'MarkerSize',3,...
+        'MarkerFaceColor',[1 1 1],...
+        'Marker','o',...
+        'LineStyle','--',...
+        'Color',[0 0 1]);
+    hold on;
+    
+    for i=1:length(yArray)
+        line([xArray(i) xArray(i)],[(yArray(i) - yError(i)) (yArray(i) + yError(i))], ...
+            'Color',[1 1 1]);
+    end
+    hold off;
+    grid on;
+    
+elseif(argXY == 1)
+    
+    handleG = figure(fignumber);
+    plot(xArray,yArray);
+    hold on;
+    
+    for i=1:length(yArray)
+        line([xArray(i) xArray(i)],[(yArray(i) - yError(i)) (yArray(i) + yError(i))], ...
+            'LineStyle','-','Color',[1 1 1]);
+    end
+    for i=1:length(xArray)
+        line([(xArray(i)-xError(i)) (xArray(i)+xError(i))],[(yArray(i)) (yArray(i))], ...
+            'LineStyle','-','Color',[1 1 1]);
+    end
+    hold off;
+    grid off;
+end
+
+
+
+
+end

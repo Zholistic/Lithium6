@@ -1,5 +1,5 @@
 %directory = 'C:\Data\140904_transversewidth_600usTOF_Isat1e8_alpha0.6_atomnumber_5000\';
-directory = 'C:\Data\140904_transversewidth_600usTOF_Isat1e8_alpha0.6_atomnumber_10000\';
+%directory = 'C:\Data\140904_transversewidth_600usTOF_Isat1e8_alpha0.6_atomnumber_10000\';
 directory = 'C:\Data\140907_2D_transversewidth_10k_atoms_750ms_ramp\';
 %directory = 'C:\Data\140909_transversewidth_5k_atoms_750ms_ramp\';
 %directory = 'C:\Data\140915_transversewidth_13p5k_atoms_750ms_ramp\';
@@ -183,18 +183,25 @@ pixelCounts(:) = varData(:,5)*0.42;
 [sortedVarData,indexs] = sort(varData);
 %indexs(:,1) is a vector of the sort.
 
+pixelCountsSort = []; sigmaXSort = []; sigmaYSort = [];
+TonTFsSort = []; imageArrayCSort = [];
+sigmaRsmSort = []; TonTFsSort = [];
+
 for i=1:length(sigmaX)
     sigmaXSort(i) = sigmaX(indexs(i));
     sigmaYSort(i) = sigmaY(indexs(i));
     pixelCountsSort(i) = pixelCounts(indexs(i));
     sigmaXsMomSort(i) = sigmaXsm(indexs(i));
     sigmaYsMomSort(i) = sigmaYsm(indexs(i));
+    
+    imageArrayCSort(:,:,i) = imageArrayC(:,:,indexs(i));
 end
 
 %Average over same BField data points:
 j=1; runTotal = 0; magFields = []; widthsX = []; widthsY = [];
 stdDevWidthsX = []; stdDevWidthsY = []; pixelNumbers = [];
 pixelNumbersStdDev = []; sMomentX = []; sMomentY = [];
+imageArrayAvgs = [];
 sMomentXStdDev = []; sMomentYStdDev = []; prev = sortedVarData(1,1);
 for i=1:length(sortedVarData)
     curr = sortedVarData(i,1);
@@ -214,6 +221,9 @@ for i=1:length(sortedVarData)
         sMomentY(j) = mean(sigmaYsMomSort(i-runTotal:i));
         sMomentXStdDev(j) = std(sigmaXsMomSort(i-runTotal:i));
         sMomentYStdDev(j) = std(sigmaYsMomSort(i-runTotal:i));
+        
+        imageArrayAvgs(:,:,j) = centerAndAverage(imageArrayCSort(:,:,i-runTotal:i));
+        
         runTotal = 0;
         j = j+1;
     end
@@ -231,11 +241,32 @@ for i=1:length(sortedVarData)
         sMomentY(j) = mean(sigmaYsMomSort(i-runTotal:i));
         sMomentXStdDev(j) = std(sigmaXsMomSort(i-runTotal:i));
         sMomentYStdDev(j) = std(sigmaYsMomSort(i-runTotal:i));
+        
+        imageArrayAvgs(:,:,j) = centerAndAverage(imageArrayCSort(:,:,i-runTotal:i));
+        
         runTotal = 0;
         j = j+1;
     end
     
     prev = curr;
+end
+
+%Fit functions to the averaged images:
+gcoefsXa = []; gcoefsYa = []; gcoefsYaError = []; gcoefsXaError = [];
+for i=1:length(imageArrayAvgs(1,1,:))
+    [gcoefsXa(:,i),gcoefsXaError(:,:,i)] = gausFit1D(mean(imageArrayAvgs(CrossROIy,:,i),1)); %mean averages over y
+    %Profile: plot(mean(imageArrayC(:,:,i),1))
+    [gcoefsYa(:,i),gcoefsYaError(:,:,i)] = gausFit1D(mean(imageArrayAvgs(:,CrossROIx,i),2)); %mean averages over x
+    %Profile: plot(mean(imageArrayC(:,:,i),2))       
+end
+
+widthsYavg = gcoefsYa(3,:);
+widthsXavg = gcoefsXa(3,:);
+
+widthsYavgError = []; widthsXavgError = [];
+for i=1:length(widthsYavg)
+    widthsYavgError(i) = widthsYavg(i) - gcoefsYaError(3,1,i);
+    widthsXavgError(i) = widthsXavg(i) - gcoefsXaError(3,1,i);
 end
 
 %convert to real units:
@@ -291,7 +322,20 @@ plot(magFields,widthsX./(pixelNumbers.^0.25),'MarkerFaceColor',[0.60000002384185
 'Color',[0 0 1]);
 end
         
-
+figure(20)
+errorbar(magFields,widthsYavg,widthsYavgError,'MarkerSize',3,...
+    'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+    'Marker','o',...
+    'LineStyle','--',...
+    'Color',[0 0 1]);
+grid on;
+figure(21)
+errorbar(magFields,widthsXavg,widthsXavgError,'MarkerSize',3,...
+    'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+    'Marker','o',...
+    'LineStyle','--',...
+    'Color',[0 0 1]);
+grid on;
 
 
 

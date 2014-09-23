@@ -1,4 +1,4 @@
-function [ imageOutput, domainOutput ] = binMeCenterAndAverageIncNaN( imgArray, inputX, nbins )
+function [ imageOutput, domainOutput, domainElements ] = binMeCenterAndAverageIncNaN( imgArray, inputX, nbins )
 %Bins the image array inputY on the domain array inputX. Puts into nbins.
 %Returns outputBinned of which outputBinned(1,:) is the range.
 %scans over NaN values.
@@ -6,16 +6,26 @@ function [ imageOutput, domainOutput ] = binMeCenterAndAverageIncNaN( imgArray, 
 %inputY = imgArray(1,1,:);
 
 binMean = []; binStd = []; binEdges=[]; imageOutput = []; finalBinned = [];
-binEdgesR = [];
+binEdgesR = []; xBinMembers = [];
 binLengths = []; binMembers = [];
 binsStart = 2000; binsEnd = 60000;
 binEdges = linspace(binsStart,binsEnd,nbins+1);
 binLength = (binsEnd-binsStart)/(nbins);
 [h,whichBin] = histc(inputX, binEdges);
 
-j=1; binCount = 1;
+m=1; j=1; binCount = 1;
 for i = 1:nbins+1
+    m = 1;
     flagBinMembers = (whichBin == i);
+    for l=1:length(flagBinMembers)
+        if (flagBinMembers(l) == 1)
+            xBinMembers{i}(m) = l;
+            m = m+1;
+        end
+        if(m == 1) %found no bin members
+            xBinMembers{i} = [];
+        end
+    end
     binMembers     = imgArray(:,:,flagBinMembers);
     %what bins to exclude? Nothing
     if (1)
@@ -42,12 +52,14 @@ for i=1:length(binMean(1,1,:))
     %finalBinned(2,i) = binsStart - binLengths(1) + sum(binLengths(1:i)); 
     %offset half a binlength
     thisLength = binLengths(i);
-    xOutput(i) = binsStart + (sum(binLengths(1:i))) - thisLength/2;    
+    xOutput(i) = binsStart + (sum(binLengths(1:i))) - thisLength/2;
+
     %finalBinned(3,i) = binStd(i); %error on the bin sums
     %finalBinned(4,i) = binEdgesR(i)+binLength;
 end
 
 imageOutput = images;
 domainOutput = xOutput;
+domainElements = xBinMembers;
 
 end
