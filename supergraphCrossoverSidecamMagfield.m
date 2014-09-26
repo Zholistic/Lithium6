@@ -294,53 +294,114 @@ end
 hold off;
 grid on;
 
-figure(301);
-hold on; coefsLF = []; coefsLFs = [];
-for j=1:imageNumber
+fitsInitRange = [];
+fitsInitRange{10} = 3:9;
+fitsInitRange{9} = 2:11;
+fitsInitRange{8} = 2:9;
+fitsInitRange{7} = 2:10;
+fitsInitRange{6} = 3:10;
+fitsInitRange{5} = 1:7;
+fitsInitRange{4} = 1:7;
+fitsInitRange{3} = 1:4;
+fitsInitRange{2} = 2:3;
+fitsInitRange{1} = 1:2;
 
+elem = 37;
+fitsFinalRange = [];
+fitsFinalRange{10} = [12:26 28:32];
+fitsFinalRange{9} = 16:36;
+fitsFinalRange{8} = [20 22:32 34:35];
+fitsFinalRange{7} = [12:33 35:36];
+fitsFinalRange{6} = [16:24 26:28 30:31 33:35];
+fitsFinalRange{5} = [9:22];
+fitsFinalRange{4} = [10 12 14 16 17 19 22 25 26 29 31];
+fitsFinalRange{3} = [11 12 13 14 16 18 21 23 26 28 30 32];
+fitsFinalRange{2} = [2:22 24:28 30:31 33:36];
+fitsFinalRange{1} = [1:23 25 27:29 31:35];
+
+%figure(301);
+coefsLF = []; coefsLFs = [];
+for j=1:imageNumber
+    
     xToPlot = []; yToPlot = [];
     %xToPlotAR = xdatasR{j}{2};
     %yToPlotAR = ydatas{j}{2}./ydatasR{j}{2}  + (j-1)*0.05;
+    %xToPlot = inpaint_nans(xdatas{j}{3});
+    %yToPlot = inpaint_nans(ydatas{j}{3});
     xToPlot = xdatas{j}{3};
     yToPlot = ydatas{j}{3};
+    errorY = ldatas{j};
+    errorX = ydatas{j}{1};
     
-    %Line fit to > 30000:
-    fgl = @(p,x)(p(1).*x + p(2)); 
-    p0 = [0 0.3];
-    lb = [-.1 0.15];
-    ub = [.1 0.6];
+    %Line fit to first points:
+    %fgl = @(p,x)(p(1).*x + p(2));
+    %p0 = [0 0.3];
+    %lb = [-.1 0.15];
+    %ub = [.1 0.6];
     if(1)
         fgl = @(p,x)(0.*x + p(1));
-        p0 = -0.3;
-        lb = -1;
-        ub = -0.1;
+        p0 = 4.5;
+        lb = 3;
+        ub = 6;
     end
     curvefitoptions = optimset('MaxFunEvals',100000,'MaxIter',50000,'Display','off');
     %xs = 1:length(xToPlotAR);
-    %[coefsLF(:,j),resnorm,r,exitflag,output,lambda,J] = lsqcurvefit(fgl,p0,xToPlotAR(end-20:end),inpaint_nans(yToPlotAR(end-20:end)),lb,ub,curvefitoptions);
-
+    [coefsLF(:,j),resnorm,r,exitflag,output,lambda,J] = lsqcurvefit(fgl,p0,xToPlot(fitsInitRange{j}),yToPlot(fitsInitRange{j}),lb,ub,curvefitoptions);
     
-    %Line fit to < 10000:
-    fgls = @(p,x)(p(1).*x + p(2)); 
-    p0s = [-.1 -0.3];
-    lbs = [-.3 -1];
-    ubs = [0 0];
+    
+    %Line fit to latter part of data:
+    fgls = @(p,x)(p(1).*x + p(2));
+    p0s = [3/50000 5];
+    lbs = [0 3];
+    ubs = [1 6];
     curvefitoptions = optimset('MaxFunEvals',100000,'MaxIter',50000,'Display','off');
     %xs = 1:length(xToPlotAR);
-    %[coefsLFs(:,j),resnorm,r,exitflag,output,lambda,J] = lsqcurvefit(fgls,p0s,xToPlotAR(1:6),inpaint_nans(yToPlotAR(1:6)),lbs,ubs,curvefitoptions);
-       
+    [coefsLFs(:,j),resnorm,r,exitflag,output,lambda,J] = lsqcurvefit(fgls,p0s,xToPlot(fitsFinalRange{j}),yToPlot(fitsFinalRange{j}),lbs,ubs,curvefitoptions);
     
-    figure(j);
-    plot(xToPlot,yToPlot,'MarkerSize',3,...
-    'MarkerFaceColor',[colourShift1 colourShift1 1],...
-    'Marker','o',...
-    'LineStyle','--',...
-    'Color',[0 0 1]);
-    %plot(xToPlot,fgl(coefsLF(:,j),xToPlot),'r');
-    %plot(xToPlot,fgls(coefsLFs(:,j),xToPlot),'g');
+    
+    %figure(j)
+    hold on;
+    %plot(xToPlot,yToPlot,'MarkerSize',3,...
+    %'MarkerFaceColor','b',...
+    %'Marker','o',...
+    %'LineStyle','--',...
+    %'Color',[0 0 1]);
+    h = plotErrorLines(xToPlot,yToPlot,errorX,errorY,1,j, [0 0 1],'o');
+    plot(2500:25000,fgl(coefsLF(:,j),2500:25000),'r');
+    range = 15000:60000;
+    if(j == 6)
+        range = 12000:60000;
+    end
+    if(j == 5 || j == 4 || j == 3)
+        range = 5000:60000;
+    end
+    if(j < 3)
+        range = 1000:60000;
+    end
+    plot(range,fgls(coefsLFs(:,j),range),'g');
+    line([xToPlot(fitsFinalRange{j}(1)) xToPlot(fitsFinalRange{j}(1))],[4.4 5.6], ...
+        'Color',[0.7 0.7 0.7],'LineStyle','--')
+    
+    grid on;
+    figname = [ 'ElbowGraph_Field_' num2str(magVector(j)) 'G'];
+    figdirectory = 'C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Elbows\';
+    saveas(h,[figdirectory figname '.fig'],'fig');
+    saveas(h,[figdirectory figname '.png'],'png');
+    hold off;
 end
-hold off;
-grid on;
+
+elbows = [];
+elbows(:,10) = [18460 2000 0.03];
+elbows(:,9) = [20000 2000 0.03];
+elbows(:,8) = [19330 2000 0.03];
+elbows(:,7) = [19500 3000 0.03];
+elbows(:,6) = [16250 2000 0.06];
+elbows(:,5) = [11530 1000 0.03];
+elbows(:,4) = [12450 2500 0.05];
+elbows(:,3) = [8000 500 0];
+elbows(:,2) = [0 0 0];
+elbows(:,1) = [0 0 0];
+
 
 figure(102);
 hold on;
@@ -531,6 +592,14 @@ surfc(xToPlot,yToPlot,inpaint_nans(zToPlot),'LineStyle','none','FaceColor','inte
 hold off;
 grid on;
 
+figure(500)
+hold on;
+plot3(magVector,elbows(1,:),ones([length(magVector) 1]).*7);
+for i=1:length(elbows(1,:))
+    plot3([magVector(i) magVector(i)],[(elbows(1,i) - elbows(2,i)) (elbows(1,i) + elbows(2,i))],ones([2 1]).*7);
+end
+hold off;
+grid on;
 
 
 %%%%%%Log10 surface plot:
