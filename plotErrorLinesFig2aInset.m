@@ -1,6 +1,8 @@
 function [ handleG ] = plotErrorLinesFig2aInset( xArray, yArray, xError, yError, argXY, fignumber, color, markerType )
-width = 2.6;     % Width in inches
-height = 1.8;    % Height in inches
+width = 2.6;     % Width in inches Original Inset
+height = 1.8;    % Height in inches Original Inset
+width = 3;     % Width in inches 
+height = 2;    % Height in inches 
 %width = 6.2;     % Width in inches
 %height = 3;    % Height in inches
 alw = 0.75;    % AxesLineWidth
@@ -24,7 +26,7 @@ if(argXY == 0)
 
     hold on;
     
-    line([832.2 832.2],[21.2 26],'Color',[0 0 0],'LineWidth', lw,'LineStyle','-.');
+    line([832.2 832.2],[11 21.5],'Color',[0 0 0],'LineWidth', lw,'LineStyle','-.');
     
     for i=1:length(yArray)
         line([xArray(i) xArray(i)],[(yArray(i) - yError(i)) (yArray(i) + yError(i))], ...
@@ -36,8 +38,8 @@ if(argXY == 0)
         'Marker',markerType,...
         'LineStyle','none','LineWidth',lw);
     
-    xlim([680 1000]);
-    ylim([21.2 26]);
+    xlim([680 990]);
+    ylim([15.8 19.2]);
     %legend('f(x)', 'g(x)', 'f(x)=g(x)', 'Location', 'SouthEast');
     %xlabel('Magnetic Field (G)');
     %ylabel('Transverse Width (\mu m)');
@@ -79,8 +81,8 @@ set(gcf,'PaperPosition', myfiguresize);
 %set(gcf,'Renderer','OpenGL')
 
 % Save the file as PNG
-print('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2a_Inset_v9','-depsc2','-r300');
-print('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2a_Inset_v9','-dpng','-r300');
+print('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2a_Inset_v11','-depsc2','-r300');
+print('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2a_Inset_v11','-dpng','-r300');
 
 
 

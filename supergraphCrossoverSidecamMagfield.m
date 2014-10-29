@@ -5,7 +5,7 @@ imageNumber = 10;
 bins = 36;
 massL6 = 9.988e-27; %9.988 x 10^27 kg
 hbar = 1.05457e-34; %1.05457*10^-34 m^2 kg/s
-pixelLength = 3.75e-6 / 1.4; %2.84 um topcam, 3.2250 um sidecam 1.4 magnification
+pixelLength = 3.75e-6 / 1.9; %2.84 um topcam, 3.2250 um sidecam 1.9 magnification (old 1.4 mag)
 
 magVector = [820 832.2 855 860 865 880 900 920 950 972];
 
@@ -694,11 +694,12 @@ ElbowsN2DEf = (omegaRVector./omegaZ).*sqrt(2.*elbows(1,:));
 ElbowsN2DEfError = (omegaRVector./omegaZ).*sqrt(2.*elbows(2,:));
 %paintedNansMasterMatrix = inpaint_nans(masterMatrix);
 
+close all;
 figure(3000);
 x = []; y = []; z = []; xlin = []; ylin = []; Z = [];
 x = masterMatrix(1,:);
 y = masterMatrix(2,:);
-z = masterMatrix(3,:);
+z = masterMatrix(3,:).*2.*pixelLength./1e-6;
 
 xlin = linspace(min(x),max(x),1000);
 ylin = linspace(min(y),max(y),1000);
@@ -712,24 +713,29 @@ surf(X,Y,Z,'LineStyle','none','FaceColor','interp','FaceAlpha',1);
 %contourf(X,Y,Z,15); 
 %caxis([4.5,7]);
 axis tight; hold on; grid off;
-plot3(xlin,1,7,'LineStyle','-.','LineWidth',2,'Color',[1 1 1]);
+
 %Elbow error:
 for i=1:length(Lzona3d)
-    plot3([Lzona3d(i) Lzona3d(i)],[(ElbowsN2DEf(i) - ElbowsN2DEfError(i)./3) (ElbowsN2DEf(i) + ElbowsN2DEfError(i)./3)],ones([2 1]).*7,'LineStyle','-','LineWidth',1,'Color',[0.6 0.6 0.6]);
+    plot3([Lzona3d(i) Lzona3d(i)],[(ElbowsN2DEf(i) - ElbowsN2DEfError(i)./3) (ElbowsN2DEf(i) + ElbowsN2DEfError(i)./3)],ones([2 1]).*37,'LineStyle','-','LineWidth',1,'Color',[0.6 0.6 0.6]);
 end
-plot3(linspace(min(Lzona3d),max(Lzona3d),40),fittedmodelElbows(linspace(min(Lzona3d),max(Lzona3d),40)),ones([length(linspace(min(Lzona3d),max(Lzona3d),40)) 1]).*7,'LineStyle','--','LineWidth',1,'Color',[0.8 0.8 0.8]);
-plot3(Lzona3d(1:end),ElbowsN2DEf,ones([length(ElbowsN2DEf) 1]).*7,'MarkerFaceColor',[0.8 0.8 0.8],'MarkerEdgeColor',[0.6 0.6 0.6],...
+plot3(linspace(min(Lzona3d),max(Lzona3d),40),fittedmodelElbow4(linspace(min(Lzona3d),max(Lzona3d),40)),ones([length(linspace(min(Lzona3d),max(Lzona3d),40)) 1]).*37,'LineStyle','--','LineWidth',1,'Color',[0.8 0.8 0.8]);
+plot3(Lzona3d(1:end),ElbowsN2DEf,ones([length(ElbowsN2DEf) 1]).*37,'MarkerFaceColor',[0.8 0.8 0.8],'MarkerEdgeColor',[0.6 0.6 0.6],...
     'Marker','o',...
     'MarkerSize',8,...
     'LineWidth',1,...
     'LineStyle','none',...
     'Color',[1 1 1]);
-plot3(x,y,z,'.','MarkerSize',10,'Color',[0.5 0.5 0.5]);
+plot3(x,y,z + 1,'o','MarkerSize',2,'Color',[0.4 0.4 0.4]);
+plot3(linspace(min(Lzona3d),max(Lzona3d),40),ones([40 1]),ones([40 1]).*37,'LineWidth',0.8,'Color',[1 1 1]);
+view(2);
 hold off;
+set(gca,'xdir','reverse');
+box on;
+colorbar;
 
 % Save the file as PNG
-print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_y_Efonhbaromegaz_x_lzona3d_v1'],'-depsc2','-r300');
-print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_y_Efonhbaromegaz_x_lzona3d_v1'],'-dpng','-r300');
+print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_y_Efonhbaromegaz_x_lzona3d_v5'],'-depsc2','-r300');
+print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_y_Efonhbaromegaz_x_lzona3d_v5'],'-dpng','-r300');
 
 for i=1:length(logKfA2D)
     minL = min(logKfA2D{i});

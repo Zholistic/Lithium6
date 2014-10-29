@@ -1,8 +1,8 @@
 function [ handleG ] = plotErrorLinesFig2aMain( xArray, yArray, xError, yError, argXY, fignumber, color, markerType )
 %width = 2.6;     % Width in inches
 %height = 1.2;    % Height in inches
-width = 6.2;     % Width in inches
-height = 3;    % Height in inches
+width = 6;     % Width in inches
+height = 2;    % Height in inches
 alw = 0.75;    % AxesLineWidth
 fsz = 8;      % Fontsize
 lw = 0.5;      % LineWidth
@@ -23,7 +23,7 @@ if(argXY == 0)
 
     hold on;
     
-    line([832.2 832.2],[22.8 29],'Color',[0 0 0],'LineWidth', lw,'LineStyle','-.');    
+    line([832.2 832.2],[16 22],'Color',[0 0 0],'LineWidth', lw,'LineStyle','-.');    
     
     for i=1:length(yArray)
         line([xArray(i) xArray(i)],[(yArray(i) - yError(i)) (yArray(i) + yError(i))], ...
@@ -35,11 +35,11 @@ if(argXY == 0)
         'Marker',markerType,...
         'LineStyle','none','LineWidth',lw);
         
-    xlim([680 1000]);
-    ylim([22.8 29]);
+    xlim([680 990]);
+    ylim([16.5 21.5]);
     %legend('f(x)', 'g(x)', 'f(x)=g(x)', 'Location', 'SouthEast');
-    xlabel('Magnetic Field (G)');
-    ylabel('Transverse Width (\mu m)');
+    %xlabel('Magnetic Field (G)');
+    %ylabel('Transverse Width (\mu m)');
     %title('Transverse Width vs Magnetic Field (N_{\sigma} = 12 thousand)');
         
     
@@ -78,8 +78,8 @@ set(gcf,'PaperPosition', myfiguresize);
 %set(gcf,'Renderer','OpenGL')
 
 % Save the file as PNG
-print('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2a_Main_v9','-depsc2','-r300');
-print('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2a_Main_v9','-dpng','-r300');
+print('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2a_Main_v11','-depsc2','-r300');
+print('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2a_Main_v11','-dpng','-r300');
 
 
 
