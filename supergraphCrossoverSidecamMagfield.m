@@ -3,6 +3,7 @@ close all;
 handles = [];
 imageNumber = 10;
 bins = 36;
+home = 1;
 
 magVector = [820 832.2 855 860 865 880 900 920 950 972];
 
@@ -22,6 +23,122 @@ handles(6) = gcf;
 open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\All Tight Binned Indv fig\CrossoverSideCam_972G_TightWidthvsAtom_140914_BinnedIndividualFits_withRaw.fig');
 handles(7) = gcf;
 end
+if(home)
+    if(1)
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Tight_50Bins.fig');
+handles(1) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140916_sidecam_832p2G_Tight_50Bins.fig');
+handles(2) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_855G_Tight_50Bins.fig');
+handles(3) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_860G_Tight_50Bins.fig');
+handles(4) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_865G_Tight_50Bins.fig');
+handles(5) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140911_sidecam_880G_Tight_50Bins.fig');
+handles(6) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_900G_Tight_50Bins.fig');
+handles(7) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_920G_Tight_50Bins.fig');
+handles(8) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_950G_Tight_50Bins.fig');
+handles(9) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_972G_Tight_50Bins.fig');
+handles(10) = gcf;
+end
+
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Tight_36Bins_BinAvg.fig');
+handlesBin36CA(1) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140916_sidecam_832p2G_Tight_36Bins_BinAvg.fig');
+handlesBin36CA(2) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_855G_Tight_36Bins_BinAvg.fig');
+handlesBin36CA(3) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_860G_Tight_36Bins_BinAvg.fig');
+handlesBin36CA(4) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_865G_Tight_36Bins_BinAvg.fig');
+handlesBin36CA(5) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140911_sidecam_880G_Tight_36Bins_BinAvg.fig');
+handlesBin36CA(6) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_900G_Tight_36Bins_BinAvg.fig');
+handlesBin36CA(7) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_920G_Tight_36Bins_BinAvg.fig');
+handlesBin36CA(8) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_950G_Tight_36Bins_BinAvg.fig');
+handlesBin36CA(9) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_972G_Tight_36Bins_BinAvg.fig');
+handlesBin36CA(10) = gcf;
+
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Radial_Log1050Bins.fig');
+handlesLog(1) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140916_sidecam_832p2G_Radial_Log1050Bins.fig');
+handlesLog(2) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_855G_Radial_Log1050Bins.fig');
+handlesLog(3) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_860G_Radial_Log1050Bins.fig');
+handlesLog(4) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_865G_Radial_Log1050Bins.fig');
+handlesLog(5) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140911_sidecam_880G_Radial_Log1050Bins.fig');
+handlesLog(6) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_900G_Radial_Log1050Bins.fig');
+handlesLog(7) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_920G_Radial_Log1050Bins.fig');
+handlesLog(8) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_950G_Radial_Log1050Bins.fig');
+handlesLog(9) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_972G_Radial_Log1050Bins.fig');
+handlesLog(10) = gcf;
+
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Radial_50Bins.fig');
+handlesRadial(1) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140916_sidecam_832p2G_Radial_50Bins.fig');
+handlesRadial(2) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_855G_Radial_50Bins.fig');
+handlesRadial(3) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_860G_Radial_50Bins.fig');
+handlesRadial(4) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_865G_Radial_50Bins.fig');
+handlesRadial(5) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140911_sidecam_880G_Radial_50Bins.fig');
+handlesRadial(6) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_900G_Radial_50Bins.fig');
+handlesRadial(7) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_920G_Radial_50Bins.fig');
+handlesRadial(8) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_950G_Radial_50Bins.fig');
+handlesRadial(9) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_972G_Radial_50Bins.fig');
+handlesRadial(10) = gcf;
+
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Radial_36Bins_BinAvg.fig');
+handlesRadialBin36CA(1) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140916_sidecam_832p2G_Radial_36Bins_BinAvg.fig');
+handlesRadialBin36CA(2) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_855G_Radial_36Bins_BinAvg.fig');
+handlesRadialBin36CA(3) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_860G_Radial_36Bins_BinAvg.fig');
+handlesRadialBin36CA(4) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_865G_Radial_36Bins_BinAvg.fig');
+handlesRadialBin36CA(5) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140911_sidecam_880G_Radial_36Bins_BinAvg.fig');
+handlesRadialBin36CA(6) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_900G_Radial_36Bins_BinAvg.fig');
+handlesRadialBin36CA(7) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_920G_Radial_36Bins_BinAvg.fig');
+handlesRadialBin36CA(8) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_950G_Radial_36Bins_BinAvg.fig');
+handlesRadialBin36CA(9) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_972G_Radial_36Bins_BinAvg.fig');
+handlesRadialBin36CA(10) = gcf;
+
+transverseImages = 3;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140909_sidecam_TransverseWidth_5000_PixelNumber.fig');
+handlesTransverse(1) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140907_sidecam_TransverseWidth_10000_PixelNumber.fig');
+handlesTransverse(2) = gcf;
+open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_TransverseWidth_13500_PixelNumber.fig');
+handlesTransverse(3) = gcf;
+else
 if(1)
 open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Tight_50Bins.fig');
 handles(1) = gcf;
@@ -138,7 +255,7 @@ open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence
 handlesTransverse(2) = gcf;
 open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_TransverseWidth_13500_PixelNumber.fig');
 handlesTransverse(3) = gcf;
-
+end
 xdatas = []; ydatas = [];
 xdatasT = []; ydatasT = [];
 xdatasLog10 = []; ydatasLog10 = [];
@@ -384,7 +501,11 @@ for j=1:imageNumber
     
     grid on;
     figname = [ 'ElbowGraph_Field_' num2str(magVector(j)) 'G'];
+    if(home)
+    figdirectory = 'C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Elbows\';  
+    else
     figdirectory = 'C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Elbows\';
+    end
     saveas(h,[figdirectory figname '.fig'],'fig');
     saveas(h,[figdirectory figname '.png'],'png');
     hold off;
@@ -474,10 +595,30 @@ for i=1:imageNumber
 end
 
 padAmount = 0;
-zMatrix = [];
+zMatrix = []; yMatrix = []; xMatrix = [];
+
 for i=1:imageNumber
-    padAmount = longest - length(ydatas{i}{3}(:));
+    %padAmount = longest - length(ydatas{i}{3}(:));
     zMatrix(:,i) = padarray(ydatas{i}{3}(:),padAmount,NaN,'post');
+    yMatrix(:,i) = padarray(xdatas{i}{3}(:),padAmount,NaN,'post');
+    xMatrix(:,i) = padarray(magVector(i),46-10,magVector(i),'post');
+end
+
+if(0)
+padAmount = 0;
+zMatrix = []; yMatrix = []; xMatrix = [];
+zMatrixUS = []; yMatrixUS = [];
+for i=1:imageNumber
+    %padAmount = longest - length(ydatas{i}{3}(:));
+    zMatrixUS(:,i) = padarray(ydatas{i}{3}(:),370-37,NaN,'post');
+    yMatrixUS(:,i) = padarray(yMatrixRVector,padAmount,NaN,'post');
+    [sortedyS,indexs] = sort(yMatrixUS(:,i));
+    for j=1:length(indexs)
+        zMatrix(j,i) = zMatrixUS(indexs(j),i);
+    end
+    yMatrix(:,i) = sortedyS;
+    xMatrix(:,i) = padarray(magVector(i),46-10,magVector(i),'post');
+end         
 end
 
 padAmount = 0;
@@ -636,6 +777,30 @@ hold off;
 grid on;
 
 
+%%%%%Delaunay plot:
+figure(210);
+hold on;
+tri = delaunay(xMatrix,inpaint_nans(yMatrix));
+[r,c] = size(tri);
+disp(r)
+h = trisurf(tri, xMatrix, inpaint_nans(yMatrix), inpaint_nans(zMatrix));
+%axis vis3d
+%l = light('Position',[-50 -15 29])
+%set(gca,'CameraPosition',[208 -50 7687])
+%lighting phong
+shading interp
+%colorbar EastOutside
+
+hold off;
+
+%%%%%%Griddata plot:
+xMatrixRVector = reshape(xMatrix,[],1);
+yMatrixRVector = reshape(inpaint_nans(yMatrix),[],1);
+zMatrixRVector = reshape(inpaint_nans(zMatrix),[],1);
+
+[xqS,yqS] = meshgrid(magVector, 2000:10:60000);
+
+vqS = griddata(xMatrixRVector,yMatrixRVector,zMatrixRVector,xqS,yqS);
 
 
 
