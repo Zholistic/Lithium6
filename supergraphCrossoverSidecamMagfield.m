@@ -636,7 +636,7 @@ wei2 = xlsread('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sideca
 wei3 = xlsread('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\q2dbose.xlsx',3);
 
 h = figure(2); 
-width = 3;     % Width in inches
+width = 3; % Width in inches
 height = 2;
 fsz = 8;
 alw = 0.75;
