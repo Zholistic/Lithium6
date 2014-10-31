@@ -560,11 +560,13 @@ yToPlotTransverse = ydatasT{5};
 xToPlotTransverse = xdatasT{5};
 errorTransverse = ldatasT{5};
 plotErrorLinesFig2aMain(xToPlotTransverse,yToPlotTransverse.*2.*pixelLength./1e-6,[],errorTransverse.*2.*pixelLength./1e-6,0,1,[0 0 1],'o');
+csvwrite('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\fig2a_12kAtom.csv',[xToPlotTransverse yToPlotTransverse.*2.*pixelLength./1e-6 errorTransverse.*2.*pixelLength./1e-6]);
 %Figure 2 a) Inset: (5k atoms)
 yToPlotTransverse = ydatasT{4};
 xToPlotTransverse = xdatasT{4};
 errorTransverse = ldatasT{4};
 plotErrorLinesFig2aInset(xToPlotTransverse,yToPlotTransverse.*2.*pixelLength./1e-6,[],errorTransverse.*2.*pixelLength./1e-6,0,2,[1 0 0],'square');
+csvwrite('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\fig2a_6kAtom.csv',[xToPlotTransverse yToPlotTransverse.*2.*pixelLength./1e-6 errorTransverse.*2.*pixelLength./1e-6]);
 
 %Figure 2 b)    
 %hold on;
@@ -628,8 +630,37 @@ end
 %hold off;
 %grid on;
 
+%Wei Zhang Theory:
+wei1 = xlsread('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\q2dbose.xlsx',1);
+wei2 = xlsread('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\q2dbose.xlsx',2);
+wei3 = xlsread('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\q2dbose.xlsx',3);
 
+h = figure(2); 
+width = 3;     % Width in inches
+height = 2;
+fsz = 8;
+alw = 0.75;
+pos = get(gcf, 'Position');
+set(gcf, 'Position', [pos(1) pos(2) width*100, height*100]);
+set(gca, 'FontSize', fsz, 'LineWidth', alw,'YMinorTick','on','XMinorTick','on');
+plot(wei3(:,12),wei3(:,11),'LineWidth', 2,'LineStyle','--','color',[0 0 0]); xlim([680 990]);
+hold on;
+plot(wei2(1:end,7),wei2(1:end,6),'r','LineWidth', 2);
+plot(wei1(1:end,7),wei1(1:end,6),'b','LineWidth', 2);
+ line([832.2 832.2],[0 1],'Color',[0 0 0],'LineWidth', 1,'LineStyle','-.');  
+hold off;
 
+set(gcf,'InvertHardcopy','on');
+set(gcf,'PaperUnits', 'inches');
+papersize = get(gcf, 'PaperSize');
+left = (papersize(1)- width)/2;
+bottom = (papersize(2)- height)/2;
+myfiguresize = [left, bottom, width, height];
+set(gcf,'PaperPosition', myfiguresize);
+
+print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2_wei_v2'],'-depsc2','-r300');
+print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2_wei_v2'],'-dpng','-r300');
+saveas(h,['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2_wei_v2'],'fig');
 
 
 %%%%%Fancy Surface Plot
@@ -695,7 +726,7 @@ ElbowsN2DEfError = (omegaRVector./omegaZ).*sqrt(2.*elbows(2,:));
 %paintedNansMasterMatrix = inpaint_nans(masterMatrix);
 
 close all;
-figure(3000);
+h = figure(3000);
 x = []; y = []; z = []; xlin = []; ylin = []; Z = [];
 x = masterMatrix(1,:);
 y = masterMatrix(2,:);
@@ -734,8 +765,13 @@ box on;
 colorbar;
 
 % Save the file as PNG
-print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_y_Efonhbaromegaz_x_lzona3d_v5'],'-depsc2','-r300');
-print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_y_Efonhbaromegaz_x_lzona3d_v5'],'-dpng','-r300');
+print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_y_Efonhbaromegaz_x_lzona3d_v6'],'-depsc2','-r300');
+print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_y_Efonhbaromegaz_x_lzona3d_v6'],'-dpng','-r300');
+saveas(h,['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_y_Efonhbaromegaz_x_lzona3d_v6'],'fig'); %(h,[figdirectory figname '.fig'],'fig')
+csvwrite(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_surface_interpolated.csv'],[X Y Z]);
+csvwrite(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_surface_raw.csv'],masterMatrix);
+csvwrite(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_elbows.csv'],ElbowsN2DEf);
+csvwrite(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_elbows_error.csv'],ElbowsN2DEfError./3);
 
 for i=1:length(logKfA2D)
     minL = min(logKfA2D{i});

@@ -1,8 +1,8 @@
 function [ handleG ] = plotErrorLinesFig2aMain( xArray, yArray, xError, yError, argXY, fignumber, color, markerType )
 %width = 2.6;     % Width in inches
 %height = 1.2;    % Height in inches
-width = 6.2;     % Width in inches
-height = 3;    % Height in inches
+width = 6;     % Width in inches
+height = 2;    % Height in inches
 alw = 0.75;    % AxesLineWidth
 fsz = 8;      % Fontsize
 lw = 0.5;      % LineWidth
@@ -14,7 +14,7 @@ pos = get(gcf, 'Position');
 set(gcf, 'Position', [pos(1) pos(2) width*100, height*100]); %<- Set size
 %set(gca, 'FontSize', fsz, 'LineWidth', alw,'YGrid','on','YTick', 4.2:0.4:6);
 %set(gca, 'FontSize', fsz, 'LineWidth', alw,'GridLineStyle','-','YGrid','on','XGrid','on','YMinorTick','on','XMinorTick','on');
-set(gca, 'FontSize', fsz, 'LineWidth', alw,'YMinorTick','on','XMinorTick','on','YGrid','on'); %<- Set properties
+set(gca, 'FontSize', fsz, 'LineWidth', alw,'YMinorTick','on','XMinorTick','on'); %<- Set properties
 %plot(dmn,f(dmn),'b-','LineWidth',lw,'MarkerSize',msz); %<- Specify plot properites
 box on;
 
@@ -23,7 +23,7 @@ if(argXY == 0)
 
     hold on;
     
-    line([832.2 832.2],[24 31],'Color',[0.8 0.6 0.6],'LineWidth', lw);    
+    line([832.2 832.2],[16 22],'Color',[0 0 0],'LineWidth', lw,'LineStyle','-.');    
     
     for i=1:length(yArray)
         line([xArray(i) xArray(i)],[(yArray(i) - yError(i)) (yArray(i) + yError(i))], ...
@@ -35,12 +35,12 @@ if(argXY == 0)
         'Marker',markerType,...
         'LineStyle','none','LineWidth',lw);
         
-    xlim([680 1000]);
-    ylim([24 31]);
+    xlim([680 990]);
+    ylim([16.5 21.5]);
     %legend('f(x)', 'g(x)', 'f(x)=g(x)', 'Location', 'SouthEast');
-    xlabel('Magnetic Field (G)');
-    ylabel('Transverse Width (\mu m)');
-    title('Transverse Width vs Magnetic Field (N_{\sigma} = 12 thousand)');
+    %xlabel('Magnetic Field (G)');
+    %ylabel('Transverse Width (\mu m)');
+    %title('Transverse Width vs Magnetic Field (N_{\sigma} = 12 thousand)');
         
     
 elseif(argXY == 1)
@@ -78,9 +78,9 @@ set(gcf,'PaperPosition', myfiguresize);
 %set(gcf,'Renderer','OpenGL')
 
 % Save the file as PNG
-print('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2a_Main_v5','-depsc2','-r300');
-print('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2a_Main_v5','-dpng','-r300');
-
+print('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2a_Main_v11','-depsc2','-r300');
+print('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2a_Main_v11','-dpng','-r300');
+saveas(handleG,
 
 
 end

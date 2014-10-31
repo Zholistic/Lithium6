@@ -15,12 +15,15 @@ dSet = 1;
 if(fignumber == 1000)
     dSet = 1;
     %mag = 2;
+    fignumber = 832;
 elseif(fignumber == 1001)
     dSet = 2;
     %mag = 7;
+    fignumber = 865;
 elseif(fignumber == 1002)
     dSet = 3;
     %mag = 10;
+    fignumber = 950;
 end
 
 handleG = figure(fignumber);
@@ -95,7 +98,7 @@ elseif(argXY == 1)
 
     
     xlim([0 33800]);
-    ylim([15 21]);
+    ylim([16 21]);
     %legend('f(x)', 'g(x)', 'f(x)=g(x)', 'Location', 'SouthEast');
     %xlabel('Magnetic Field (G)');
     %ylabel('Transverse Width (\mu m)');
@@ -118,6 +121,8 @@ set(gcf,'PaperPosition', myfiguresize);
 % Save the file as PNG
 print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2b_Main' num2str(fignumber) '_v13'],'-depsc2','-r300');
 print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2b_Main' num2str(fignumber) '_v13'],'-dpng','-r300');
+saveas(handleG,['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2def_Main' num2str(fignumber) '_v13'],'fig');
+csvwrite(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2def_' num2str(fignumber) '.csv'],[xArray yArray yError]);
 
 figure(20+fignumber);
     plot(xArray,yArray,'Color',color,'MarkerSize',msz,...
@@ -134,5 +139,6 @@ figure(20+fignumber);
 % Save the file as PNG
 print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2b_Main' num2str(fignumber+20) '_Legend_v3'],'-depsc2','-r300');
 print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2b_Main' num2str(fignumber+20) '_Legend_v3'],'-dpng','-r300');
+
 
 end

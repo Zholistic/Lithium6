@@ -2,7 +2,7 @@ function [ handleG ] = plotErrorLines( xArray, yArray, xError, yError, argXY, fi
 %width = 2.6;     % Width in inches
 %height = 1.2;    % Height in inches
 width = 2;     % Width in inches
-height = 3;    % Height in inches
+height = 2;    % Height in inches
 alw = 0.75;    % AxesLineWidth
 fsz = 8;      % Fontsize
 lw = 0.5;      % LineWidth
@@ -95,7 +95,7 @@ elseif(argXY == 1)
 
     
     xlim([0 33800]);
-    ylim([22 28]);
+    ylim([16 21]);
     %legend('f(x)', 'g(x)', 'f(x)=g(x)', 'Location', 'SouthEast');
     %xlabel('Magnetic Field (G)');
     %ylabel('Transverse Width (\mu m)');
@@ -116,8 +116,10 @@ set(gcf,'PaperPosition', myfiguresize);
 %set(gcf,'Renderer','OpenGL')
 
 % Save the file as PNG
-print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2b_Main' num2str(fignumber) '_v11'],'-depsc2','-r300');
-print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2b_Main' num2str(fignumber) '_v11'],'-dpng','-r300');
+print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2b_Main' num2str(fignumber) '_v13'],'-depsc2','-r300');
+print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2b_Main' num2str(fignumber) '_v13'],'-dpng','-r300');
+saveas(handleG,['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2def_Main' num2str(fignumber) '_v13'],'fig');
+csvwrite('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2def_' num2str(fignumber) '.csv',[xToPlotTransverse yToPlotTransverse.*2.*pixelLength./1e-6 errorTransverse.*2.*pixelLength./1e-6]);
 
 figure(20+fignumber);
     plot(xArray,yArray,'Color',color,'MarkerSize',msz,...
@@ -132,7 +134,8 @@ figure(20+fignumber);
         legend '950 G';
     end
 % Save the file as PNG
-print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2b_Main' num2str(fignumber+20) '_Legend_v2'],'-depsc2','-r300');
-print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2b_Main' num2str(fignumber+20) '_Legend_v2'],'-dpng','-r300');
+print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2b_Main' num2str(fignumber+20) '_Legend_v3'],'-depsc2','-r300');
+print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2b_Main' num2str(fignumber+20) '_Legend_v3'],'-dpng','-r300');
+
 
 end

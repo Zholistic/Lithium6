@@ -83,7 +83,7 @@ set(gcf,'PaperPosition', myfiguresize);
 % Save the file as PNG
 print('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2a_Inset_v11','-depsc2','-r300');
 print('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2a_Inset_v11','-dpng','-r300');
-
+saveas(handleG,'C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2a_Inset_v11','fig');
 
 
 end
