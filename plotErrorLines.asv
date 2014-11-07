@@ -15,15 +15,12 @@ dSet = 1;
 if(fignumber == 1000)
     dSet = 1;
     %mag = 2;
-    fignumber = 832;
 elseif(fignumber == 1001)
     dSet = 2;
     %mag = 7;
-    fignumber = 865;
 elseif(fignumber == 1002)
     dSet = 3;
     %mag = 10;
-    fignumber = 950;
 end
 
 handleG = figure(fignumber);
@@ -37,6 +34,7 @@ box on;
 
 if(argXY == 0)
     %only yError:
+
     hold on;
     
     for i=1:length(yArray)
@@ -66,9 +64,7 @@ if(argXY == 0)
     
 elseif(argXY == 1)
     
-
     %handleG = figure(fignumber);
-
     hold on;
     for i=1:length(yArray)
         line([xArray(i) xArray(i)],[(yArray(i) - yError(i)) (yArray(i) + yError(i))], ...
@@ -123,7 +119,7 @@ set(gcf,'PaperPosition', myfiguresize);
 print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2b_Main' num2str(fignumber) '_v13'],'-depsc2','-r300');
 print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2b_Main' num2str(fignumber) '_v13'],'-dpng','-r300');
 saveas(handleG,['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2def_Main' num2str(fignumber) '_v13'],'fig');
-csvwrite(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2def_' num2str(fignumber) '.csv'],[xArray yArray yError]);
+csvwrite('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\figure2def_' num2str(fignumber) '.csv',[xToPlotTransverse yToPlotTransverse.*2.*pixelLength./1e-6 errorTransverse.*2.*pixelLength./1e-6]);
 
 figure(20+fignumber);
     plot(xArray,yArray,'Color',color,'MarkerSize',msz,...

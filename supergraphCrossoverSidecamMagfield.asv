@@ -3,11 +3,9 @@ close all;
 handles = [];
 imageNumber = 10;
 bins = 36;
-
 massL6 = 9.988e-27; %9.988 x 10^27 kg
 hbar = 1.05457e-34; %1.05457*10^-34 m^2 kg/s
 pixelLength = 3.75e-6 / 1.9; %2.84 um topcam, 3.2250 um sidecam 1.9 magnification (old 1.4 mag)
-
 
 magVector = [820 832.2 855 860 865 880 900 920 950 972];
 
@@ -27,122 +25,6 @@ handles(6) = gcf;
 open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\All Tight Binned Indv fig\CrossoverSideCam_972G_TightWidthvsAtom_140914_BinnedIndividualFits_withRaw.fig');
 handles(7) = gcf;
 end
-
-    if(1)
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Tight_50Bins.fig');
-handles(1) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140916_sidecam_832p2G_Tight_50Bins.fig');
-handles(2) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_855G_Tight_50Bins.fig');
-handles(3) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_860G_Tight_50Bins.fig');
-handles(4) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_865G_Tight_50Bins.fig');
-handles(5) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140911_sidecam_880G_Tight_50Bins.fig');
-handles(6) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_900G_Tight_50Bins.fig');
-handles(7) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_920G_Tight_50Bins.fig');
-handles(8) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_950G_Tight_50Bins.fig');
-handles(9) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_972G_Tight_50Bins.fig');
-handles(10) = gcf;
-end
-
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Tight_36Bins_BinAvg.fig');
-handlesBin36CA(1) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140916_sidecam_832p2G_Tight_36Bins_BinAvg.fig');
-handlesBin36CA(2) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_855G_Tight_36Bins_BinAvg.fig');
-handlesBin36CA(3) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_860G_Tight_36Bins_BinAvg.fig');
-handlesBin36CA(4) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_865G_Tight_36Bins_BinAvg.fig');
-handlesBin36CA(5) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140911_sidecam_880G_Tight_36Bins_BinAvg.fig');
-handlesBin36CA(6) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_900G_Tight_36Bins_BinAvg.fig');
-handlesBin36CA(7) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_920G_Tight_36Bins_BinAvg.fig');
-handlesBin36CA(8) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_950G_Tight_36Bins_BinAvg.fig');
-handlesBin36CA(9) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_972G_Tight_36Bins_BinAvg.fig');
-handlesBin36CA(10) = gcf;
-
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Radial_Log1050Bins.fig');
-handlesLog(1) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140916_sidecam_832p2G_Radial_Log1050Bins.fig');
-handlesLog(2) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_855G_Radial_Log1050Bins.fig');
-handlesLog(3) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_860G_Radial_Log1050Bins.fig');
-handlesLog(4) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_865G_Radial_Log1050Bins.fig');
-handlesLog(5) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140911_sidecam_880G_Radial_Log1050Bins.fig');
-handlesLog(6) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_900G_Radial_Log1050Bins.fig');
-handlesLog(7) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_920G_Radial_Log1050Bins.fig');
-handlesLog(8) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_950G_Radial_Log1050Bins.fig');
-handlesLog(9) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_972G_Radial_Log1050Bins.fig');
-handlesLog(10) = gcf;
-
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Radial_50Bins.fig');
-handlesRadial(1) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140916_sidecam_832p2G_Radial_50Bins.fig');
-handlesRadial(2) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_855G_Radial_50Bins.fig');
-handlesRadial(3) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_860G_Radial_50Bins.fig');
-handlesRadial(4) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_865G_Radial_50Bins.fig');
-handlesRadial(5) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140911_sidecam_880G_Radial_50Bins.fig');
-handlesRadial(6) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_900G_Radial_50Bins.fig');
-handlesRadial(7) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_920G_Radial_50Bins.fig');
-handlesRadial(8) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_950G_Radial_50Bins.fig');
-handlesRadial(9) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_972G_Radial_50Bins.fig');
-handlesRadial(10) = gcf;
-
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Radial_36Bins_BinAvg.fig');
-handlesRadialBin36CA(1) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140916_sidecam_832p2G_Radial_36Bins_BinAvg.fig');
-handlesRadialBin36CA(2) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_855G_Radial_36Bins_BinAvg.fig');
-handlesRadialBin36CA(3) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_860G_Radial_36Bins_BinAvg.fig');
-handlesRadialBin36CA(4) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140912_sidecam_865G_Radial_36Bins_BinAvg.fig');
-handlesRadialBin36CA(5) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140911_sidecam_880G_Radial_36Bins_BinAvg.fig');
-handlesRadialBin36CA(6) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_900G_Radial_36Bins_BinAvg.fig');
-handlesRadialBin36CA(7) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_920G_Radial_36Bins_BinAvg.fig');
-handlesRadialBin36CA(8) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_950G_Radial_36Bins_BinAvg.fig');
-handlesRadialBin36CA(9) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140914_sidecam_972G_Radial_36Bins_BinAvg.fig');
-handlesRadialBin36CA(10) = gcf;
-
-transverseImages = 3;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140909_sidecam_TransverseWidth_5000_PixelNumber.fig');
-handlesTransverse(1) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140907_sidecam_TransverseWidth_10000_PixelNumber.fig');
-handlesTransverse(2) = gcf;
-open('C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_TransverseWidth_13500_PixelNumber.fig');
-handlesTransverse(3) = gcf;
-
 if(1)
 open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_820G_Tight_50Bins.fig');
 handles(1) = gcf;
@@ -259,7 +141,6 @@ open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence
 handlesTransverse(2) = gcf;
 open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140915_sidecam_TransverseWidth_13500_PixelNumber.fig');
 handlesTransverse(3) = gcf;
-
 open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140909_sidecam_TransverseWidth_5000_PixelNumber_CenterAvg.fig');
 handlesTransverse(4) = gcf;
 open('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\140907_sidecam_TransverseWidth_10000_PixelNumber_CenterAvg.fig');
@@ -512,11 +393,7 @@ for j=1:imageNumber
     
     grid on;
     figname = [ 'ElbowGraph_Field_' num2str(magVector(j)) 'G'];
-    if(home)
-    figdirectory = 'C:\Users\Zholistic\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Elbows\';  
-    else
     figdirectory = 'C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Elbows\';
-    end
     %saveas(h,[figdirectory figname '.fig'],'fig');
     %saveas(h,[figdirectory figname '.png'],'png');
     hold off;
@@ -607,11 +484,11 @@ for i=1:imageNumber
 end
 
 padAmount = 0;
-zMatrix = []; yMatrix = []; xMatrix = [];
-
+zMatrix = [];
 for i=1:imageNumber
-    %padAmount = longest - length(ydatas{i}{3}(:));
+    padAmount = longest - length(ydatas{i}{3}(:));
     zMatrix(:,i) = padarray(ydatas{i}{3}(:),padAmount,NaN,'post');
+    
 end
 
 padAmount = 0;
@@ -759,7 +636,7 @@ wei2 = xlsread('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sideca
 wei3 = xlsread('C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure2\q2dbose.xlsx',3);
 
 h = figure(2); 
-width = 3; % Width in inches
+width = 3;     % Width in inches
 height = 2;
 fsz = 8;
 alw = 0.75;
@@ -893,9 +770,8 @@ print(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequen
 saveas(h,['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_y_Efonhbaromegaz_x_lzona3d_v6'],'fig'); %(h,[figdirectory figname '.fig'],'fig')
 csvwrite(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_surface_interpolated.csv'],[X Y Z]);
 csvwrite(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_surface_raw.csv'],masterMatrix);
-csvwrite(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_elbows.csv'],ElbowsN2DEf);
-csvwrite(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_elbows_error.csv'],ElbowsN2DEfError./3);
-
+csvwrite(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_elbows.csv'],ElbowsN2DEf);ElbowsN2DEfError(i)./3
+csvwrite(['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Figure3\figure3_elbows_error.csv'],ElbowsN2DEf);
 for i=1:length(logKfA2D)
     minL = min(logKfA2D{i});
 end
@@ -1015,30 +891,6 @@ hold off;
 grid on;
 
 
-%%%%%Delaunay plot:
-figure(210);
-hold on;
-tri = delaunay(xMatrix,inpaint_nans(yMatrix));
-[r,c] = size(tri);
-disp(r)
-h = trisurf(tri, xMatrix, inpaint_nans(yMatrix), inpaint_nans(zMatrix));
-%axis vis3d
-%l = light('Position',[-50 -15 29])
-%set(gca,'CameraPosition',[208 -50 7687])
-%lighting phong
-shading interp
-%colorbar EastOutside
-
-hold off;
-
-%%%%%%Griddata plot:
-xMatrixRVector = reshape(xMatrix,[],1);
-yMatrixRVector = reshape(inpaint_nans(yMatrix),[],1);
-zMatrixRVector = reshape(inpaint_nans(zMatrix),[],1);
-
-[xqS,yqS] = meshgrid(magVector, 2000:10:60000);
-
-vqS = griddata(xMatrixRVector,yMatrixRVector,zMatrixRVector,xqS,yqS);
 
 
 
