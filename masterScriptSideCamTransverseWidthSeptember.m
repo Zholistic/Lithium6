@@ -1,18 +1,19 @@
 %directory = 'C:\Data\140904_transversewidth_600usTOF_Isat1e8_alpha0.6_atomnumber_5000\';
 %directory = 'C:\Data\140904_transversewidth_600usTOF_Isat1e8_alpha0.6_atomnumber_10000\';
 directory = 'C:\Data\140907_2D_transversewidth_10k_atoms_750ms_ramp\';
-%directory = 'C:\Data\140909_transversewidth_5k_atoms_750ms_ramp\';
+directory = 'C:\Data\140909_transversewidth_5k_atoms_750ms_ramp\';
 %directory = 'C:\Data\140915_transversewidth_13p5k_atoms_750ms_ramp\';
 date = '140904';
 date = '140907';
-%date = '140909';
+date = '140909';
 %date = '140915';
 camera = 'sidecam';
 varstring = 'mag_field'; %140907 (and previous?)
-%varstring = 'magnetic_field';
-atomnum = 10000;
+varstring = 'magnetic_field'; %Make sure this is right or will get wrong varData...
+atomnum = 5000;
 %varstring2 = 'Holdtime';
 pixelLength = 2.84e-6; %2.84 um topcam, 
+pixelLength = 3.75e-6 / 1.9;
 massL6 = 9.988e-27; %9.988 x 10^27 kg
 hbar = 1.05457e-34; %1.05457*10^-34 m^2 kg/s
 Isat = 135*10; %135*x us
@@ -270,10 +271,10 @@ for i=1:length(widthsYavg)
 end
 
 %convert to real units:
-%widthsX = widthsX.*pixelLength.*2; %*2 to make it not the radius
-%widthsY = widthsY.*pixelLength.*2; 
-%stdDevWidthsY = stdDevWidthsY.*pixelLength.*2; %full error on width
-%stdDevWidthsX = stdDevWidthsX.*pixelLength.*2;
+widthsX = widthsX.*2.*pixelLength./1e-6; %*2 to make it not the radius
+widthsY = widthsY.*2.*pixelLength./1e-6; 
+stdDevWidthsY = stdDevWidthsY.*2.*pixelLength./1e-6; %full error on width
+stdDevWidthsX = stdDevWidthsX.*2.*pixelLength./1e-6;
 
 sMomentY = sMomentY.*pixelLength.*2; %*2 to make it not the radius
 sMomentX = sMomentX.*pixelLength.*2; 

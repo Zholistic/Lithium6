@@ -41,8 +41,7 @@ for i=1:(length(C)-1)
     if strcmp(curr,'MeasNr')
         TotalImages = TotalImages + 1;
     end
-              
-    
+                 
 end
 
 %Get information from log file:
