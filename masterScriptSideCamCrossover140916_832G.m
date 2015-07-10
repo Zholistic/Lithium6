@@ -335,6 +335,52 @@ for i=1:length(widthsYavgBin)
     widthsXavgBinError(i) = widthsXavgBin(i) - gcoefsXaBinError(3,1,i);
 end
 
+%2015 Central Density work:
+%---------------------------------------------
+%bin number (no elbow here) is closest to the elbow atom number:
+peakDensities = []; coefsPolyFits = []; weakProfiles = [];
+for i=2:22
+binnum = i;
+figure(2000);
+%imagesc(avgImagesBin(:,:,binnum));
+figure(2001);
+tightProfile = mean(avgImagesBin(:,CrossROIx,binnum),2);
+%plot(tightProfile);
+figure(2002);
+weakProfiles(:,i) = mean(avgImagesBin(CrossROIy,:,binnum),1);
+%plot(weakProfile);
+binAtomNumber = atomMeans(binnum);
+%atomMeans
+
+%Fit polylog to the weak profile:
+coefsPolyFits(:,i) = polyLog1Fit1D(mean(avgImagesBin(CrossROIy,:,binnum),1),camera);
+figure(3000 + i);
+fgPL = @(p,x)(p(1).*log(1+exp((p(2)+(-1).*(x-p(3)).^2)./(p(4).^2))));
+plot(fgPL(coefsPolyFits(:,i),1:400)); hold on; plot(weakProfiles(:,i), 'r'); hold off;
+
+%peak density:
+peakDensity = max(fgPL(coefsPolyFit,1:400));
+%peakDensity
+peakDensities(i) = peakDensity;
+end
+
+%---------------------------------------------
+
+%bin numbers 2-18
+%peakDensities = [16.4771, 19.0768, 23.0874, 26.4634, 30.2181, 33.2543, 37.9829, 42.5008, 50.8495, 56.5960, 60.1847, 64.1202, 66.5675, 69.8547, 73.5390, 77.1333, 79.6861];
+figure(2004);
+plot( atomMeans(2:22),peakDensities(2:22),'.');
+
+%---------------------------------------------
+for i=2:22
+    figure(4000);
+    hold on;
+    shift = 120;
+    plot(1+i*shift:381+i*shift,fgPL(coefsPolyFits(:,i),1:381),'Color',[0.1+i/100 0.6+i/100 1]);  plot(1+i*shift:381+i*shift,weakProfiles(:,i),'Color',[1 0.6 0.6]);   
+end
+
+%---------------------------------------------
+
 %convert to real units:
 %widthsX = widthsX.*pixelLength.*2; %*2 to make it not the radius
 %widthsY = widthsY.*pixelLength.*2; 

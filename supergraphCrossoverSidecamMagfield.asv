@@ -386,6 +386,10 @@ end
 hold off;
 grid on;
 
+%2015 Elbow work:
+peakPoly = [36.5674, 53.2957, 45.5677, 54.4748, 54.6825, 62.1721, 53.5184, 64.859];
+atomPoly = [7566, 12468, 10813, 15822, 18866, 18917, 20692, 18746];
+
 figure(301);
 hold on; coefsLF = []; coefsLFs = [];
 for j=1:imageNumber

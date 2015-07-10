@@ -1,8 +1,8 @@
-directory = 'C:\Data\140912_2d_transverse_crossover_865G_750ms_laser_ramp_ISAT1e6_alpha_1\';
-date = '140912';
+directory = 'C:\Data\140916_2d_transverse_crossover_832p2G_750ms_laser_ramp_ISAT1e6_alpha_1\';
+date = '140916';
 camera = 'sidecam';
 varstring = 'motfet';
-magfield = '865G';
+magfield = '832p2G';
 bins = 36;
 %varstring2 = 'Holdtime';
 pixelLength = 2.84e-6; %2.84 um topcam, 
@@ -337,26 +337,48 @@ end
 
 %2015 Central Density work:
 %---------------------------------------------
-%bin number 6 is closest to the elbow atom number:
-binnum = 6;
+%bin number (no elbow here) is closest to the elbow atom number:
+peakDensities = []; coefsPolyFits = []; weakProfiles = [];
+for i=2:22
+binnum = i;
 figure(2000);
-imagesc(avgImagesBin(:,:,binnum));
+%imagesc(avgImagesBin(:,:,binnum));
 figure(2001);
 tightProfile = mean(avgImagesBin(:,CrossROIx,binnum),2);
-plot(tightProfile);
+%plot(tightProfile);
 figure(2002);
-weakProfile = mean(avgImagesBin(CrossROIy,:,binnum),1);
-plot(weakProfile);
-binAtomNumber = atomNumsBin(binnum);
+weakProfiles(:,i) = mean(avgImagesBin(CrossROIy,:,binnum),1);
+%plot(weakProfile);
+binAtomNumber = atomMeans(binnum);
+%atomMeans
 
 %Fit polylog to the weak profile:
-coefsPolyFit = polyLog1Fit1D(mean(avgImagesBin(CrossROIy,:,binnum),1),camera);
-figure(2003);
+coefsPolyFits(:,i) = polyLog1Fit1D(mean(avgImagesBin(CrossROIy,:,binnum),1),camera);
+figure(3000 + i);
 fgPL = @(p,x)(p(1).*log(1+exp((p(2)+(-1).*(x-p(3)).^2)./(p(4).^2))));
-plot(fgPL(coefsPolyFit,1:400)); hold on; plot(weakProfile, 'r'); hold off;
+plot(fgPL(coefsPolyFits(:,i),1:400)); hold on; plot(weakProfiles(:,i), 'r'); hold off;
 
 %peak density:
 peakDensity = max(fgPL(coefsPolyFit,1:400));
+%peakDensity
+peakDensities(i) = peakDensity;
+end
+
+%---------------------------------------------
+
+%bin numbers 2-18
+%peakDensities = [16.4771, 19.0768, 23.0874, 26.4634, 30.2181, 33.2543, 37.9829, 42.5008, 50.8495, 56.5960, 60.1847, 64.1202, 66.5675, 69.8547, 73.5390, 77.1333, 79.6861];
+figure(2004);
+plot( atomMeans(2:22),peakDensities(2:22),'.');
+
+%---------------------------------------------
+for i=2:22
+    figure(4000);
+    hold on;
+    plot(fgPL(coefsPolyFits(:,i),1:400));  plot(1:381,weakProfiles(:,i), 'r');
+    
+    
+end
 
 %---------------------------------------------
 

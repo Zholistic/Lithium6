@@ -1,8 +1,8 @@
-directory = 'C:\Data\140912_2d_transverse_crossover_865G_750ms_laser_ramp_ISAT1e6_alpha_1\';
-date = '140912';
+directory = 'C:\Data\140911_2d_transverse_crossover_880G_750ms_laser_ramp_ISAT1e6_alpha_1\';
+date = '140911';
 camera = 'sidecam';
 varstring = 'motfet';
-magfield = '865G';
+magfield = '880G';
 bins = 36;
 %varstring2 = 'Holdtime';
 pixelLength = 2.84e-6; %2.84 um topcam, 
@@ -337,26 +337,24 @@ end
 
 %2015 Central Density work:
 %---------------------------------------------
-%bin number 6 is closest to the elbow atom number:
-binnum = 6;
+%bin number 9 is closest to the elbow atom number:
 figure(2000);
-imagesc(avgImagesBin(:,:,binnum));
+imagesc(avgImagesBin(:,:,9));
 figure(2001);
-tightProfile = mean(avgImagesBin(:,CrossROIx,binnum),2);
+tightProfile = mean(avgImagesBin(:,CrossROIx,9),2);
 plot(tightProfile);
 figure(2002);
-weakProfile = mean(avgImagesBin(CrossROIy,:,binnum),1);
+weakProfile = mean(avgImagesBin(CrossROIy,:,9),1);
 plot(weakProfile);
-binAtomNumber = atomNumsBin(binnum);
+binAtomNumber = atomNumsBin(9);
 
 %Fit polylog to the weak profile:
-coefsPolyFit = polyLog1Fit1D(mean(avgImagesBin(CrossROIy,:,binnum),1),camera);
+coefsPolyFit = polyLog1Fit1D(mean(avgImagesBin(CrossROIy,:,9),1),camera);
 figure(2003);
 fgPL = @(p,x)(p(1).*log(1+exp((p(2)+(-1).*(x-p(3)).^2)./(p(4).^2))));
-plot(fgPL(coefsPolyFit,1:400)); hold on; plot(weakProfile, 'r'); hold off;
+plot(fgPL(coefsPolyFit,1:400));
 
-%peak density:
-peakDensity = max(fgPL(coefsPolyFit,1:400));
+%peak
 
 %---------------------------------------------
 

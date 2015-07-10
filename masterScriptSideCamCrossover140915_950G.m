@@ -334,6 +334,31 @@ for i=1:length(widthsYavgBin)
     widthsXavgBinError(i) = widthsXavgBin(i) - gcoefsXaBinError(3,1,i);
 end
 
+%2015 Central Density work:
+%---------------------------------------------
+%bin number 12 is closest to the elbow atom number:
+binnum = 11;
+figure(2000);
+imagesc(avgImagesBin(:,:,binnum));
+figure(2001);
+tightProfile = mean(avgImagesBin(:,CrossROIx,binnum),2);
+plot(tightProfile);
+figure(2002);
+weakProfile = mean(avgImagesBin(CrossROIy,:,binnum),1);
+plot(weakProfile);
+binAtomNumber = atomNumsBin(binnum);
+
+%Fit polylog to the weak profile:
+coefsPolyFit = polyLog1Fit1D(mean(avgImagesBin(CrossROIy,:,binnum),1),camera);
+figure(2003);
+fgPL = @(p,x)(p(1).*log(1+exp((p(2)+(-1).*(x-p(3)).^2)./(p(4).^2))));
+plot(fgPL(coefsPolyFit,1:400)); hold on; plot(weakProfile, 'r'); hold off;
+
+%peak density:
+peakDensity = max(fgPL(coefsPolyFit,1:400));
+
+%---------------------------------------------
+
 %convert to real units:
 %widthsX = widthsX.*pixelLength.*2; %*2 to make it not the radius
 %widthsY = widthsY.*pixelLength.*2; 
