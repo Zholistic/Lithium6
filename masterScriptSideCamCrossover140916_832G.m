@@ -311,6 +311,7 @@ end
 
 %Fit functions to the averaged bin images:
 gcoefsXaBin = []; gcoefsYaBin = []; gcoefsYaBinError = []; gcoefsXaBinError = [];
+centersAvg = [];
 for i=1:length(avgImagesBin(1,1,:))
     if(avgImagesBin(1,1,i) == 40000)
         %no image to fit to in this bin
@@ -323,6 +324,7 @@ for i=1:length(avgImagesBin(1,1,:))
         %Profile: plot(mean(imageArrayC(:,:,i),1))
         [gcoefsYaBin(:,i),gcoefsYaBinError(:,:,i)] = gausFit1DLockZero(mean(avgImagesBin(:,CrossROIx,i),2)); %mean averages over x
         %Profile: plot(mean(imageArrayC(:,:,i),2))
+        centersAvg(:,i) = [ceil(gcoefsXaBin(2,i)), ceil(gcoefsYaBin(2,i))];
     end
 end
 
@@ -339,29 +341,68 @@ end
 %---------------------------------------------
 %bin number (no elbow here) is closest to the elbow atom number:
 peakDensities = []; coefsPolyFits = []; weakProfiles = [];
+coefsTFFits = []; omegaR = 2*pi*24.5; weakProfilesFermiRadius = [];
+Rfpxs = []; plotfunctionTF = [];
 for i=2:22
+weakProfileFermiRadius = [];    
 binnum = i;
-figure(2000);
+%figure(2000);
 %imagesc(avgImagesBin(:,:,binnum));
-figure(2001);
+%figure(2001);
 tightProfile = mean(avgImagesBin(:,CrossROIx,binnum),2);
 %plot(tightProfile);
-figure(2002);
+%figure(2002);
 weakProfiles(:,i) = mean(avgImagesBin(CrossROIy,:,binnum),1);
 %plot(weakProfile);
 binAtomNumber = atomMeans(binnum);
 %atomMeans
 
+%Fermi radius:
+Ef = sqrt(atomMeans(binnum))*hbar*omegaR; %Single spin species Ef
+Rf = sqrt((2*Ef)/(massL6*omegaR^2));
+
+%Fermi radius to pixels:
+Rfpx = ceil(Rf/pixelLength) + 15; % + n to increase width of fit
+Rfpxs(i) = Rfpx;
+
+weakProfileFermiRadius = mean(avgImagesBin(CrossROIy,centersAvg(1,i)-Rfpx:centersAvg(1,i)+Rfpx,binnum),1);
+
 %Fit polylog to the weak profile:
-coefsPolyFits(:,i) = polyLog1Fit1D(mean(avgImagesBin(CrossROIy,:,binnum),1),camera);
-figure(3000 + i);
-fgPL = @(p,x)(p(1).*log(1+exp((p(2)+(-1).*(x-p(3)).^2)./(p(4).^2))));
-plot(fgPL(coefsPolyFits(:,i),1:400)); hold on; plot(weakProfiles(:,i), 'r'); hold off;
+%coefsPolyFits(:,i) = polyLog1Fit1D(mean(avgImagesBin(CrossROIy,:,binnum),1),camera);
+%figure(3000 + i);
+%fgPL = @(p,x)(p(1).*log(1+exp((p(2)+(-1).*(x-p(3)).^2)./(p(4).^2))));
+%plot(fgPL(coefsPolyFits(:,i),1:400)); hold on; plot(weakProfiles(:,i), 'r'); hold off;
+
+%Fit Thomas-Fermi to weak profile:
+coefsTFFits(:,i) = thomasFermiFit1D(mean(avgImagesBin(CrossROIy,centersAvg(1,i)-Rfpx:centersAvg(1,i)+Rfpx,binnum),1));
+%coefsTFFits(:,i) = thomasFermiFit1D(mean(avgImagesBin(CrossROIy,:,binnum),1));
+figure(4000 + i);
+%fgTF = @(p,x)(p(1)*(1-((x-p(2)).^2)./(p(3))).^(3/2));
+fgTF = @(p,x)((4/3).*(p(1)/(p(2).^2)).*(p(2).^2-((x-p(3)).^2)).^(3/2));
+   
+s = 1;
+for j=-(length(mean(avgImagesBin(CrossROIy,:,binnum),1))-centersAvg(1,i)-Rfpx)+1:length(mean(avgImagesBin(CrossROIy,:,binnum),1))-(length(mean(avgImagesBin(CrossROIy,:,binnum),1))-centersAvg(1,i)-Rfpx)
+    if(0 > fgTF(real(coefsTFFits(:,i)),j))
+        plotfunctionTF(s) = 0;
+    else
+        plotfunctionTF(s) = fgTF(real(coefsTFFits(:,i)),j);
+    end
+    s = s+1;
+end
+
+plot(fgTF(real(coefsTFFits(:,i)),1:length(weakProfileFermiRadius))); hold on; plot(weakProfileFermiRadius, 'r'); hold off;
+%plot(fgTF(coefsTFFits(:,i),1:400)); hold on; plot(weakProfiles(:,i), 'r'); hold off;
 
 %peak density:
-peakDensity = max(fgPL(coefsPolyFit,1:400));
-%peakDensity
+%peakDensity = real(coefsTFFits(1,i))*((3*(Rf^2))/4);
+peakDensity = real(coefsTFFits(1,i));
 peakDensities(i) = peakDensity;
+
+%plot(atomMeans(2:22),peakDensities(2:22)); %Atoms vs peakDensity
+%plot(atomMeans(2:22),real(coefsTFFits(2,2:22))); %Atoms vs Fermi radii
+%plot(plotfunctionTF); hold on; plot(weakProfiles(:,i), 'r');
+%xtofitAtoms = atomMeans(2:22);
+%ytofitDensity = peakDensities(2:22);
 end
 
 %---------------------------------------------
