@@ -342,7 +342,8 @@ end
 %bin number (no elbow here) is closest to the elbow atom number:
 peakDensities = []; coefsPolyFits = []; weakProfiles = [];
 coefsTFFits = []; omegaR = 2*pi*24.5; weakProfilesFermiRadius = [];
-Rfpxs = []; plotfunctionTF = [];
+Rfpxs = []; plotfunctionTF = []; plotfunctionsTF = []; coefsTFFitsError = [];
+peakDensitiesError = [];
 for i=2:22
 weakProfileFermiRadius = [];    
 binnum = i;
@@ -362,7 +363,7 @@ Ef = sqrt(atomMeans(binnum))*hbar*omegaR; %Single spin species Ef
 Rf = sqrt((2*Ef)/(massL6*omegaR^2));
 
 %Fermi radius to pixels:
-Rfpx = ceil(Rf/pixelLength) + 15; % + n to increase width of fit
+Rfpx = ceil(Rf/pixelLength) + 22; % + n to increase width of fit
 Rfpxs(i) = Rfpx;
 
 weakProfileFermiRadius = mean(avgImagesBin(CrossROIy,centersAvg(1,i)-Rfpx:centersAvg(1,i)+Rfpx,binnum),1);
@@ -374,18 +375,20 @@ weakProfileFermiRadius = mean(avgImagesBin(CrossROIy,centersAvg(1,i)-Rfpx:center
 %plot(fgPL(coefsPolyFits(:,i),1:400)); hold on; plot(weakProfiles(:,i), 'r'); hold off;
 
 %Fit Thomas-Fermi to weak profile:
-coefsTFFits(:,i) = thomasFermiFit1D(mean(avgImagesBin(CrossROIy,centersAvg(1,i)-Rfpx:centersAvg(1,i)+Rfpx,binnum),1));
+[coefsTFFits(:,i), coefsTFFitsError(:,:,i)] = thomasFermiFit1D(mean(avgImagesBin(CrossROIy,centersAvg(1,i)-Rfpx:centersAvg(1,i)+Rfpx,binnum),1));
 %coefsTFFits(:,i) = thomasFermiFit1D(mean(avgImagesBin(CrossROIy,:,binnum),1));
 figure(4000 + i);
 %fgTF = @(p,x)(p(1)*(1-((x-p(2)).^2)./(p(3))).^(3/2));
 fgTF = @(p,x)((4/3).*(p(1)/(p(2).^2)).*(p(2).^2-((x-p(3)).^2)).^(3/2));
+
+
    
 s = 1;
-for j=-(length(mean(avgImagesBin(CrossROIy,:,binnum),1))-centersAvg(1,i)-Rfpx)+1:length(mean(avgImagesBin(CrossROIy,:,binnum),1))-(length(mean(avgImagesBin(CrossROIy,:,binnum),1))-centersAvg(1,i)-Rfpx)
+for j=-(length(mean(avgImagesBin(CrossROIy,:,binnum),1))-centersAvg(1,i)-Rfpx):length(mean(avgImagesBin(CrossROIy,:,binnum),1))-(length(mean(avgImagesBin(CrossROIy,:,binnum),1))-centersAvg(1,i)-Rfpx)
     if(0 > fgTF(real(coefsTFFits(:,i)),j))
-        plotfunctionTF(s) = 0;
+        plotfunctionsTF(s,i) = 0;
     else
-        plotfunctionTF(s) = fgTF(real(coefsTFFits(:,i)),j);
+        plotfunctionsTF(s,i) = fgTF(real(coefsTFFits(:,i)),j);
     end
     s = s+1;
 end
@@ -398,12 +401,23 @@ plot(fgTF(real(coefsTFFits(:,i)),1:length(weakProfileFermiRadius))); hold on; pl
 peakDensity = real(coefsTFFits(1,i));
 peakDensities(i) = peakDensity;
 
+for t=1:length(peakDensities)
+    peakDensitiesError(i) = peakDensities(i) - coefsTFFitsError(1,1,i);
+end
+
 %plot(atomMeans(2:22),peakDensities(2:22)); %Atoms vs peakDensity
 %plot(atomMeans(2:22),real(coefsTFFits(2,2:22))); %Atoms vs Fermi radii
 %plot(plotfunctionTF); hold on; plot(weakProfiles(:,i), 'r');
 %xtofitAtoms = atomMeans(2:22);
 %ytofitDensity = peakDensities(2:22);
+%figure(1);plot(plotfunctionsTF(:,21)); hold on; plot(weakProfiles(:,21), 'r');
+%figure(1); errorbar(atomMeans(2:22), peakDensities(2:22), peakDensitiesError(2:22),'.')
 end
+
+%fit to peakDensity profile:
+%coefsPDF = expFit1D();
+%Taken from cftool
+
 
 %---------------------------------------------
 
