@@ -123,9 +123,18 @@ for i=1:(length(C)-1)
     if strcmp(curr,varstring)
         k=k+1;
         %logholdtime(ceil(i/(length(C)/TotalImages))) = str2num(next);
-        varData(k,5) = str2num(NsumROI);           
+        varData(k,5) = str2num(NsumROI); 
+        if(widthy)
         varData(k,4) = str2num(widthy);
+        else
+         varData(k,4) = 0; 
+        end
+        if(widthx)
         varData(k,3) = str2num(widthx);
+        else
+         varData(k,3) = 0; 
+        end
+
         varData(k,2) = dataset;
         varData(k,1) = str2num(next);
 

@@ -1,23 +1,17 @@
-%directory = 'C:\Data\140904_transversewidth_600usTOF_Isat1e8_alpha0.6_atomnumber_5000\';
-%directory = 'C:\Data\140904_transversewidth_600usTOF_Isat1e8_alpha0.6_atomnumber_10000\';
-directory = 'C:\Data\140907_2D_transversewidth_10k_atoms_750ms_ramp\';
-directory = 'C:\Data\140909_transversewidth_5k_atoms_750ms_ramp\';
-%directory = 'C:\Data\140915_transversewidth_13p5k_atoms_750ms_ramp\';
-date = '140904';
-date = '140907';
-date = '140909';
-%date = '140915';
+directory = 'C:\Data\150902_sidecam_resoloution_2DTrap_972G_7k\';
+date = '150902';
 camera = 'sidecam';
-varstring = 'mag_field'; %140907 (and previous?)
-varstring = 'magnetic_field'; %Make sure this is right or will get wrong varData...
-atomnum = 5000;
+varstring = 'TOF';
+magfield = '832p2G';
+bins = 36;
 %varstring2 = 'Holdtime';
-pixelLength = 2.84e-6; %2.84 um topcam, 
-pixelLength = 3.75e-6 / 1.9;
+pixelLength = 2.84e-6; %2.84 um topcam, topcam magnification = 4.58
+pixelLength = 3.75e-6 / 1.9; %1.9 magnification (old 1.4 mag) ??
 massL6 = 9.988e-27; %9.988 x 10^27 kg
 hbar = 1.05457e-34; %1.05457*10^-34 m^2 kg/s
 Isat = 135*10; %135*x us
 kB = 1.38e-23; %Boltzmanns constant m^2 kg s^-2 K^-1
+PixelArea =(2.84e-6)^2;
 imgArrayFresh = [];  lowIntRealAtomImg = [];
 OD = 0; %optical density from SPE process function 1=OD, 0=WithSigma
 close all;
@@ -31,6 +25,8 @@ fid = fopen(logfilename,'rt');
 C = textscan(fid, '%s', 'Delimiter','\t'); %tokenize into tab seperated tokens
 C = C{1};
 fclose(fid);
+
+
 
 %Iterate through strings in the log file array 1-d C{:} to find the
 %information we want:
@@ -55,13 +51,16 @@ end
 %Get information from log file:
 [fileLocList,varData] = generateFromLogfile(directory,date,varstring,camera);
 
+varDataMain = [];
+varDataMain = varData(:,1)';
+
 imageArray = [];
 %Pull images:
 for i=1:length(fileLocList)
     imageArray(:,:,i) = PullFTS(fileLocList{i},raw);
 end
 
-
+%Crop images:
 %Crop images:
 imageArrayC = []; imageArrayTC = [];
 ROIx = 450:730;
@@ -69,17 +68,11 @@ ROIy = 500:675;
 %The cross is inside the region specified above. 
 %Can improve the error by tightening the Cross ROI up
 %for that particular dataset. 
-CrossROIx = 77:200; 
+CrossROIx = 75:200; 
 CrossROIy = 65:100;
+TightROIx = 538:619;
+TightROIy = 565:580;
 
-if(strcmp(date,'140907'))
-    disp('140907 Data');
-    %CrossROIx = 35:255; %The cross is inside the region specified above.
-    %CrossROIy = 40:130;
-end
-    
-TightROIx = 510:670;
-TightROIy = 575:595;
 imageArrayC = imageArray(ROIy,ROIx,:);
 imageArrayTC = imageArray(TightROIy,TightROIx,:);
 
@@ -87,18 +80,23 @@ imageArrayTC = imageArray(TightROIy,TightROIx,:);
 %Display every X image:
 if(0)
 for i=1:length(imageArrayC(1,1,:))
-    if(mod(i,5) == 0)       
+    if(mod(i,1) == 0)       
         figure(i);
         imagesc(imageArrayC(:,:,i));        
     end
 end
+for i=1:length(imageArrayC(1,1,:))
+    if(mod(i,1) == 0)       
+        figure(i);
+        imagesc(imageArrayTC(:,:,i));        
+    end
+end
 end
 
-
- 
 %%%%%Fit Gaussians:
 fg = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2)) + p(4));
-gcoefsX = []; gcoefsY = []; centers = []; gcoefsXi = []; gcoefsYi = [];
+gcoefsX = []; gcoefsY = []; centers = []; gcoefsXi = []; gcoefsYi = []; sigmaX = [];
+sigmaY = []; gcoefsPolyLog1 = [];
 for i=1:length(imageArrayC(1,1,:))
     %Initial Fit for zeroing:
     gcoefsXi(:,i) = gausFit1D(mean(imageArrayC(CrossROIy,:,i),1)); %mean averages over y
@@ -107,6 +105,7 @@ for i=1:length(imageArrayC(1,1,:))
     %Shift wings to zero:
     shiftFactor = (gcoefsXi(4,i)+gcoefsYi(4,i))/2;
     imageArrayC(:,:,i) = imageArrayC(:,:,i) - shiftFactor;
+    imageArrayTC(:,:,i) = imageArrayTC(:,:,i) - shiftFactor;
     
     %Refit:
     gcoefsX(:,i) = gausFit1D(mean(imageArrayC(CrossROIy,:,i),1)); %mean averages over y
@@ -119,21 +118,6 @@ for i=1:length(imageArrayC(1,1,:))
     sigmaY(:,i) = gcoefsY(3,i);
 end
 
-%Display every X fit:
-if(0)
-for i=1:length(imageArrayC(1,1,:))
-    if(mod(i,4) == 0)       
-        figure(i);
-        plot(fg(gcoefsX(:,i),1:300));hold on; plot(mean(imageArrayC(:,:,i),1),'r'); hold off;      
-    end
-end
-for i=1:length(imageArrayC(1,1,:))
-    if(mod(i,4) == 0)       
-        figure(i);
-        plot(fg(gcoefsY(:,i),1:150));hold on; plot(mean(imageArrayC(:,:,i),2),'r'); hold off;      
-    end
-end
-end
 
 %%%%%Second moment:
 xvector = [];
@@ -169,6 +153,32 @@ end
 sigmaYsm = sqrt(SMomY);
 
 
+%%%%%Temperatures:
+if(0)
+TonTFs = [];
+for i=1:length(imageArrayC(1,1,:))
+    TonTFs(i) = 1/(log(1+exp(gcoefsPolyLog1(2,i)/gcoefsPolyLog1(3,i)^2)));
+end
+end
+
+
+%Display every X fit:
+if(0)
+for i=1:length(imageArrayC(1,1,:))
+    if(mod(i,1) == 0)       
+        figure(i);
+        plot(fglz(gcoefsX(:,i),1:400));hold on; plot(mean(imageArrayC(CrossROIy,:,i),1),'r'); hold off;      
+    end
+end
+%These ARE the plots you're looking for:
+for i=1:length(imageArrayC(1,1,:))
+    if(mod(i,1) == 0)       
+        figure(i);
+        plot(fglz(gcoefsY(:,i),1:180));hold on; plot(mean(imageArrayC(:,CrossROIx,i),2),'r'); hold off;      
+    end
+end
+end
+
 %%%%%Atom numbers:
 %Tight ROI array:
 pixelCounts = [];
@@ -181,6 +191,7 @@ pixelCounts(:) = varData(:,5)*0.42;
 
 
 %Sort varData:
+indexs = [];
 [sortedVarData,indexs] = sort(varData);
 %indexs(:,1) is a vector of the sort.
 
@@ -251,7 +262,6 @@ for i=1:length(sortedVarData)
     
     prev = curr;
 end
-
 %Fit functions to the averaged images:
 gcoefsXa = []; gcoefsYa = []; gcoefsYaError = []; gcoefsXaError = [];
 for i=1:length(imageArrayAvgs(1,1,:))
@@ -261,6 +271,9 @@ for i=1:length(imageArrayAvgs(1,1,:))
     %Profile: plot(mean(imageArrayC(:,:,i),2))       
 end
 
+%function:
+fg1d = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2))); 
+
 widthsYavg = gcoefsYa(3,:);
 widthsXavg = gcoefsXa(3,:);
 
@@ -269,6 +282,62 @@ for i=1:length(widthsYavg)
     widthsYavgError(i) = widthsYavg(i) - gcoefsYaError(3,1,i);
     widthsXavgError(i) = widthsXavg(i) - gcoefsXaError(3,1,i);
 end
+
+%Images:
+if(0)
+for i=1:length(imageArrayAvgsTight(1,1,:))
+    if(mod(i,1) == 0)       
+        figure(i);
+        imagesc(imageArrayAvgsTight(:,:,i));        
+    end
+end
+end
+
+%%%%%Second moment:
+imageArrayAvgsTight = [];
+CrossROIxSM = 50:220; 
+CrossROIySM = 50:100;
+
+
+imageArrayAvgsTight(:,:,1) = imageArrayAvgs(CrossROIySM,CrossROIxSM+20,1);
+imageArrayAvgsTight(:,:,2) = imageArrayAvgs(CrossROIySM,CrossROIxSM+5,2);
+imageArrayAvgsTight(:,:,3) = imageArrayAvgs(CrossROIySM,CrossROIxSM+5,3);
+imageArrayAvgsTight(:,:,4) = imageArrayAvgs(CrossROIySM,CrossROIxSM+20,4);
+imageArrayAvgsTight(:,:,5) = imageArrayAvgs(CrossROIySM,CrossROIxSM,5);
+
+xvector = [];
+xvector = 1:length(imageArrayAvgsTight(1,:,1));
+COMx = [];
+for i=1:length(imageArrayAvgsTight(1,1,:))
+        %Sum of Intensity*pixel location / sum of intensity
+        COMx(i) = sum(sum(imageArrayAvgsTight(:,:,i),1).*xvector) / sum(sum(imageArrayAvgsTight(:,:,i),1));
+end
+
+%Second moment x direction
+SMomX = []; sigmaXsm = [];
+for i=1:length(imageArrayAvgsTight(1,1,:))
+    SMomX(i) = sum(sum(imageArrayAvgsTight(:,:,i),1).*(xvector - COMx(i)).^2) / sum(mean(imageArrayAvgsTight(:,:,i),1));
+end
+
+sigmaXsm = sqrt(SMomX);
+
+yvector = [];
+yvector = 1:length(imageArrayAvgsTight(:,1,1));
+COMy = [];
+for i=1:length(imageArrayAvgsTight(1,1,:))
+        %Sum of Intensity*pixel location / sum of intensity
+        COMy(i) = sum(mean(imageArrayAvgsTight(:,:,i),2)'.*yvector) / sum(mean(imageArrayAvgsTight(:,:,i),2));
+end
+
+%Second moment y direction
+SMomY = []; sigmaYsm = [];
+for i=1:length(imageArrayAvgsTight(1,1,:))
+    SMomY(i) = sum(mean(imageArrayAvgsTight(:,:,i),2)'.*(yvector - COMy(i)).^2) / sum(mean(imageArrayAvgsTight(:,:,i),2));
+end
+
+sigmaYsm = sqrt(SMomY);
+%%%%%%
+
 
 %convert to real units:
 widthsX = widthsX.*2.*pixelLength./1e-6; %*2 to make it not the radius
@@ -281,67 +350,10 @@ sMomentX = sMomentX.*pixelLength.*2./1e-6;
 sMomentXStdDev = sMomentXStdDev.*pixelLength.*2; %full error on width
 sMomentYStdDev = sMomentYStdDev.*pixelLength.*2;
 
-figure(1);
-h = errorbar(magFields,widthsY,stdDevWidthsY./2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
-    'Marker','o',...
-    'LineStyle','none',...
-    'Color',[0 0 1]);
-grid on;
-figname = [date '_' camera '_TransverseWidth_' num2str(atomnum) '_PixelNumber'];
-figdirectory = 'C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\';
-saveas(h,[figdirectory figname '.fig'],'fig');
-saveas(h,[figdirectory figname '.png'],'png');
-%line([832.2 832.2],[0 0],'LineStyle','--','Color',[0.7 0.7 0.7]); 
 
-figure(2);
-errorbar(magFields,widthsX,stdDevWidthsX./2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
-    'Marker','o',...
-    'LineStyle','none',...
-    'Color',[0 0 1]);
-grid on;
-figure(3);
-errorbar(magFields,pixelNumbers,pixelNumbersStdDev./2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
-    'Marker','o',...
-    'LineStyle','none',...
-    'Color',[0 0 1]);
-grid on;
-if(0)
-figure(4);
-errorbar(magFields,sMomentY,sMomentYStdDev./2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
-    'Marker','o',...
-    'LineStyle','none',...
-    'Color',[0 0 1]);
-figure(5);
-errorbar(magFields,sMomentX,sMomentXStdDev./2,'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
-    'Marker','o',...
-    'LineStyle','none',...
-    'Color',[0 0 1]);
-figure(6);
-plot(magFields,widthsX./(pixelNumbers.^0.25),'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
-'Marker','o',...
-'LineStyle','none',...
-'Color',[0 0 1]);
+for i=1:length(imageArrayAvgs(1,1,:))
+    if(mod(i,1) == 0)       
+        figure(i);
+        plot(fglz(gcoefsYa(:,i),1:180));hold on; plot(mean(imageArrayAvgs(:,CrossROIx,i),2),'r'); hold off;      
+    end
 end
-        
-figure(20)
-h = errorbar(magFields,widthsYavg,widthsYavgError,'MarkerSize',3,...
-    'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
-    'Marker','o',...
-    'LineStyle','--',...
-    'Color',[0 0 1]);
-grid on;
-figname = [date '_' camera '_TransverseWidth_' num2str(atomnum) '_PixelNumber_CenterAvg'];
-figdirectory = 'C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Sequence\Newbinned\';
-saveas(h,[figdirectory figname '.fig'],'fig');
-saveas(h,[figdirectory figname '.png'],'png');
-figure(21)
-errorbar(magFields,widthsXavg,widthsXavgError,'MarkerSize',3,...
-    'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
-    'Marker','o',...
-    'LineStyle','--',...
-    'Color',[0 0 1]);
-grid on;
-
-
-
-

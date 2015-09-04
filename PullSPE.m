@@ -7,9 +7,9 @@ debug = 0;
 
 warning('OFF');
 
-%xDim = 256;
-%yDim = 768;
-%NoFrames = 3;
+xDim = 256;
+yDim = 768;
+NoFrames = 3;
 
 Phi       =0.93; %Beam correction term determined for each beam.
 PixelArea =(13e-6*83.0/400.0)^2; %Actual Pixel size area
@@ -26,9 +26,9 @@ header =fread(fid,4100/2,'int16');
 fclose(fid);
 
 %Mine header for information:
-NoFrames =header(741);
-xDim     =header(758);
-yDim     =header(761); 
+%NoFrames =header(741);
+%xDim     =header(758);
+%yDim     =header(761); 
 
 %Inits:
 ImMat    =zeros(xDim*yDim*NoFrames,1);

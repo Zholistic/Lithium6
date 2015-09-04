@@ -340,6 +340,7 @@ end
 %2015 Central Density work:
 %---------------------------------------------
 %bin number (no elbow here) is closest to the elbow atom number:
+%Changed mean to sum...
 peakDensities = []; coefsPolyFits = []; weakProfiles = [];
 coefsTFFits = []; omegaR = 2*pi*24.5; weakProfilesFermiRadius = [];
 Rfpxs = []; plotfunctionTF = []; plotfunctionsTF = []; coefsTFFitsError = [];
@@ -350,10 +351,10 @@ binnum = i;
 %figure(2000);
 %imagesc(avgImagesBin(:,:,binnum));
 %figure(2001);
-tightProfile = mean(avgImagesBin(:,CrossROIx,binnum),2);
+tightProfile = sum(avgImagesBin(:,CrossROIx,binnum),2);
 %plot(tightProfile);
 %figure(2002);
-weakProfiles(:,i) = mean(avgImagesBin(CrossROIy,:,binnum),1);
+weakProfiles(:,i) = sum(avgImagesBin(CrossROIy,:,binnum),1);
 %plot(weakProfile);
 binAtomNumber = atomMeans(binnum);
 %atomMeans
@@ -366,7 +367,7 @@ Rf = sqrt((2*Ef)/(massL6*omegaR^2));
 Rfpx = ceil(Rf/pixelLength) + 22; % + n to increase width of fit
 Rfpxs(i) = Rfpx;
 
-weakProfileFermiRadius = mean(avgImagesBin(CrossROIy,centersAvg(1,i)-Rfpx:centersAvg(1,i)+Rfpx,binnum),1);
+weakProfileFermiRadius = sum(avgImagesBin(CrossROIy,centersAvg(1,i)-Rfpx:centersAvg(1,i)+Rfpx,binnum),1);
 
 %Fit polylog to the weak profile:
 %coefsPolyFits(:,i) = polyLog1Fit1D(mean(avgImagesBin(CrossROIy,:,binnum),1),camera);
@@ -375,7 +376,7 @@ weakProfileFermiRadius = mean(avgImagesBin(CrossROIy,centersAvg(1,i)-Rfpx:center
 %plot(fgPL(coefsPolyFits(:,i),1:400)); hold on; plot(weakProfiles(:,i), 'r'); hold off;
 
 %Fit Thomas-Fermi to weak profile:
-[coefsTFFits(:,i), coefsTFFitsError(:,:,i)] = thomasFermiFit1D(mean(avgImagesBin(CrossROIy,centersAvg(1,i)-Rfpx:centersAvg(1,i)+Rfpx,binnum),1));
+[coefsTFFits(:,i), coefsTFFitsError(:,:,i)] = thomasFermiFit1D(sum(avgImagesBin(CrossROIy,centersAvg(1,i)-Rfpx:centersAvg(1,i)+Rfpx,binnum),1));
 %coefsTFFits(:,i) = thomasFermiFit1D(mean(avgImagesBin(CrossROIy,:,binnum),1));
 figure(4000 + i);
 %fgTF = @(p,x)(p(1)*(1-((x-p(2)).^2)./(p(3))).^(3/2));
@@ -384,7 +385,7 @@ fgTF = @(p,x)((4/3).*(p(1)/(p(2).^2)).*(p(2).^2-((x-p(3)).^2)).^(3/2));
 
    
 s = 1;
-for j=-(length(mean(avgImagesBin(CrossROIy,:,binnum),1))-centersAvg(1,i)-Rfpx):length(mean(avgImagesBin(CrossROIy,:,binnum),1))-(length(mean(avgImagesBin(CrossROIy,:,binnum),1))-centersAvg(1,i)-Rfpx)
+for j=-(length(sum(avgImagesBin(CrossROIy,:,binnum),1))-centersAvg(1,i)-Rfpx):length(sum(avgImagesBin(CrossROIy,:,binnum),1))-(length(sum(avgImagesBin(CrossROIy,:,binnum),1))-centersAvg(1,i)-Rfpx)
     if(0 > fgTF(real(coefsTFFits(:,i)),j))
         plotfunctionsTF(s,i) = 0;
     else
@@ -412,6 +413,7 @@ end
 %ytofitDensity = peakDensities(2:22);
 %figure(1);plot(plotfunctionsTF(:,21)); hold on; plot(weakProfiles(:,21), 'r');
 %figure(1); errorbar(atomMeans(2:22), peakDensities(2:22), peakDensitiesError(2:22),'.')
+%Raw profile: mean(avgImagesBin(CrossROIy,:,binnum),1)
 end
 
 %fit to peakDensity profile:

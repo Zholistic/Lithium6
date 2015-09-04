@@ -6,7 +6,9 @@ bins = 36;
 
 massL6 = 9.988e-27; %9.988 x 10^27 kg
 hbar = 1.05457e-34; %1.05457*10^-34 m^2 kg/s
-pixelLength = 3.75e-6 / 1.9; %2.84 um topcam, 3.2250 um sidecam 1.9 magnification (old 1.4 mag)
+%pixel Lengths: 2.84 um topcam, topcam magnification = 4.58. 3.75 um
+%sidecam, magnification 1.4 (? 1.33)
+pixelLength = 3.75e-6 / 1.9; %2.84 um topcam, 1.9 magnification (old 1.4 mag)
 
 
 magVector = [820 832.2 855 860 865 880 900 920 950 972];
@@ -385,6 +387,10 @@ for j=1:imageNumber
 end
 hold off;
 grid on;
+
+%2015 Elbow work:
+peakPoly = [36.5674, 53.2957, 45.5677, 54.4748, 54.6825, 62.1721, 53.5184, 64.859];
+atomPoly = [7566, 12468, 10813, 15822, 18866, 18917, 20692, 18746];
 
 figure(301);
 hold on; coefsLF = []; coefsLFs = [];
@@ -806,7 +812,7 @@ saveas(h,['C:\Users\tpeppler\Dropbox\PhD\2DEOSandCrossover\Crossover Sidecam Seq
 
 
 %%%%%Fancy Surface Plot
-
+%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%TODO: remove inpaint_nans here...
 %need to oversubscribe the points to account for atom number discrepancies...
