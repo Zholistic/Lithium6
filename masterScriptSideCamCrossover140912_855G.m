@@ -9,6 +9,7 @@ pixelLength = 2.84e-6; %2.84 um topcam,
 massL6 = 9.988e-27; %9.988 x 10^27 kg
 hbar = 1.05457e-34; %1.05457*10^-34 m^2 kg/s
 Isat = 135*10; %135*x us
+Isat = 10^6;
 kB = 1.38e-23; %Boltzmanns constant m^2 kg s^-2 K^-1
 PixelArea =(2.84e-6)^2;
 imgArrayFresh = [];  lowIntRealAtomImg = [];
@@ -54,7 +55,7 @@ varDataMain = varData(:,1)';
 imageArray = [];
 %Pull images:
 for i=1:length(fileLocList)
-    imageArray(:,:,i) = PullFTS(fileLocList{i},raw);
+    imageArray(:,:,i) = PullFTS(fileLocList{i},raw,Isat);
 end
 
 %Crop images:
@@ -310,7 +311,7 @@ end
 
 
 %Fit functions to the averaged bin images:
-gcoefsXaBin = []; gcoefsYaBin = []; gcoefsYaBinError = []; gcoefsXaBinError = [];
+gcoefsXaBin = []; gcoefsYaBin = []; gcoefsYaBinError = []; gcoefsXaBinError = []; centersAvg = [];
 for i=1:length(avgImagesBin(1,1,:))
     if(avgImagesBin(1,1,i) == 40000)
         %no image to fit to in this bin
@@ -318,11 +319,13 @@ for i=1:length(avgImagesBin(1,1,:))
         gcoefsXaBinError(:,:,i) = ones([3 2]).*0;
         gcoefsYaBin(:,i) = [NaN NaN NaN];
         gcoefsYaBinError(:,:,i) = ones([3 2]).*0;
+        centersAvg(:,i) = [0 0];
     else
         [gcoefsXaBin(:,i),gcoefsXaBinError(:,:,i)] = gausFit1DLockZero(mean(avgImagesBin(CrossROIy,:,i),1)); %mean averages over y
         %Profile: plot(mean(imageArrayC(:,:,i),1))
         [gcoefsYaBin(:,i),gcoefsYaBinError(:,:,i)] = gausFit1DLockZero(mean(avgImagesBin(:,CrossROIx,i),2)); %mean averages over x
         %Profile: plot(mean(imageArrayC(:,:,i),2))
+        centersAvg(:,i) = [ceil(gcoefsXaBin(2,i)), ceil(gcoefsYaBin(2,i))]; %center = [x y]
     end
 end
 
@@ -343,7 +346,7 @@ peakDensities = []; coefsPolyFits = []; weakProfiles = [];
 coefsTFFits = []; omegaR = 2*pi*24.5; weakProfilesFermiRadius = [];
 Rfpxs = []; plotfunctionTF = []; plotfunctionsTF = []; coefsTFFitsError = [];
 peakDensitiesError = [];
-for i=2:22
+for i=4
 weakProfileFermiRadius = [];    
 binnum = i;
 %figure(2000);

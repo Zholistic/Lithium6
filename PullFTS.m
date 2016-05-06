@@ -1,5 +1,7 @@
-function [ftsImage] = PullFTS(fileloc,raw)
+function [ftsImage] = PullFTS(fileloc,raw,Isat)
 %'raw' uses the atom and beam images
+Delta     =0; %Detuning
+Gamma     =5.9e6*(2*pi); %Natural Linewidth
 
 if(raw)
     %Rejig the strings:
@@ -21,7 +23,17 @@ if(raw)
     newImageBeam = imread(beamloc);
     
     %Isat Correction?
-    newImage = (-1)*(newImageAtom - newImageBeam);
+    newImage = (-1)*(double(newImageAtom) - double(newImageBeam));
+    
+    %Isat Correction%%%%%%%%%%
+    %Division Term:
+    AtomsDiv1 = (1+4*(Delta^2)/Gamma^2).*real(-log(double(newImageAtom)./(double(newImageBeam))));
+
+    %Subtraction Term:
+    AtomsSub1 = -(newImageAtom - (newImageBeam))./Isat;
+
+    OD1 = (AtomsDiv1 + double(AtomsSub1));
+    Atoms1ODnn = OD1;
     
     %Noise cancellation, using two large strips above and below the cloud:
     NROIy1 = 200:400; NROIy2 = 700:800;
@@ -34,6 +46,7 @@ if(raw)
     
     %Subtraction of noise:
     finalImage = newImage - noiseVal;
+    ftsImage = Atoms1ODnn;
     ftsImage = finalImage;
     
 else

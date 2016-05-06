@@ -9,6 +9,7 @@ pixelLength = 2.84e-6; %2.84 um topcam,
 massL6 = 9.988e-27; %9.988 x 10^27 kg
 hbar = 1.05457e-34; %1.05457*10^-34 m^2 kg/s
 Isat = 135*10; %135*x us
+Isat = 10^6;
 kB = 1.38e-23; %Boltzmanns constant m^2 kg s^-2 K^-1
 PixelArea =(2.84e-6)^2;
 imgArrayFresh = [];  lowIntRealAtomImg = [];
@@ -54,7 +55,7 @@ varDataMain = varData(:,1)';
 imageArray = [];
 %Pull images:
 for i=1:length(fileLocList)
-    imageArray(:,:,i) = PullFTS(fileLocList{i},raw);
+    imageArray(:,:,i) = PullFTS(fileLocList{i},raw,Isat);
 end
 
 %Crop images:
@@ -429,11 +430,13 @@ figure(2004);
 plot( atomMeans(2:22),peakDensities(2:22),'.');
 
 %---------------------------------------------
+if(0)
 for i=2:22
     figure(4000);
     hold on;
     shift = 120;
     plot(1+i*shift:381+i*shift,fgPL(coefsPolyFits(:,i),1:381),'Color',[0.1+i/100 0.6+i/100 1]);  plot(1+i*shift:381+i*shift,weakProfiles(:,i),'Color',[1 0.6 0.6]);   
+end
 end
 
 %---------------------------------------------

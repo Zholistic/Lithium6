@@ -1,8 +1,10 @@
 directory = 'C:\Data\150903_Top_Side_Compare_Magnification\150903_magnification_compare_top\';
 directory = 'C:\Data\150904_Top_Side_Compare_Magnification_600usTOF\150904_magnification_compare_top\';
 directory = 'C:\Data\150904_Top_Side_Compare_Magnification_600usTOF\150904_5ForCalib\';
+directory = 'C:\Data\150906_mag_side\';
 date = '150903';
 date = '150904';
+date = '150906';
 camera = 'sidecam';
 varstring = 'imagenumber';
 magfield = '832p2G';
@@ -13,6 +15,7 @@ pixelLength = 3.75e-6 / 1.9; %1.9 magnification (old 1.4 mag) ??
 massL6 = 9.988e-27; %9.988 x 10^27 kg
 hbar = 1.05457e-34; %1.05457*10^-34 m^2 kg/s
 Isat = 135*10; %135*x us
+Isat = 10^6;
 kB = 1.38e-23; %Boltzmanns constant m^2 kg s^-2 K^-1
 PixelArea =(2.84e-6)^2;
 imgArrayFresh = [];  lowIntRealAtomImg = [];
@@ -60,7 +63,7 @@ varDataMain = varData(:,1)';
 imageArray = [];
 %Pull images:
 for i=1:length(fileLocList)
-    imageArray(:,:,i) = PullFTS(fileLocList{i},raw);
+    imageArray(:,:,i) = PullFTS(fileLocList{i},raw,Isat);
 end
 
 %Crop images:
@@ -291,7 +294,7 @@ end
 
 %Images:
 if(0)
-    for i=1:length(imageArrayAvgs(1,1,:))
+for i=1:length(imageArrayAvgs(1,1,:))
     if(mod(i,1) == 0)       
         figure(i);
         plot(fg1d(gcoefsXa(:,i),1:800));hold on; plot(mean(imageArrayAvgs(CrossROIy,:,i),1),'r'); hold off;      

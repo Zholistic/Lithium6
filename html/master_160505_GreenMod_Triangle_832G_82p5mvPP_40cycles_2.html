@@ -1,0 +1,912 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>master_160505_GreenMod_Triangle_832G_82p5mvPP_40cycles_2</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-05-06"><meta name="DC.source" content="master_160505_GreenMod_Triangle_832G_82p5mvPP_40cycles_2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput">directory = <span class="string">'C:\Data\160505_CollectiveOscillations_2D_Green_modulation_triangle_envelope_82p5mvpp_832G_40cycles_varyholdtime_2\'</span>;
+
+date = <span class="string">'160505'</span>;
+camera = <span class="string">'topcam'</span>;
+varstring = <span class="string">'HoldTime'</span>;
+<span class="comment">%varstring2 = 'Holdtime';</span>
+pixelLength = 2.84e-6; <span class="comment">%13 um topcam, topcam magnification = 4.58, ie 2.84um effective</span>
+massL6 = 9.988e-27; <span class="comment">%9.988 x 10^27 kg</span>
+hbar = 1.05457e-34; <span class="comment">%1.05457*10^-34 m^2 kg/s</span>
+Isat = 134*10; <span class="comment">%135*x us</span>
+<span class="comment">%Isat = 10^6;</span>
+kB = 1.38e-23; <span class="comment">%Boltzmanns constant m^2 kg s^-2 K^-1</span>
+imgArrayFresh = [];  lowIntRealAtomImg = [];
+OD = 0; <span class="comment">%optical density from SPE process function 1=OD, 0=WithSigma</span>
+close <span class="string">all</span>;
+raw = 1;
+
+<span class="comment">%Read in the log file:</span>
+
+logfilename = [directory date <span class="string">'_log_camera.txt'</span>];
+fid = fopen(logfilename,<span class="string">'rt'</span>);
+C = textscan(fid, <span class="string">'%s'</span>, <span class="string">'Delimiter'</span>,<span class="string">'\t'</span>); <span class="comment">%tokenize into tab seperated tokens</span>
+C = C{1};
+fclose(fid);
+
+<span class="comment">%Iterate through strings in the log file array 1-d C{:} to find the</span>
+<span class="comment">%information we want:</span>
+
+varData = [];
+
+TotalImages = 0;
+
+<span class="comment">%for loop to find the total number of images</span>
+<span class="keyword">for</span> i=1:(length(C)-1)
+
+    curr = C{i};
+    next = C{i+1};
+
+    <span class="keyword">if</span> strcmp(curr,<span class="string">'MeasNr'</span>)
+        TotalImages = TotalImages + 1;
+    <span class="keyword">end</span>
+
+
+<span class="keyword">end</span>
+
+<span class="comment">%Get information from log file:</span>
+widthYlogfile = []; widthXlogfile = []; nROIlogfile = [];
+[fileLocList,varData] = generateFromLogfile(directory,date,varstring,camera);
+widthYlogfile = varData(:,4);
+widthXlogfile = varData(:,3);
+nROIlogfile = varData(:,5);
+
+imageArray = [];
+<span class="comment">%Pull images:</span>
+<span class="keyword">for</span> i=1:length(fileLocList)
+    OD = 0;
+    [beamImage,atom1Image,atom2Image] = PullSPE(fileLocList{i},Isat,OD);
+    imageArray(:,:,i) = atom2Image(:,:,1);
+<span class="keyword">end</span>
+
+<span class="comment">%Crop images:</span>
+imageArrayC = []; imageArrayTC = [];
+ROIx = 1:length(imageArray(1,:,1));
+ROIy = 1:length(imageArray(:,1,1));
+CrossROIy = 20:180;
+CrossROIx = 35:185; <span class="comment">%The cross is inside the region specified above.</span>
+TightROIx = 35:185;
+TightROIy = 30:170;
+<span class="comment">%Split into high and low intensity arrays</span>
+imageArrayC = imageArray(ROIy,ROIx,:);
+imageArrayTC = imageArray(TightROIy,TightROIx,:);
+
+<span class="comment">%Display every X image:</span>
+<span class="keyword">if</span>(0)
+<span class="keyword">for</span> i=1:length(imageArray(1,1,:))
+    <span class="keyword">if</span>(mod(i,1) == 0)
+        figure(i);
+        imagesc(imageArray(:,:,i));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="keyword">for</span> i=1:length(imageArrayC(1,1,:))
+    <span class="keyword">if</span>(mod(i,1) == 0)
+        figure(i);
+        imagesc(imageArrayTC(:,:,i));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">%Radially averaged profiles:</span>
+radProfiles = []; radProfilesT = []; center = [];
+disp(<span class="string">'Radially averaging...'</span>);
+<span class="keyword">for</span> i=1:length(imageArrayC(1,1,:))
+    [radProfilesT(:,:,i),center(:,i)] = radAverageBigSquare(imageArrayC(:,:,i));
+    radProfiles(:,:,i) = radProfilesT(:,1:end-20,i);
+<span class="keyword">end</span>
+
+<span class="comment">%Shift wings of radial profiles to zero:</span>
+shiftBy = [];
+<span class="keyword">for</span> i=1:length(radProfiles(1,1,:))
+    shiftBy(i) = mean(radProfiles(1,55:75,i));
+    radProfiles(1,:,i) = radProfiles(1,:,i) - shiftBy(i);
+<span class="keyword">end</span>
+
+<span class="comment">%%%%%Fit Functions:</span>
+<span class="comment">%gaussian with 4 variables:</span>
+fg = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2)) + p(4));
+<span class="comment">%gaussian with 2 variables (for radial profiles)</span>
+fgr = @(p,x)(p(1).*exp((-1).*((x).^2) ./ (2.*p(2).^2)));
+<span class="comment">%polylog order 1 function:</span>
+<span class="comment">%fgp = @(p,x)(p(1).*log(1+exp((p(2)+(-1).*x.^2)./(p(3)^2))));</span>
+fgp = @(p,x)(p(1).*log(1+exp((p(2)+(-1).*p(3).*x.^2)./(p(4)))));
+<span class="comment">%gaussian with 2 variables fixed 2.5 exponent:</span>
+fgr2p5 = @(p,x)(p(1).*exp((-1).*((x).^(2.5)) ./ (2.*p(2).^(2.5))));
+<span class="comment">%gaussian with 2 variables and fitted exponent:</span>
+fgrfe = @(p,x)(p(1).*exp((-1).*((x).^(p(2))) ./ (2.*p(3).^(2.5))));
+
+gcoefsX = []; gcoefsY = []; centers = []; gcoefsXi = []; gcoefsYi = [];
+gcoefsR = []; gcoefsR2p5 = []; sigmaR2p5 = []; gcoefsPolyLog1 = [];
+gcoefsRFreeExp = []; sigmaR = [];
+sigmaX = []; sigmaY = []; shiftFactor = []; shiftFactorR = [];
+disp(<span class="string">'Function Fitting...'</span>);
+<span class="keyword">for</span> i=1:length(imageArrayC(1,1,:))
+    <span class="comment">%Initial Fit for zeroing:</span>
+    gcoefsXi(:,i) = gausFit1D(mean(imageArrayC(CrossROIy,:,i),1)); <span class="comment">%mean averages over y</span>
+    gcoefsYi(:,i) = gausFit1D(mean(imageArrayC(:,CrossROIx,i),2)); <span class="comment">%mean averages over x</span>
+    gcoefsR(:,i) = gausFitHalf1D(radProfiles(1,:,i),radProfiles(2,:,i));
+    <span class="comment">%gcoefsR2p5(:,i) = gausExp2p5FitHalf1D(radProfiles(1,:,i),radProfiles(2,:,i));</span>
+    gcoefsPolyLog1(:,i) = polyLog1FitHalf1D(radProfiles(1,:,i),radProfiles(2,:,i),<span class="string">'topcam'</span>);
+    <span class="comment">%gcoefsRFreeExp(:,i) = gausFreeExpFitHalf1D(radProfiles(1,:,i),radProfiles(2,:,i));</span>
+
+    <span class="comment">%Shift wings to zero:</span>
+    shiftFactor(i) = (gcoefsXi(4,i)+gcoefsYi(4,i))/2;
+    imageArrayC(:,:,i) = imageArrayC(:,:,i) - shiftFactor(i);
+
+    <span class="comment">%Refit:</span>
+    gcoefsX(:,i) = gausFit1D(mean(imageArrayC(CrossROIy,:,i),1)); <span class="comment">%mean averages over y</span>
+    <span class="comment">%Profile: plot(mean(imageArrayC(:,:,i),1))</span>
+    gcoefsY(:,i) = gausFit1D(mean(imageArrayC(:,CrossROIx,i),2)); <span class="comment">%mean averages over x</span>
+    <span class="comment">%Profile: plot(mean(imageArrayC(:,:,i),2))</span>
+
+    centers(:,i) = [ceil(gcoefsX(2,i)), ceil(gcoefsY(2,i))]; <span class="comment">%center = [x y]</span>
+    sigmaX(:,i) = gcoefsX(3,i);
+    sigmaY(:,i) = gcoefsY(3,i);
+    sigmaR(:,i) = gcoefsR(2,i);
+    <span class="comment">%sigmaR2p5(:,i) = gcoefsR2p5(2,i);</span>
+<span class="keyword">end</span>
+
+
+<span class="comment">%show function fits:</span>
+<span class="keyword">if</span>(0)
+    <span class="keyword">for</span> i=1:length(imageArrayC(1,1,:))
+    <span class="keyword">if</span>(mod(i,1) == 0)
+        figure(i);
+        plot(fgr(gcoefsR(:,i),1:180),<span class="string">'g'</span>); hold <span class="string">on</span>; plot(fgp(gcoefsPolyLog1(:,i),1:180)); plot(radProfiles(2,:,i),radProfiles(1,:,i),<span class="string">'r'</span>); line([sigmaRsm(i) sigmaRsm(i)],[0 fgp(gcoefsPolyLog1(:,i),sigmaRsm(i))],<span class="string">'LineStyle'</span>,<span class="string">'--'</span>,<span class="string">'Color'</span>,[0.7 0.7 0.7]); hold <span class="string">off</span>;
+    <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">%%%%%Atom numbers:</span>
+<span class="comment">%Tight ROI array:</span>
+pixelCounts = [];
+<span class="keyword">for</span> i=1:length(imageArrayC(1,1,:))
+    pixelCounts(i) = sum(sum(imageArrayC(:,:,i)));
+<span class="keyword">end</span>
+
+<span class="comment">%%%%%Temperatures:</span>
+TonTFs = []; Ts = [];
+<span class="keyword">for</span> i=1:length(imageArrayC(1,1,:))
+    TonTFs(i) = 1/(log(1+exp(gcoefsPolyLog1(2,i)/gcoefsPolyLog1(3,i)^2)));
+    Ts(i) = gcoefsPolyLog1(4,i);
+<span class="keyword">end</span>
+
+
+<span class="comment">%Sort varData:</span>
+sortedVarData = []; indexs = []; sigmaRSort = [];
+sigmaXSort = []; sigmaYSort = []; sigmaR2p5Sort = [];
+sigmaRsmSort = []; TonTFsSort = []; imageArrayCSort = [];
+[sortedVarData,indexs] = sort(varData);
+<span class="comment">%indexs(:,1) is a vector of the sort (varstring).</span>
+
+<span class="comment">%Re-order each array:</span>
+<span class="keyword">for</span> i=1:length(sigmaX)
+    sigmaXSort(i) = sigmaX(indexs(i));
+    sigmaYSort(i) = sigmaY(indexs(i));
+    pixelCountsSort(i) = pixelCounts(indexs(i));
+    sigmaRSort(i) = sigmaR(indexs(i));
+    <span class="comment">%sigmaR2p5Sort(i) = sigmaR2p5(indexs(i));</span>
+    <span class="comment">%sigmaRsmSort(i) = sigmaRsm(indexs(i));</span>
+    TonTFsSort(i) = TonTFs(indexs(i));
+    imageArrayCSort(:,:,i) = imageArrayC(:,:,indexs(i));
+<span class="keyword">end</span>
+
+<span class="comment">%Average over same motfet data points:</span>
+<span class="comment">%Bug fix history: 150109 fixed endNum</span>
+j=1; runTotal = 0; motFets = []; widthsX = []; widthsY = [];
+stdDevWidthsX = []; stdDevWidthsY = []; pixelNumbers = [];
+pixelNumbersStdDev = []; sMomentX = []; sMomentY = [];
+widthsR = []; stdDevWidthsR = []; widthsR2p5 = [];
+widthsPsm = []; stdDevWidthsPsm = []; TonTFsm = []; stdDevTonTFsm = [];
+sMomentXStdDev = []; sMomentYStdDev = []; stdDevWidthsR2p5 = [];
+prev = sortedVarData(1); imageArrayAvgs = []; runTotals = [];
+<span class="keyword">for</span> i=1:length(sortedVarData)
+    curr = sortedVarData(i);
+
+    <span class="keyword">if</span>( curr == prev )
+        runTotal = runTotal+1;
+    <span class="keyword">else</span>
+        <span class="comment">%hit next value</span>
+        runTotals(j) = runTotal;
+        startNum = i-runTotal;
+        endNum = i-1;
+        widthsX(j) = mean(sigmaXSort(i-runTotal:endNum));
+        stdDevWidthsX(j) = std(sigmaXSort(i-runTotal:endNum));
+        widthsY(j) = mean(sigmaYSort(i-runTotal:endNum));
+        stdDevWidthsY(j) = std(sigmaYSort(i-runTotal:endNum));
+        widthsR(j) = mean(sigmaRSort(i-runTotal:endNum));
+        stdDevWidthsR(j) = std(sigmaRSort(i-runTotal:endNum));
+        <span class="comment">%widthsR2p5(j) = mean(sigmaR2p5Sort(i-runTotal:i));</span>
+        <span class="comment">%stdDevWidthsR2p5(j) = std(sigmaR2p5Sort(i-runTotal:i));</span>
+        <span class="comment">%widthsPsm(j) = mean(sigmaRsmSort(i-runTotal:i));</span>
+        <span class="comment">%stdDevWidthsPsm(j) = std(sigmaRsmSort(i-runTotal:i));</span>
+
+        TonTFsm(j) = mean(TonTFsSort(i-runTotal:endNum));
+        stdDevTonTFsm(j) = std(TonTFsSort(i-runTotal:endNum));
+
+        imageArrayAvgs(:,:,j) = centerAndAverage(imageArrayCSort(:,:,i-runTotal:endNum));
+
+        motFets(j) = sortedVarData(i-runTotal);
+        pixelNumbers(j) = mean(pixelCountsSort(i-runTotal:endNum));
+        pixelNumbersStdDev(j) = std(pixelCountsSort(i-runTotal:endNum));
+        runTotal = 1;
+        j = j+1;
+    <span class="keyword">end</span>
+    <span class="keyword">if</span>( i == length(sortedVarData))
+        <span class="comment">%Final run:</span>
+        <span class="keyword">if</span>(i == runTotal)
+            runTotal = runTotal-1;
+        <span class="keyword">end</span>
+        runTotals(j) = runTotal;
+        widthsX(j) = mean(sigmaXSort(i-runTotal:i));
+        stdDevWidthsX(j) = std(sigmaXSort(i-runTotal:i));
+        widthsY(j) = mean(sigmaYSort(i-runTotal:i));
+        stdDevWidthsY(j) = std(sigmaYSort(i-runTotal:i));
+        widthsR(j) = mean(sigmaRSort(i-runTotal:i));
+        stdDevWidthsR(j) = std(sigmaRSort(i-runTotal:i));
+        <span class="comment">%widthsR2p5(j) = mean(sigmaR2p5Sort(i-runTotal:i));</span>
+        <span class="comment">%stdDevWidthsR2p5(j) = std(sigmaR2p5Sort(i-runTotal:i));</span>
+        <span class="comment">%widthsPsm(j) = mean(sigmaRsmSort(i-runTotal:i));</span>
+        <span class="comment">%stdDevWidthsPsm(j) = std(sigmaRsmSort(i-runTotal:i));</span>
+
+        TonTFsm(j) = mean(TonTFsSort(i-runTotal:i));
+        stdDevTonTFsm(j) = std(TonTFsSort(i-runTotal:i));
+
+        imageArrayAvgs(:,:,j) = centerAndAverage(imageArrayCSort(:,:,i-runTotal:i));
+
+        motFets(j) = sortedVarData(i);
+        pixelNumbers(j) = mean(pixelCountsSort(i-runTotal:i));
+        pixelNumbersStdDev(j) = std(pixelCountsSort(i-runTotal:i));
+        runTotal = 1;
+        j = j+1;
+    <span class="keyword">end</span>
+
+    prev = curr;
+<span class="keyword">end</span>
+
+<span class="keyword">if</span>(0)
+errorbar(pixelNumbers,widthsR,stdDevWidthsR./2,stdDevWidthsR./2,<span class="string">'MarkerSize'</span>,3,<span class="keyword">...</span>
+    <span class="string">'MarkerFaceColor'</span>,[0.600000023841858 0.600000023841858 1],<span class="keyword">...</span>
+    <span class="string">'Marker'</span>,<span class="string">'o'</span>,<span class="keyword">...</span>
+    <span class="string">'LineStyle'</span>,<span class="string">'none'</span>,<span class="keyword">...</span>
+    <span class="string">'Color'</span>,[0 0 1]);
+grid <span class="string">on</span>;
+<span class="keyword">end</span>
+
+
+<span class="keyword">if</span>(0)
+    <span class="keyword">for</span> i=1:length(imageArrayAvgs(1,1,:))
+    <span class="keyword">if</span>(mod(i,2) == 0)
+        figure(i);
+        imagesc(imageArrayAvgs(:,:,i));
+    <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+
+<span class="keyword">if</span>(0)
+    radProfileAvg = []; gcoefsRAvg = [];
+    <span class="keyword">for</span> i=1:length(imageArrayAvgs(1,1,:))
+    <span class="keyword">if</span>(mod(i,1) == 0)
+        figure(i);
+
+        [radProfilesAvg(:,:,i),~] = radAverageBigSquare(imageArrayAvgs(:,:,i));
+        gcoefsRAvg(:,i) = gausFitHalf1D(radProfilesAvg(1,:,i),radProfilesAvg(2,:,i));
+        plot(fgr(gcoefsRAvg(:,i),1:200));hold <span class="string">on</span>; grid <span class="string">on</span>; plot(radProfilesAvg(2,:,i), radProfilesAvg(1,:,i),<span class="string">'r'</span>); hold <span class="string">off</span>;
+    <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+plot(motFets(1:end),widthsR(1:end),<span class="string">'.'</span>);
+
+<span class="comment">%------------ PCA Code ------------%</span>
+
+        pcaEndPoint = 21; <span class="comment">%Where to take the final holdtime array index</span>
+
+        imagesToReshape = [];
+        <span class="comment">%imagesToReshape = imageArrayC(:,:,1:35); %single images</span>
+        imagesToReshape = imageArrayAvgs(:,:,1:pcaEndPoint);
+        <span class="comment">%imagesToReshape = imagesAvgSet2;</span>
+        <span class="comment">%imagesToReshape = imagesAvgSet3;</span>
+        <span class="comment">%imagesToReshape = imagesAvgSet4;</span>
+
+        numberOfImages = length(imagesToReshape(1,1,:));
+        vectorLength = length(imagesToReshape(:,1,1))*length(imagesToReshape(1,:,1));
+
+        <span class="comment">%reshape images into vectors:</span>
+        vectorImages = []; vectorSum = zeros(vectorLength,1);
+        <span class="keyword">for</span> i=1:length(imagesToReshape(1,1,:))
+            vectorImages(:,i) = reshape(imagesToReshape(:,:,i),[],1);
+            vectorSum = vectorSum + vectorImages(:,i);
+        <span class="keyword">end</span>
+
+        <span class="comment">%Mean Image:</span>
+        meanImageVector = (1/numberOfImages).*vectorSum;
+        undividedImage = reshape(vectorSum,length(imagesToReshape(:,1,1)),length(imagesToReshape(1,:,1)));
+        meanImage = reshape(meanImageVector,length(imagesToReshape(:,1,1)),length(imagesToReshape(1,:,1)));
+
+        normImages = [];
+        <span class="keyword">for</span> i=1:length(imagesToReshape(1,1,:))
+            normImages(:,i) = vectorImages(:,i) - meanImageVector;
+        <span class="keyword">end</span>
+
+        <span class="comment">%N x p Bmatrix (N = number of images, p = pixels per image)</span>
+        Bmatrix = normImages;
+
+        <span class="comment">%[coeff, score, latent] = pca(ingredients)</span>
+        <span class="comment">%each column of score corresponds to one principal component</span>
+        <span class="comment">%latent stores the variances of the N principal components</span>
+        [Y01,P01,E01,tsquared,percentV] = pca(Bmatrix);
+
+
+        <span class="comment">%Reconstruct images using desired principle components</span>
+        eigenVectorBmatrix = []; imagesFromEVector = [];
+        <span class="keyword">for</span> i=1:numberOfImages
+            eigenVectorBmatrix = P01(:,i);
+            imagesFromEVector(:,:,i) = reshape(eigenVectorBmatrix,length(imagesToReshape(:,1,1)),length(imagesToReshape(1,:,1)));
+        <span class="keyword">end</span>
+
+
+        <span class="comment">%set of eigenmodes (principal components) large figure:</span>
+        figure(1);
+        <span class="comment">%set(gca,'XTickLabelMode', 'manual','XTickLabel', []);</span>
+        <span class="comment">%set(gca,'YTickLabelMode', 'manual','YTickLabel', []);</span>
+        <span class="keyword">for</span> i=1:numberOfImages
+            subplot(ceil(numberOfImages/5),5,i);
+            imagesc(imagesFromEVector(:,:,i));
+            set(gca,<span class="string">'XTickLabelMode'</span>, <span class="string">'manual'</span>,<span class="string">'XTickLabel'</span>, []);
+            set(gca,<span class="string">'YTickLabelMode'</span>, <span class="string">'manual'</span>,<span class="string">'YTickLabel'</span>, []);
+        <span class="keyword">end</span>
+
+        <span class="keyword">for</span> i=1:5
+            figure(i+100); imagesc(imagesFromEVector(:,:,i));
+        <span class="keyword">end</span>
+
+        <span class="comment">%Fit to find frequency:</span>
+        <span class="comment">%make sure x in ... ms</span>
+        fgsine = @(p,x)(p(1).*sin(p(2).*x+p(3))+p(4));
+        fgsineDamp = @(p,x)(p(1).*exp(-p(2).*x).*sin(p(3).*x+p(4))+p(5));
+
+        <span class="comment">%Mode 1:</span>
+        [gcoefsPCAmode1,gcoefsPCAerror1] = sinExpDampFitFreqGuess(Y01(:,1),motFets(1:pcaEndPoint),0.26);
+        freqPCAmode1 = gcoefsPCAmode1(3)/(10^(-3))/(2*pi);
+        freqPCAmode1ErrorMin = gcoefsPCAerror1(3,1)/(10^(-3))/(2*pi);
+        freqPCAmode1ErrorMax = gcoefsPCAerror1(3,2)/(10^(-3))/(2*pi);
+
+        figure(1111);
+        subplot(1,2,1);
+        imagesc(imagesFromEVector(:,:,1));
+        subplot(1,2,2);
+        plot(fgsineDamp(gcoefsPCAmode1,1:70)); hold <span class="string">on</span>;
+        plot(motFets(1:pcaEndPoint),Y01(:,1),<span class="string">'.'</span>,<span class="string">'color'</span>,[0 0 0]);
+        text(5,-0.34,[<span class="string">'\omega = 2\pi \times '</span> num2str(freqPCAmode1,4) <span class="string">' ('</span> num2str(freqPCAmode1ErrorMin,4) <span class="string">','</span> num2str(freqPCAmode1ErrorMax,4) <span class="string">')'</span>]);
+        hold <span class="string">off</span>;
+
+
+        <span class="comment">%Mode 2:</span>
+        [gcoefsPCAmode2,gcoefsPCAerror2] = sinExpDampFitFreqGuess(Y01(:,2),motFets(1:pcaEndPoint),0.13);
+        freqPCAmode2 = gcoefsPCAmode2(3)/(10^(-3))/(2*pi);
+        freqPCAmode2ErrorMin = gcoefsPCAerror2(3,1)/(10^(-3))/(2*pi);
+        freqPCAmode2ErrorMax = gcoefsPCAerror2(3,2)/(10^(-3))/(2*pi);
+
+        <span class="comment">%figure(3);</span>
+        subplot(2,2,3);
+        imagesc(imagesFromEVector(:,:,2));
+        subplot(2,2,4);
+        plot(fgsineDamp(gcoefsPCAmode2,1:520)); hold <span class="string">on</span>;
+        plot(motFets(1:pcaEndPoint),Y01(:,2),<span class="string">'.'</span>,<span class="string">'color'</span>,[0 0 0]);
+        text(5,-0.28,[<span class="string">'\omega = 2\pi \times '</span> num2str(freqPCAmode2,4) <span class="string">' ('</span> num2str(freqPCAmode2ErrorMin,4) <span class="string">','</span> num2str(freqPCAmode2ErrorMax,4) <span class="string">')'</span>]);
+        hold <span class="string">off</span>;
+</pre><pre class="codeoutput">Reading in log file...
+Radially averaging...
+Function Fitting...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+Centering Image Array...
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+directory = 'C:\Data\160505_CollectiveOscillations_2D_Green_modulation_triangle_envelope_82p5mvpp_832G_40cycles_varyholdtime_2\';
+
+date = '160505';
+camera = 'topcam';
+varstring = 'HoldTime';
+%varstring2 = 'Holdtime';
+pixelLength = 2.84e-6; %13 um topcam, topcam magnification = 4.58, ie 2.84um effective
+massL6 = 9.988e-27; %9.988 x 10^27 kg
+hbar = 1.05457e-34; %1.05457*10^-34 m^2 kg/s
+Isat = 134*10; %135*x us
+%Isat = 10^6;
+kB = 1.38e-23; %Boltzmanns constant m^2 kg s^-2 K^-1
+imgArrayFresh = [];  lowIntRealAtomImg = [];
+OD = 0; %optical density from SPE process function 1=OD, 0=WithSigma
+close all;
+raw = 1;
+
+%Read in the log file:
+
+logfilename = [directory date '_log_camera.txt'];
+fid = fopen(logfilename,'rt');
+C = textscan(fid, '%s', 'Delimiter','\t'); %tokenize into tab seperated tokens
+C = C{1};
+fclose(fid);
+
+%Iterate through strings in the log file array 1-d C{:} to find the
+%information we want:
+
+varData = [];
+
+TotalImages = 0;
+
+%for loop to find the total number of images
+for i=1:(length(C)-1)
+
+    curr = C{i};
+    next = C{i+1};
+    
+    if strcmp(curr,'MeasNr')
+        TotalImages = TotalImages + 1;
+    end
+              
+    
+end
+
+%Get information from log file:
+widthYlogfile = []; widthXlogfile = []; nROIlogfile = [];
+[fileLocList,varData] = generateFromLogfile(directory,date,varstring,camera);
+widthYlogfile = varData(:,4);
+widthXlogfile = varData(:,3);
+nROIlogfile = varData(:,5);
+
+imageArray = [];
+%Pull images:
+for i=1:length(fileLocList)
+    OD = 0;
+    [beamImage,atom1Image,atom2Image] = PullSPE(fileLocList{i},Isat,OD);
+    imageArray(:,:,i) = atom2Image(:,:,1);
+end
+
+%Crop images:
+imageArrayC = []; imageArrayTC = [];
+ROIx = 1:length(imageArray(1,:,1));
+ROIy = 1:length(imageArray(:,1,1));
+CrossROIy = 20:180; 
+CrossROIx = 35:185; %The cross is inside the region specified above.
+TightROIx = 35:185;
+TightROIy = 30:170;
+%Split into high and low intensity arrays
+imageArrayC = imageArray(ROIy,ROIx,:);
+imageArrayTC = imageArray(TightROIy,TightROIx,:);
+
+%Display every X image:
+if(0)
+for i=1:length(imageArray(1,1,:))
+    if(mod(i,1) == 0)       
+        figure(i);
+        imagesc(imageArray(:,:,i));        
+    end
+end
+for i=1:length(imageArrayC(1,1,:))
+    if(mod(i,1) == 0)       
+        figure(i);
+        imagesc(imageArrayTC(:,:,i));        
+    end
+end
+end
+
+%Radially averaged profiles:
+radProfiles = []; radProfilesT = []; center = [];
+disp('Radially averaging...');
+for i=1:length(imageArrayC(1,1,:))
+    [radProfilesT(:,:,i),center(:,i)] = radAverageBigSquare(imageArrayC(:,:,i));
+    radProfiles(:,:,i) = radProfilesT(:,1:end-20,i);
+end
+
+%Shift wings of radial profiles to zero:
+shiftBy = [];
+for i=1:length(radProfiles(1,1,:))
+    shiftBy(i) = mean(radProfiles(1,55:75,i));
+    radProfiles(1,:,i) = radProfiles(1,:,i) - shiftBy(i);
+end
+
+%%%%%Fit Functions:
+%gaussian with 4 variables:
+fg = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2)) + p(4));
+%gaussian with 2 variables (for radial profiles)
+fgr = @(p,x)(p(1).*exp((-1).*((x).^2) ./ (2.*p(2).^2)));
+%polylog order 1 function:
+%fgp = @(p,x)(p(1).*log(1+exp((p(2)+(-1).*x.^2)./(p(3)^2))));
+fgp = @(p,x)(p(1).*log(1+exp((p(2)+(-1).*p(3).*x.^2)./(p(4)))));
+%gaussian with 2 variables fixed 2.5 exponent:
+fgr2p5 = @(p,x)(p(1).*exp((-1).*((x).^(2.5)) ./ (2.*p(2).^(2.5))));
+%gaussian with 2 variables and fitted exponent:
+fgrfe = @(p,x)(p(1).*exp((-1).*((x).^(p(2))) ./ (2.*p(3).^(2.5)))); 
+
+gcoefsX = []; gcoefsY = []; centers = []; gcoefsXi = []; gcoefsYi = [];
+gcoefsR = []; gcoefsR2p5 = []; sigmaR2p5 = []; gcoefsPolyLog1 = [];
+gcoefsRFreeExp = []; sigmaR = [];
+sigmaX = []; sigmaY = []; shiftFactor = []; shiftFactorR = [];
+disp('Function Fitting...');
+for i=1:length(imageArrayC(1,1,:))
+    %Initial Fit for zeroing:
+    gcoefsXi(:,i) = gausFit1D(mean(imageArrayC(CrossROIy,:,i),1)); %mean averages over y
+    gcoefsYi(:,i) = gausFit1D(mean(imageArrayC(:,CrossROIx,i),2)); %mean averages over x
+    gcoefsR(:,i) = gausFitHalf1D(radProfiles(1,:,i),radProfiles(2,:,i));
+    %gcoefsR2p5(:,i) = gausExp2p5FitHalf1D(radProfiles(1,:,i),radProfiles(2,:,i));
+    gcoefsPolyLog1(:,i) = polyLog1FitHalf1D(radProfiles(1,:,i),radProfiles(2,:,i),'topcam');
+    %gcoefsRFreeExp(:,i) = gausFreeExpFitHalf1D(radProfiles(1,:,i),radProfiles(2,:,i));
+    
+    %Shift wings to zero:
+    shiftFactor(i) = (gcoefsXi(4,i)+gcoefsYi(4,i))/2;
+    imageArrayC(:,:,i) = imageArrayC(:,:,i) - shiftFactor(i);
+        
+    %Refit:
+    gcoefsX(:,i) = gausFit1D(mean(imageArrayC(CrossROIy,:,i),1)); %mean averages over y
+    %Profile: plot(mean(imageArrayC(:,:,i),1))
+    gcoefsY(:,i) = gausFit1D(mean(imageArrayC(:,CrossROIx,i),2)); %mean averages over x
+    %Profile: plot(mean(imageArrayC(:,:,i),2))
+    
+    centers(:,i) = [ceil(gcoefsX(2,i)), ceil(gcoefsY(2,i))]; %center = [x y]
+    sigmaX(:,i) = gcoefsX(3,i);
+    sigmaY(:,i) = gcoefsY(3,i);
+    sigmaR(:,i) = gcoefsR(2,i);
+    %sigmaR2p5(:,i) = gcoefsR2p5(2,i);
+end
+
+
+%show function fits:
+if(0)
+    for i=1:length(imageArrayC(1,1,:))
+    if(mod(i,1) == 0)       
+        figure(i);
+        plot(fgr(gcoefsR(:,i),1:180),'g'); hold on; plot(fgp(gcoefsPolyLog1(:,i),1:180)); plot(radProfiles(2,:,i),radProfiles(1,:,i),'r'); line([sigmaRsm(i) sigmaRsm(i)],[0 fgp(gcoefsPolyLog1(:,i),sigmaRsm(i))],'LineStyle','REPLACE_WITH_DASH_DASH','Color',[0.7 0.7 0.7]); hold off;      
+    end
+    end
+end
+
+%%%%%Atom numbers:
+%Tight ROI array:
+pixelCounts = [];
+for i=1:length(imageArrayC(1,1,:))
+    pixelCounts(i) = sum(sum(imageArrayC(:,:,i)));
+end
+
+%%%%%Temperatures:
+TonTFs = []; Ts = [];
+for i=1:length(imageArrayC(1,1,:))
+    TonTFs(i) = 1/(log(1+exp(gcoefsPolyLog1(2,i)/gcoefsPolyLog1(3,i)^2)));
+    Ts(i) = gcoefsPolyLog1(4,i);
+end
+
+
+%Sort varData:
+sortedVarData = []; indexs = []; sigmaRSort = [];
+sigmaXSort = []; sigmaYSort = []; sigmaR2p5Sort = [];
+sigmaRsmSort = []; TonTFsSort = []; imageArrayCSort = [];
+[sortedVarData,indexs] = sort(varData);
+%indexs(:,1) is a vector of the sort (varstring).
+
+%Re-order each array:
+for i=1:length(sigmaX)
+    sigmaXSort(i) = sigmaX(indexs(i));
+    sigmaYSort(i) = sigmaY(indexs(i));
+    pixelCountsSort(i) = pixelCounts(indexs(i));
+    sigmaRSort(i) = sigmaR(indexs(i));
+    %sigmaR2p5Sort(i) = sigmaR2p5(indexs(i));
+    %sigmaRsmSort(i) = sigmaRsm(indexs(i));
+    TonTFsSort(i) = TonTFs(indexs(i));
+    imageArrayCSort(:,:,i) = imageArrayC(:,:,indexs(i));  
+end
+
+%Average over same motfet data points:
+%Bug fix history: 150109 fixed endNum
+j=1; runTotal = 0; motFets = []; widthsX = []; widthsY = [];
+stdDevWidthsX = []; stdDevWidthsY = []; pixelNumbers = [];
+pixelNumbersStdDev = []; sMomentX = []; sMomentY = [];
+widthsR = []; stdDevWidthsR = []; widthsR2p5 = [];
+widthsPsm = []; stdDevWidthsPsm = []; TonTFsm = []; stdDevTonTFsm = [];
+sMomentXStdDev = []; sMomentYStdDev = []; stdDevWidthsR2p5 = [];
+prev = sortedVarData(1); imageArrayAvgs = []; runTotals = [];
+for i=1:length(sortedVarData)
+    curr = sortedVarData(i);
+    
+    if( curr == prev )
+        runTotal = runTotal+1;
+    else
+        %hit next value
+        runTotals(j) = runTotal;
+        startNum = i-runTotal;
+        endNum = i-1;
+        widthsX(j) = mean(sigmaXSort(i-runTotal:endNum));
+        stdDevWidthsX(j) = std(sigmaXSort(i-runTotal:endNum));
+        widthsY(j) = mean(sigmaYSort(i-runTotal:endNum));
+        stdDevWidthsY(j) = std(sigmaYSort(i-runTotal:endNum));
+        widthsR(j) = mean(sigmaRSort(i-runTotal:endNum));
+        stdDevWidthsR(j) = std(sigmaRSort(i-runTotal:endNum));
+        %widthsR2p5(j) = mean(sigmaR2p5Sort(i-runTotal:i));
+        %stdDevWidthsR2p5(j) = std(sigmaR2p5Sort(i-runTotal:i));
+        %widthsPsm(j) = mean(sigmaRsmSort(i-runTotal:i));
+        %stdDevWidthsPsm(j) = std(sigmaRsmSort(i-runTotal:i));
+        
+        TonTFsm(j) = mean(TonTFsSort(i-runTotal:endNum));
+        stdDevTonTFsm(j) = std(TonTFsSort(i-runTotal:endNum));
+        
+        imageArrayAvgs(:,:,j) = centerAndAverage(imageArrayCSort(:,:,i-runTotal:endNum));
+        
+        motFets(j) = sortedVarData(i-runTotal);
+        pixelNumbers(j) = mean(pixelCountsSort(i-runTotal:endNum));
+        pixelNumbersStdDev(j) = std(pixelCountsSort(i-runTotal:endNum));
+        runTotal = 1;
+        j = j+1;
+    end
+    if( i == length(sortedVarData))
+        %Final run:
+        if(i == runTotal)
+            runTotal = runTotal-1;
+        end
+        runTotals(j) = runTotal;
+        widthsX(j) = mean(sigmaXSort(i-runTotal:i));
+        stdDevWidthsX(j) = std(sigmaXSort(i-runTotal:i));
+        widthsY(j) = mean(sigmaYSort(i-runTotal:i));
+        stdDevWidthsY(j) = std(sigmaYSort(i-runTotal:i));
+        widthsR(j) = mean(sigmaRSort(i-runTotal:i));
+        stdDevWidthsR(j) = std(sigmaRSort(i-runTotal:i));
+        %widthsR2p5(j) = mean(sigmaR2p5Sort(i-runTotal:i));
+        %stdDevWidthsR2p5(j) = std(sigmaR2p5Sort(i-runTotal:i));
+        %widthsPsm(j) = mean(sigmaRsmSort(i-runTotal:i));
+        %stdDevWidthsPsm(j) = std(sigmaRsmSort(i-runTotal:i));
+        
+        TonTFsm(j) = mean(TonTFsSort(i-runTotal:i));
+        stdDevTonTFsm(j) = std(TonTFsSort(i-runTotal:i));
+        
+        imageArrayAvgs(:,:,j) = centerAndAverage(imageArrayCSort(:,:,i-runTotal:i));
+        
+        motFets(j) = sortedVarData(i);
+        pixelNumbers(j) = mean(pixelCountsSort(i-runTotal:i));
+        pixelNumbersStdDev(j) = std(pixelCountsSort(i-runTotal:i));
+        runTotal = 1;
+        j = j+1;
+    end
+    
+    prev = curr;
+end
+
+if(0)
+errorbar(pixelNumbers,widthsR,stdDevWidthsR./2,stdDevWidthsR./2,'MarkerSize',3,...
+    'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+    'Marker','o',...
+    'LineStyle','none',...
+    'Color',[0 0 1]);
+grid on;
+end
+
+
+if(0)
+    for i=1:length(imageArrayAvgs(1,1,:))
+    if(mod(i,2) == 0)       
+        figure(i);
+        imagesc(imageArrayAvgs(:,:,i));        
+    end
+    end
+end
+
+
+if(0)
+    radProfileAvg = []; gcoefsRAvg = [];
+    for i=1:length(imageArrayAvgs(1,1,:))
+    if(mod(i,1) == 0)       
+        figure(i);
+        
+        [radProfilesAvg(:,:,i),~] = radAverageBigSquare(imageArrayAvgs(:,:,i));
+        gcoefsRAvg(:,i) = gausFitHalf1D(radProfilesAvg(1,:,i),radProfilesAvg(2,:,i));
+        plot(fgr(gcoefsRAvg(:,i),1:200));hold on; grid on; plot(radProfilesAvg(2,:,i), radProfilesAvg(1,:,i),'r'); hold off;      
+    end
+    end
+end
+
+plot(motFets(1:end),widthsR(1:end),'.');
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH PCA Code REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH%
+
+        pcaEndPoint = 21; %Where to take the final holdtime array index
+
+        imagesToReshape = [];
+        %imagesToReshape = imageArrayC(:,:,1:35); %single images
+        imagesToReshape = imageArrayAvgs(:,:,1:pcaEndPoint);
+        %imagesToReshape = imagesAvgSet2;
+        %imagesToReshape = imagesAvgSet3;
+        %imagesToReshape = imagesAvgSet4;
+        
+        numberOfImages = length(imagesToReshape(1,1,:));
+        vectorLength = length(imagesToReshape(:,1,1))*length(imagesToReshape(1,:,1));
+        
+        %reshape images into vectors:
+        vectorImages = []; vectorSum = zeros(vectorLength,1);
+        for i=1:length(imagesToReshape(1,1,:))
+            vectorImages(:,i) = reshape(imagesToReshape(:,:,i),[],1);
+            vectorSum = vectorSum + vectorImages(:,i);
+        end
+        
+        %Mean Image:
+        meanImageVector = (1/numberOfImages).*vectorSum;
+        undividedImage = reshape(vectorSum,length(imagesToReshape(:,1,1)),length(imagesToReshape(1,:,1)));
+        meanImage = reshape(meanImageVector,length(imagesToReshape(:,1,1)),length(imagesToReshape(1,:,1)));
+        
+        normImages = [];
+        for i=1:length(imagesToReshape(1,1,:))
+            normImages(:,i) = vectorImages(:,i) - meanImageVector;
+        end
+        
+        %N x p Bmatrix (N = number of images, p = pixels per image)
+        Bmatrix = normImages;
+        
+        %[coeff, score, latent] = pca(ingredients)
+        %each column of score corresponds to one principal component
+        %latent stores the variances of the N principal components
+        [Y01,P01,E01,tsquared,percentV] = pca(Bmatrix);
+              
+        
+        %Reconstruct images using desired principle components
+        eigenVectorBmatrix = []; imagesFromEVector = [];
+        for i=1:numberOfImages
+            eigenVectorBmatrix = P01(:,i);
+            imagesFromEVector(:,:,i) = reshape(eigenVectorBmatrix,length(imagesToReshape(:,1,1)),length(imagesToReshape(1,:,1)));
+        end
+        
+        
+        %set of eigenmodes (principal components) large figure:
+        figure(1);
+        %set(gca,'XTickLabelMode', 'manual','XTickLabel', []);
+        %set(gca,'YTickLabelMode', 'manual','YTickLabel', []);
+        for i=1:numberOfImages
+            subplot(ceil(numberOfImages/5),5,i);
+            imagesc(imagesFromEVector(:,:,i));
+            set(gca,'XTickLabelMode', 'manual','XTickLabel', []);
+            set(gca,'YTickLabelMode', 'manual','YTickLabel', []);         
+        end
+        
+        for i=1:5
+            figure(i+100); imagesc(imagesFromEVector(:,:,i));
+        end
+        
+        %Fit to find frequency:
+        %make sure x in ... ms
+        fgsine = @(p,x)(p(1).*sin(p(2).*x+p(3))+p(4));
+        fgsineDamp = @(p,x)(p(1).*exp(-p(2).*x).*sin(p(3).*x+p(4))+p(5));
+        
+        %Mode 1:
+        [gcoefsPCAmode1,gcoefsPCAerror1] = sinExpDampFitFreqGuess(Y01(:,1),motFets(1:pcaEndPoint),0.26);
+        freqPCAmode1 = gcoefsPCAmode1(3)/(10^(-3))/(2*pi);
+        freqPCAmode1ErrorMin = gcoefsPCAerror1(3,1)/(10^(-3))/(2*pi);
+        freqPCAmode1ErrorMax = gcoefsPCAerror1(3,2)/(10^(-3))/(2*pi);
+                
+        figure(1111);
+        subplot(1,2,1);
+        imagesc(imagesFromEVector(:,:,1));
+        subplot(1,2,2);
+        plot(fgsineDamp(gcoefsPCAmode1,1:70)); hold on;
+        plot(motFets(1:pcaEndPoint),Y01(:,1),'.','color',[0 0 0]); 
+        text(5,-0.34,['\omega = 2\pi \times ' num2str(freqPCAmode1,4) ' (' num2str(freqPCAmode1ErrorMin,4) ',' num2str(freqPCAmode1ErrorMax,4) ')']); 
+        hold off;
+        
+   
+        %Mode 2:
+        [gcoefsPCAmode2,gcoefsPCAerror2] = sinExpDampFitFreqGuess(Y01(:,2),motFets(1:pcaEndPoint),0.13);
+        freqPCAmode2 = gcoefsPCAmode2(3)/(10^(-3))/(2*pi);
+        freqPCAmode2ErrorMin = gcoefsPCAerror2(3,1)/(10^(-3))/(2*pi);
+        freqPCAmode2ErrorMax = gcoefsPCAerror2(3,2)/(10^(-3))/(2*pi);
+ 
+        %figure(3);
+        subplot(2,2,3);
+        imagesc(imagesFromEVector(:,:,2));
+        subplot(2,2,4);        
+        plot(fgsineDamp(gcoefsPCAmode2,1:520)); hold on;
+        plot(motFets(1:pcaEndPoint),Y01(:,2),'.','color',[0 0 0]);
+        text(5,-0.28,['\omega = 2\pi \times ' num2str(freqPCAmode2,4) ' (' num2str(freqPCAmode2ErrorMin,4) ',' num2str(freqPCAmode2ErrorMax,4) ')']); 
+        hold off;
+##### SOURCE END #####
+--></body></html>

@@ -1,8 +1,10 @@
-directory = 'C:\Data\150904_Top_Side_Compare_Magnification_600usTOF\150904_magnification_compare_side\';
-%directory = 'C:\Data\150904_magnification_check3_top\';
-date = '150904';
+%TempFit Top: To fit a quick temperature to top camera 2D clouds
+
+directory = 'C:\Data\150921_evap_2D_2secs_865G_rampon_150ms_ramphigh_750ms_hold_750ms_0p68v_fet\';
+directory = 'C:\Data\150921_evap_2D_2secs_865G_load2d_from2nd_trap\';
+date = '150921';
 camera = 'topcam';
-varstring = 'Imagenumber';
+varstring = 'rampon';
 %varstring2 = 'Holdtime';
 pixelLength = 2.84e-6; %13 um topcam, topcam magnification = 4.58, ie 2.84um effective
 massL6 = 9.988e-27; %9.988 x 10^27 kg
@@ -102,7 +104,8 @@ fg = @(p,x)(p(1).*exp((-1).*((x-p(2)).^2) ./ (2.*p(3).^2)) + p(4));
 %gaussian with 2 variables (for radial profiles)
 fgr = @(p,x)(p(1).*exp((-1).*((x).^2) ./ (2.*p(2).^2)));
 %polylog order 1 function:
-fgp = @(p,x)(p(1).*log(1+exp((p(2)+(-1).*x.^2)./(p(3).^2))));
+%fgp = @(p,x)(p(1).*log(1+exp((p(2)+(-1).*x.^2)./(p(3)^2))));
+fgp = @(p,x)(p(1).*log(1+exp((p(2)+(-1).*p(3).*x.^2)./(p(4)))));
 %gaussian with 2 variables fixed 2.5 exponent:
 fgr2p5 = @(p,x)(p(1).*exp((-1).*((x).^(2.5)) ./ (2.*p(2).^(2.5))));
 %gaussian with 2 variables and fitted exponent:
@@ -143,14 +146,12 @@ end
 %show function fits:
 if(0)
     for i=1:length(imageArrayC(1,1,:))
-    if(mod(i,6) == 0)       
+    if(mod(i,1) == 0)       
         figure(i);
         plot(fgr(gcoefsR(:,i),1:180),'g'); hold on; plot(fgp(gcoefsPolyLog1(:,i),1:180)); plot(radProfiles(2,:,i),radProfiles(1,:,i),'r'); line([sigmaRsm(i) sigmaRsm(i)],[0 fgp(gcoefsPolyLog1(:,i),sigmaRsm(i))],'LineStyle','--','Color',[0.7 0.7 0.7]); hold off;      
     end
     end
 end
-
-
 
 %%%%%Atom numbers:
 %Tight ROI array:
@@ -160,10 +161,13 @@ for i=1:length(imageArrayC(1,1,:))
 end
 
 %%%%%Temperatures:
-TonTFs = [];
+TonTFs = []; Ts = [];
 for i=1:length(imageArrayC(1,1,:))
     TonTFs(i) = 1/(log(1+exp(gcoefsPolyLog1(2,i)/gcoefsPolyLog1(3,i)^2)));
+    Ts(i) = gcoefsPolyLog1(4,i);
 end
+
+
 
 %Sort varData:
 sortedVarData = []; indexs = []; sigmaRSort = [];
@@ -251,31 +255,17 @@ for i=1:length(sortedVarData)
     prev = curr;
 end
 
-%convert to real units:
-%widthsX = widthsX.*pixelLength.*2; %*2 to make it not the radius
-%widthsY = widthsY.*pixelLength.*2; 
-widthsX = widthsX.*2; %*2 to make it not the radius
-widthsY = widthsY.*2;
-widthsR = widthsR.*2;
-%widthsR2p5 = widthsR2p5.*2;
-widthsPsm = widthsPsm.*2;
-%stdDevWidthsY = stdDevWidthsY.*pixelLength.*2; %full error on width
-%stdDevWidthsX = stdDevWidthsX.*pixelLength.*2;
-stdDevWidthsY = stdDevWidthsY.*2; %full error on width
-stdDevWidthsX = stdDevWidthsX.*2;
-stdDevWidthsR = stdDevWidthsR.*2;
-%stdDevWidthsR2p5 = stdDevWidthsR2p5.*2;
-stdDevWidthsPsm = stdDevWidthsPsm.*2;
 
 if(0)
-    radProfileAvg = []; gcoefsRAvg = [];
+    radProfileAvg = []; gcoefsRAvg = []; gcoefsPolyLog1Avg = [];
     for i=1:length(imageArrayAvgs(1,1,:))
     if(mod(i,1) == 0)       
         figure(i);
         [radProfilesAvg(:,:,i),~] = radAverageBigSquare(imageArrayAvgs(:,:,i));
+        radProfilesAvg(2,:,:) = radProfilesAvg(2,:,:).*pixelLength;
         gcoefsRAvg(:,i) = gausFitHalf1D(radProfilesAvg(1,:,i),radProfilesAvg(2,:,i));
-        plot(fgr(gcoefsRAvg(:,i),1:200));hold on; plot(radProfilesAvg(2,:,i), radProfilesAvg(1,:,i),'r'); hold off;      
+        gcoefsPolyLog1Avg(:,i) = polyLog1FitHalf1D(radProfilesAvg(1,:,i),radProfilesAvg(2,:,i),'topcam');
+        plot(fgr(gcoefsRAvg(:,i),1:200));hold on; plot(radProfilesAvg(2,:,i), radProfilesAvg(1,:,i),'r'); plot(fgp(gcoefsPolyLog1Avg(:,i),1:200),'g'); hold off;      
     end
     end
 end
-

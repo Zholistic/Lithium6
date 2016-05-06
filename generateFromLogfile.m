@@ -42,7 +42,7 @@ end
 fileLocList = cell(TotalImages,1);
 prev = 0;
 j=0; k=0; picno = '0';
-widthx = 0; widthy = 0; NsumROI = 0;
+widthx = 0; widthy = 0; NsumROI = 0; centery = 0;
 dataset = 1;
 
 %for loop to get information out of the logfile and load it into arrays:
@@ -88,7 +88,7 @@ for i=1:(length(C)-1)
     
     %data set identifier
     %dataset = 1;
-    if strcmp(curr,'width_mum_y')
+    if strcmp(curr,'width_mum_y1')
         dataset = 1;
     end
     if strcmp(curr,'width_mum_y2')
@@ -103,18 +103,20 @@ for i=1:(length(C)-1)
     if strcmp(curr,'width_mum_y5')
         dataset = 5;
     end
-    
-    if strcmp(curr,'widthx')
+    if (strcmp(curr,'centery_m') || strcmp(curr,'COMy') || strcmp(curr,'centery_m14'))
+        centery = next;
+    end
+    if strcmp(curr,'SIGMAx')
         widthx = next;
     end
-    if strcmp(curr,'widthy')
+    if strcmp(curr,'SIGMAy')
         widthy = next;
     end
     if strcmp(curr,'NsumROI')
         NsumROI = next;
     end
     if(topcam)
-        if strcmp(curr,'N_ROI')
+        if (strcmp(curr,'N_ROI') || strcmp(curr,'N_ROI1'))
             NsumROI = next;
         end
     end
@@ -123,16 +125,28 @@ for i=1:(length(C)-1)
     if strcmp(curr,varstring)
         k=k+1;
         %logholdtime(ceil(i/(length(C)/TotalImages))) = str2num(next);
+        if(NsumROI)
         varData(k,5) = str2num(NsumROI); 
+        else
+          varData(k,5) = 0;   
+        end
+        
         if(widthy)
         varData(k,4) = str2num(widthy);
         else
          varData(k,4) = 0; 
         end
+        
         if(widthx)
         varData(k,3) = str2num(widthx);
         else
          varData(k,3) = 0; 
+        end
+        
+        if(centery)
+            varData(k,6) = str2num(centery);
+        else
+            varData(k,6) = 0;
         end
 
         varData(k,2) = dataset;

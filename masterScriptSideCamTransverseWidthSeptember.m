@@ -17,6 +17,7 @@ pixelLength = 3.75e-6 / 1.9;
 massL6 = 9.988e-27; %9.988 x 10^27 kg
 hbar = 1.05457e-34; %1.05457*10^-34 m^2 kg/s
 Isat = 135*10; %135*x us
+Isat = 10^6;
 kB = 1.38e-23; %Boltzmanns constant m^2 kg s^-2 K^-1
 imgArrayFresh = [];  lowIntRealAtomImg = [];
 OD = 0; %optical density from SPE process function 1=OD, 0=WithSigma
@@ -58,7 +59,7 @@ end
 imageArray = [];
 %Pull images:
 for i=1:length(fileLocList)
-    imageArray(:,:,i) = PullFTS(fileLocList{i},raw);
+    imageArray(:,:,i) = PullFTS(fileLocList{i},raw,Isat);
 end
 
 
@@ -124,13 +125,13 @@ if(0)
 for i=1:length(imageArrayC(1,1,:))
     if(mod(i,4) == 0)       
         figure(i);
-        plot(fg(gcoefsX(:,i),1:300));hold on; plot(mean(imageArrayC(:,:,i),1),'r'); hold off;      
+        plot(fg(gcoefsX(:,i),1:300));hold on; plot(mean(imageArrayC(CrossROIy,:,i),1),'r'); hold off;      
     end
 end
 for i=1:length(imageArrayC(1,1,:))
     if(mod(i,4) == 0)       
         figure(i);
-        plot(fg(gcoefsY(:,i),1:150));hold on; plot(mean(imageArrayC(:,:,i),2),'r'); hold off;      
+        plot(fg(gcoefsY(:,i),1:150));hold on; plot(mean(imageArrayC(:,CrossROIx,i),2),'r'); hold off;      
     end
 end
 end
