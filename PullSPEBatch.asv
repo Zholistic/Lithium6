@@ -1,7 +1,10 @@
-function [beamf,atom1f,atom2f] = PullSPE(fileloc,Isat,OD)
+function [beamReturnArray,atom1ReturnArray,atom2ReturnArray] = PullSPEBatch(fileloclist,Isat,OD,fringeRem)
+%fileloclist is a cell of the image location names...
 
 %SPE_File_Name = 'C:\Data\140311_Imaging_Parameter_Check_2D_Trap_1usROI1_5usROI2_10usROI4_10usNewBeatROI5_1us20IsatROI3_Image_Pulse\140310_2748.SPE';
-SPE_File_Name = fileloc;
+atomImages1 = []; atomImages2 = []; beamImages1 = []; beamImages2 = [];
+for i=1:length(fileloclist)
+SPE_File_Name = fileloclist{i};
 
 debug = 0;
 
@@ -100,10 +103,10 @@ SortAvgBeam = []; SortAvgAtomImg1 = []; SortAvgAtomImg2 = [];
 
 %Sums over the x direction for each sorted image to give an average
 %of largest and smallest values. 
-for i=1:length(crop1(:,1,1))
-    SortAvgBeam(i) = sum(SortBeamImg(i,:,1));
-    SortAvgAtomImg1(i) = sum(SortAtomImg1(i,:,1));
-    SortAvgAtomImg2(i) = sum(SortAtomImg2(i,:,1));
+for j=1:length(crop1(:,1,1))
+    SortAvgBeam(j) = sum(SortBeamImg(j,:,1));
+    SortAvgAtomImg1(j) = sum(SortAtomImg1(j,:,1));
+    SortAvgAtomImg2(j) = sum(SortAtomImg2(j,:,1));
 end
 
 %BeamScaleFactor = (SortAvgBeam(end) - SortAvgBeam(1))/(SortAvgAtomImg1(end) - SortAvgAtomImg1(1));
@@ -145,7 +148,46 @@ if(debug)
     imagesc(real(-log(DivImage2).*(PixelArea/Sigma)));
 end
 
+beamImages2(:,:,i) = BeamImg2;
+beamImages1(:,:,i) = BeamImg1;
+atomImages2(:,:,i) = AtomImg2;
+atomImages1(:,:,i) = AtomImg1;
+end
 
+if(fringeRem)
+    %Do fringe removal and return these:
+backgroundMask = [];
+for m = 1:207
+    for n = 1:207
+        if(m > 55 && m < 160 && n > 26 && n < 132)
+        backgroundMask(n,m) = 0; %atoms region
+        else
+        backgroundMask(n,m) = 1; %background region
+        end
+    end
+end
+
+
+%[ odimages,optrefimages,avgimage,timer ] = fringeremoval2( absimages,refimages,bgmask,returnimgs)
+%[ odimages,optrefimages,avgimage,timer ] = fringeremoval2( atomImages2,beamImages2,backgroundMask,returnimgs)
+%[ odimages,optrefimages,avgimage,timer ] = fringeremoval2( atomImages2,beamImages2,backgroundMask)
+if(0)
+    close all;
+    for j=1:length(odimages(1,1,:))
+        if(mod(j,10) == 0)
+            figure(j);
+            imagesc(real(odimages(:,:,j)));
+        end
+    end
+end
+%-log(abs-dark)/(ref-dark)
+
+beamReturnArray = beamf;
+atom1ReturnArray = atom1f;
+atom2ReturnArray = atom2f;
+
+else
+for i=1:length(fileloclist)
 %Optical Density Calc-----------------------------------------------------%
 %Division Term:
 AtomsDiv1 = (1+4*(Delta^2)/Gamma^2).*real(-log(AtomImg1./(BeamImg1)));
@@ -182,7 +224,7 @@ Atoms2ODnn = OD2;
 
 %Noise Correction --------------------------------------------------------%
 %Use a region (not in the cloud) to determine the noise character:
-JunkLeft = 20; JunkRight = 150; JunkTop = 140; JunkBottom = 190;
+JunkLeft = 20; JunkRight = 140; JunkTop = 140; JunkBottom = 180;
 PxAreaNumber = (JunkRight - JunkLeft)*(JunkBottom - JunkTop); %Number of pixels in junk area.
 
 
@@ -224,8 +266,8 @@ coefs = lsqcurvefit(fg,p0,xs(:),ToFit(:,1),lb,ub,curvefitoptions);
 
 %Now subtract out value based on the gradient:
 %if(0) %Gradient correction off!
-for i=1:length(Atoms2ODnn(:,1,1))
-    Atoms2ODnn(i,:,1) = Atoms2ODnn(i,:,1) - fg(coefs,xs);
+for k=1:length(Atoms2ODnn(:,1,1))
+    Atoms2ODnn(k,:,1) = Atoms2ODnn(k,:,1) - fg(coefs,xs);
 end
 %end
 
@@ -262,14 +304,21 @@ Atoms2RN = Atoms2ODnn.*(PixelArea/Sigma);
 
 
 if(OD)
-    beamf = BeamImg;
-    atom1f = Atoms1ODnn;
-    atom2f = Atoms2ODnn;
+    beamf(:,:,i) = BeamImg;
+    atom1f(:,:,i) = Atoms1ODnn;
+    atom2f(:,:,i) = Atoms2ODnn;
 else
-    beamf = BeamImg;
-    atom1f = Atoms1RN;
-    atom2f = Atoms2RN;   
+    beamf(:,:,i) = BeamImg;
+    atom1f(:,:,i) = Atoms1RN;
+    atom2f(:,:,i) = Atoms2RN;   
 end
-    
+end
+
+beamReturnArray = beamf;
+atom1ReturnArray = atom1f;
+atom2ReturnArray = atom2f;
+
+end
+
 end
 

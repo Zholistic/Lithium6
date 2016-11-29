@@ -1,4 +1,4 @@
-function [ outputCoefs ] = gausFitHalf1D( profileToFit, xs )
+function [ outputCoefs, outputCoefError ] = gausFitHalf1D( profileToFit, xs )
 %Takes a 1D array half-profile with gaussian shape and fits using lsqcurvefit.
 %Returns the co-efficients of the fit. 
 
@@ -26,5 +26,6 @@ function [ outputCoefs ] = gausFitHalf1D( profileToFit, xs )
     [coefs,resnorm,r,exitflag,output,lambda,J] = lsqcurvefit(fg,p0,xs,profileToFit,lb,ub,curvefitoptions);
     
     outputCoefs = coefs;
+    outputCoefError = nlparci(coefs,r,'jacobian',J);
 
 end

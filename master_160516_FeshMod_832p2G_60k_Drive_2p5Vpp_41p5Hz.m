@@ -1,6 +1,6 @@
-directory = 'C:\Data\160505_CollectiveOscillations_2D_Green_modulation_triangle_envelope_880G_20_oscillation\';
+directory = 'C:\Data\160516_CollectiveOscillations_832.2G_DriveFreq_41.5Hz_20cycles_60katoms_driving_feshbachcoils_2.5Vpp\';
 
-date = '160505';
+date = '160516';
 camera = 'topcam';
 varstring = 'HoldTime';
 %varstring2 = 'Holdtime';
@@ -296,17 +296,77 @@ if(0)
     end
 end
 
-plot(motFets(1:end),widthsR(1:end),'.');
+%------------ Gaussian Fit Radius Code ------------%
+
+    figure(2000);
+    
+    errorbar(motFets,widthsR,stdDevWidthsR./2,stdDevWidthsR./2,'MarkerSize',3,...
+        'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+        'Marker','o',...
+        'LineStyle','none',...
+        'Color',[0 0 1]);
+    grid on;
+    
+    [gcoefsFreqFit,gcoefsFreqFitError] = sinExpDampFitFreqGuess(widthsR,motFets(1:end),0.26);
+    fgsineDamp = @(p,x)(p(1).*exp(-p(2).*x).*sin(p(3).*x+p(4))+p(5));
+    hold on;
+    plot(fgsineDamp(gcoefsFreqFit,1:85),'r');
+    widthsRfitFreq = gcoefsFreqFit(3)/(10^(-3))/(2*pi);
+    widthsRfitFreqMin = gcoefsFreqFitError(3,1)/(10^(-3))/(2*pi);
+    widthsRfitFreqMax = gcoefsFreqFitError(3,2)/(10^(-3))/(2*pi);
+    title(['Each image radial gaussian fit. Freq: ' num2str(widthsRfitFreq) ' ( ' num2str(widthsRfitFreqMin) ', ' num2str(widthsRfitFreqMax) ')']);
+    
+
+    
+    hold off;
+
+%Post image-avg radial widths:
+
+    radProfilesAvg = []; gcoefsRAvg = []; widthsRpa = []; gradProfError = []; widthsRpaError = [];
+    for i=1:length(imageArrayAvgs(1,1,:))
+        
+        [radProfilesAvg(:,:,i),~] = radAverageBigSquare(imageArrayAvgs(:,:,i));
+        [gcoefsRAvg(:,i), gradProfError] = gausFitHalf1D(radProfilesAvg(1,:,i),radProfilesAvg(2,:,i));
+        widthsRpa(:,i) = gcoefsRAvg(2,i);
+        widthsRpaError(:,i) = abs(gradProfError(2,1) - widthsRpa(:,i));
+
+        %figure(i);
+        %plot(fgr(gcoefsRAvg(:,i),1:200));hold on; grid on; plot(radProfilesAvg(2,:,i), radProfilesAvg(1,:,i),'r'); hold off;      
+    end
+
+
+    %Widths R Frequency Fit
+    figure(2001);
+    
+    errorbar(motFets,widthsRpa,widthsRpaError./2,widthsRpaError./2,'MarkerSize',3,...
+        'MarkerFaceColor',[0.600000023841858 0.600000023841858 1],...
+        'Marker','o',...
+        'LineStyle','none',...
+        'Color',[0 0 1]);
+    grid on;
+    
+    [gcoefsFreqFit,gcoefsFreqFitError] = sinExpDampFitFreqGuess(widthsRpa,motFets(1:end),0.26);
+    fgsineDamp = @(p,x)(p(1).*exp(-p(2).*x).*sin(p(3).*x+p(4))+p(5));
+    hold on;
+    plot(fgsineDamp(gcoefsFreqFit,1:85),'r');
+    widthsRfitFreq = gcoefsFreqFit(3)/(10^(-3))/(2*pi);
+    widthsRfitFreqMin = gcoefsFreqFitError(3,1)/(10^(-3))/(2*pi);
+    widthsRfitFreqMax = gcoefsFreqFitError(3,2)/(10^(-3))/(2*pi);
+    title(['Center and Avg holdtime then radial gaussian fit. Freq: ' num2str(widthsRfitFreq) ' ( ' num2str(widthsRfitFreqMin) ', ' num2str(widthsRfitFreqMax) ')']);
+    
+
+    hold off;
+
+%plot(motFets(1:end),widthsR(1:end),'.');
 
 %------------ PCA Code ------------%
 
-        pcaEndPoint = 21; %Where to take the final holdtime array index
+        pcaEndPoint = 26; %Where to take the final holdtime array index
+
         imagesToReshape = [];
         %imagesToReshape = imageArrayC(:,:,1:35); %single images
         imagesToReshape = imageArrayAvgs(:,:,1:pcaEndPoint);
-        %imagesToReshape = imagesAvgSet2;
-        %imagesToReshape = imagesAvgSet3;
-        %imagesToReshape = imagesAvgSet4;
+        %imagesToReshape = imageArrayCSort(:,:,1:pcaEndPoint);
         
         numberOfImages = length(imagesToReshape(1,1,:));
         vectorLength = length(imagesToReshape(:,1,1))*length(imagesToReshape(1,:,1));
@@ -366,23 +426,25 @@ plot(motFets(1:end),widthsR(1:end),'.');
         fgsineDamp = @(p,x)(p(1).*exp(-p(2).*x).*sin(p(3).*x+p(4))+p(5));
         
         %Mode 1:
+        %[gcoefsPCAmode1,gcoefsPCAerror1] = sinExpDampFitFreqGuess(Y01(:,2),sortedVarData(1:pcaEndPoint,1),0.26);
         [gcoefsPCAmode1,gcoefsPCAerror1] = sinExpDampFitFreqGuess(Y01(:,1),motFets(1:pcaEndPoint),0.26);
         freqPCAmode1 = gcoefsPCAmode1(3)/(10^(-3))/(2*pi);
         freqPCAmode1ErrorMin = gcoefsPCAerror1(3,1)/(10^(-3))/(2*pi);
         freqPCAmode1ErrorMax = gcoefsPCAerror1(3,2)/(10^(-3))/(2*pi);
                 
-        figure(7);
+        figure(1111);
         subplot(1,2,1);
         imagesc(imagesFromEVector(:,:,1));
         subplot(1,2,2);
         plot(fgsineDamp(gcoefsPCAmode1,1:70)); hold on;
+        %plot(sortedVarData(1:pcaEndPoint,1),Y01(:,2),'.','color',[0 0 0]);
         plot(motFets(1:pcaEndPoint),Y01(:,1),'.','color',[0 0 0]); 
         text(5,-0.34,['\omega = 2\pi \times ' num2str(freqPCAmode1,4) ' (' num2str(freqPCAmode1ErrorMin,4) ',' num2str(freqPCAmode1ErrorMax,4) ')']); 
         hold off;
         
-   
+if(0)   
         %Mode 2:
-        [gcoefsPCAmode2,gcoefsPCAerror2] = sinExpDampFitFreqGuess(Y01(:,2),motFets(1:pcaEndPoint),0.26);
+        [gcoefsPCAmode2,gcoefsPCAerror2] = sinExpDampFitFreqGuess(Y01(:,2),motFets(1:pcaEndPoint),0.13);
         freqPCAmode2 = gcoefsPCAmode2(3)/(10^(-3))/(2*pi);
         freqPCAmode2ErrorMin = gcoefsPCAerror2(3,1)/(10^(-3))/(2*pi);
         freqPCAmode2ErrorMax = gcoefsPCAerror2(3,2)/(10^(-3))/(2*pi);
@@ -395,5 +457,30 @@ plot(motFets(1:end),widthsR(1:end),'.');
         plot(motFets(1:pcaEndPoint),Y01(:,2),'.','color',[0 0 0]);
         text(5,-0.28,['\omega = 2\pi \times ' num2str(freqPCAmode2,4) ' (' num2str(freqPCAmode2ErrorMin,4) ',' num2str(freqPCAmode2ErrorMax,4) ')']); 
         hold off;
+end
 
 
+%------------ Fourier Code ------------%
+
+%needs set of widths:
+
+xtft = motFets;
+ytft = widthsRpa;
+
+Fs = 1/(0.003);            % Sampling frequency
+T = 1/Fs;             % Sampling period
+L = 31;             % Length of signal
+t = (0:L-1)*T;        % Time vector
+
+RadiusFT = fft(ytft);
+
+P2 = abs(RadiusFT/L);
+P1 = P2(1:L/2+1);
+P1(2:end-1) = 2*P1(2:end-1);
+
+f = Fs*(0:(L/2))/L;
+figure(3000);
+plot(f(2:end),P1(2:end));
+title('Single-Sided Amplitude Spectrum of X(t)');
+xlabel('f (Hz)');
+ylabel('|P1(f)|');

@@ -141,8 +141,6 @@ if(debug)
     imagesc(DivImage2);
     figure(2)
     imagesc(real(-log(DivImage2)));
-    figure(100)
-    imagesc(real(-log(DivImage2).*(PixelArea/Sigma)));
 end
 
 
@@ -168,10 +166,10 @@ end
 %Combine
 %OD1 = (1/Sigma).*(AtomsDiv1 + AtomsSub1);
 %OD2 = (1/Sigma).*(AtomsDiv2 + AtomsSub2);
-%OD1 = (AtomsDiv1);
-%OD2 = (AtomsDiv2);
-OD1 = (AtomsDiv1 + AtomsSub1);
-OD2 = (AtomsDiv2 + AtomsSub2);
+OD1 = (AtomsDiv1);
+OD2 = (AtomsDiv2);
+%OD1 = (AtomsDiv1 + AtomsSub1);
+%OD2 = (AtomsDiv2 + AtomsSub2);
 
 %figure(2)
 %image(OD2,'CDataMapping','scaled');
@@ -182,7 +180,7 @@ Atoms2ODnn = OD2;
 
 %Noise Correction --------------------------------------------------------%
 %Use a region (not in the cloud) to determine the noise character:
-JunkLeft = 20; JunkRight = 150; JunkTop = 140; JunkBottom = 190;
+JunkLeft = 20; JunkRight = 140; JunkTop = 140; JunkBottom = 180;
 PxAreaNumber = (JunkRight - JunkLeft)*(JunkBottom - JunkTop); %Number of pixels in junk area.
 
 

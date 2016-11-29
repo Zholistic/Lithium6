@@ -1,6 +1,6 @@
-directory = 'C:\Data\160505_CollectiveOscillations_2D_Green_modulation_triangle_envelope_880G_20_oscillation\';
+directory = 'C:\Data\160815_colle_check850\';
 
-date = '160505';
+date = '160815';
 camera = 'topcam';
 varstring = 'HoldTime';
 %varstring2 = 'Holdtime';
@@ -300,7 +300,8 @@ plot(motFets(1:end),widthsR(1:end),'.');
 
 %------------ PCA Code ------------%
 
-        pcaEndPoint = 21; %Where to take the final holdtime array index
+        pcaEndPoint = 80; %Where to take the final holdtime array index
+
         imagesToReshape = [];
         %imagesToReshape = imageArrayC(:,:,1:35); %single images
         imagesToReshape = imageArrayAvgs(:,:,1:pcaEndPoint);
@@ -371,18 +372,18 @@ plot(motFets(1:end),widthsR(1:end),'.');
         freqPCAmode1ErrorMin = gcoefsPCAerror1(3,1)/(10^(-3))/(2*pi);
         freqPCAmode1ErrorMax = gcoefsPCAerror1(3,2)/(10^(-3))/(2*pi);
                 
-        figure(7);
+        figure(1111);
         subplot(1,2,1);
         imagesc(imagesFromEVector(:,:,1));
         subplot(1,2,2);
-        plot(fgsineDamp(gcoefsPCAmode1,1:70)); hold on;
+        plot(fgsineDamp(gcoefsPCAmode1,1:480)); hold on;
         plot(motFets(1:pcaEndPoint),Y01(:,1),'.','color',[0 0 0]); 
-        text(5,-0.34,['\omega = 2\pi \times ' num2str(freqPCAmode1,4) ' (' num2str(freqPCAmode1ErrorMin,4) ',' num2str(freqPCAmode1ErrorMax,4) ')']); 
+        text(5,-0.24,['\omega = 2\pi \times ' num2str(freqPCAmode1,4) ' (' num2str(freqPCAmode1ErrorMin,4) ',' num2str(freqPCAmode1ErrorMax,4) ')']); 
         hold off;
         
-   
+if(0)   
         %Mode 2:
-        [gcoefsPCAmode2,gcoefsPCAerror2] = sinExpDampFitFreqGuess(Y01(:,2),motFets(1:pcaEndPoint),0.26);
+        [gcoefsPCAmode2,gcoefsPCAerror2] = sinExpDampFitFreqGuess(Y01(:,2),motFets(1:pcaEndPoint),0.13);
         freqPCAmode2 = gcoefsPCAmode2(3)/(10^(-3))/(2*pi);
         freqPCAmode2ErrorMin = gcoefsPCAerror2(3,1)/(10^(-3))/(2*pi);
         freqPCAmode2ErrorMax = gcoefsPCAerror2(3,2)/(10^(-3))/(2*pi);
@@ -391,9 +392,25 @@ plot(motFets(1:end),widthsR(1:end),'.');
         subplot(2,2,3);
         imagesc(imagesFromEVector(:,:,2));
         subplot(2,2,4);        
-        plot(fgsineDamp(gcoefsPCAmode2,1:520)); hold on;
+        plot(fgsineDamp(gcoefsPCAmode2,1:480)); hold on;
         plot(motFets(1:pcaEndPoint),Y01(:,2),'.','color',[0 0 0]);
         text(5,-0.28,['\omega = 2\pi \times ' num2str(freqPCAmode2,4) ' (' num2str(freqPCAmode2ErrorMin,4) ',' num2str(freqPCAmode2ErrorMax,4) ')']); 
         hold off;
+end
 
-
+if(0)   
+        %Mode 3:
+        [gcoefsPCAmode3,gcoefsPCAerror3] = sinExpDampFitFreqGuess(Y01(:,3),motFets(1:pcaEndPoint),0.13);
+        freqPCAmode3 = gcoefsPCAmode3(3)/(10^(-3))/(2*pi);
+        freqPCAmode3ErrorMin = gcoefsPCAerror3(3,1)/(10^(-3))/(2*pi);
+        freqPCAmode3ErrorMax = gcoefsPCAerror3(3,2)/(10^(-3))/(2*pi);
+ 
+        %figure(3);
+        subplot(3,2,5);
+        imagesc(imagesFromEVector(:,:,3));
+        subplot(3,2,6);        
+        plot(fgsineDamp(gcoefsPCAmode3,1:480)); hold on;
+        plot(motFets(1:pcaEndPoint),Y01(:,3),'.','color',[0 0 0]);
+        text(5,-0.28,['\omega = 2\pi \times ' num2str(freqPCAmode3,4) ' (' num2str(freqPCAmode3ErrorMin,4) ',' num2str(freqPCAmode3ErrorMax,4) ')']); 
+        hold off;
+end

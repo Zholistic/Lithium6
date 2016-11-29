@@ -17,10 +17,15 @@ for i = 1:nbins+1
     binSizes(i) = length(binMembers);
     %what bins to exclude? NaN
     if ~isnan(binMembers)
-
+        
+        %if(binCount >= 3)
+         %   binMembers
+        %end
+        
         binMean(j)     = mean(binMembers);
         binStd(j)      = std(binMembers);
         binLengths(j) = binCount*binLength;
+        %binLengths(j) = binLength;
         binEdgesR(j) = binEdges(i);
         j=j+1;
         binCounts(i) = binCount;

@@ -1,6 +1,6 @@
-directory = 'C:\Data\160505_CollectiveOscillations_2D_Green_modulation_triangle_envelope_880G_20_oscillation\';
+directory = 'C:\Data\160905_CollectiveOsc_2D_725G_600mVp2p_41p5Hz_70kAtoms_13mixture\';
 
-date = '160505';
+date = '160905';
 camera = 'topcam';
 varstring = 'HoldTime';
 %varstring2 = 'Holdtime';
@@ -296,14 +296,149 @@ if(0)
     end
 end
 
+%--------------Split into 3 sub-arrays on atom number:
+%imageArrayCSort is sorted images
+%pixelCountsSort is sorted pixels counts
+if(0)
+
+atomNumsCorrected = pixelCountsSort.*1.4.*2;
+splitDataArray2 = []; splitDataArray1 = [];
+splitImageArray1 = []; splitImageArray2 = [];
+j = 0; k = 0;
+for i=1:length(sortedVarData)
+ % figure(3); plot(sortedVarData(:,1),pixelCountsSort,'.');
+ 
+ if(atomNumsCorrected(i) > 25000)
+     j = j+1;
+     splitDataArray1(1,j) = atomNumsCorrected(i); %atom number
+     splitDataArray1(2,j) = sortedVarData(i,1); %time step
+     splitImageArray1(:,:,j) = imageArrayCSort(:,:,i); %index for imageArrayCSort
+ else
+     k = k+1;
+     splitDataArray2(1,k) = atomNumsCorrected(i); %atom number
+     splitDataArray2(2,k) = sortedVarData(i,1); %time step
+     splitImageArray2(:,:,k) = imageArrayCSort(:,:,i); %index for imageArrayCSort     
+ end
+    
+end
+
+%Average over same timestep...
+%element1 = mean(splitDataArray1(1,1:sum(splitDataArray1(2,:) == splitDataArray1(2,1)))); 
+%sum(splitDataArray1(2,:) == 0) is the number of elements equal to zero
+%[C, ia, ic] = unique(splitDataArray1(2,:)) is pretty cool, returns unique elements of
+%that array
+
+splitD1Avg = []; splitI1Avg = [];
+splitD2Avg = []; splitI2Avg = [];
+
+[C1, ia1, ic1] = unique(splitDataArray1(2,:));
+[C2, ia2, ic2] = unique(splitDataArray2(2,:));
+
+for i=1:length(ia1)-1
+    
+splitD1Avg(1,i) = mean(splitDataArray1(1,ia1(i):ia1(i+1)-1));   
+splitD1Avg(2,i) = mean(splitDataArray1(2,ia1(i):ia1(i+1)-1));
+splitI1Avg(:,:,i) = centerAndAverage(splitImageArray1(:,:,ia1(i):ia1(i+1)-1));
+   
+end
+
+splitD1Avg(1,i+1) = mean(splitDataArray1(1,ia1(end):end));
+splitD1Avg(2,i+1) = mean(splitDataArray1(2,ia1(end):end));
+splitI1Avg(:,:,i+1) = centerAndAverage(splitImageArray1(:,:,ia1(end):end));
+split1ImageAllAvg(:,:,1) = centerAndAverage(splitImageArray1(:,:,1:end));
+
+for i=1:length(ia2)-1
+    
+splitD2Avg(1,i) = mean(splitDataArray2(1,ia2(i):ia2(i+1)-1));   
+splitD2Avg(2,i) = mean(splitDataArray2(2,ia2(i):ia2(i+1)-1));  
+splitI2Avg(:,:,i) = centerAndAverage(splitImageArray2(:,:,ia2(i):ia2(i+1)-1));
+   
+end
+
+splitD2Avg(1,i+1) = mean(splitDataArray2(1,ia2(end):end));
+splitD2Avg(2,i+1) = mean(splitDataArray2(2,ia2(end):end));
+splitI2Avg(:,:,i+1) = centerAndAverage(splitImageArray2(:,:,ia2(end):end));
+split2ImageAllAvg(:,:,1) = centerAndAverage(splitImageArray2(:,:,1:end));
+
+[radProfileSplitAll1(:,:,1),~] = radAverageBigSquare(split1ImageAllAvg(:,:,1));
+gcoefsRSplitAll1(:,1) = gausFitHalf1D(radProfileSplitAll1(1,:,1),radProfileSplitAll1(2,:,1));
+figure(555); plot(fgr(gcoefsRSplitAll1(:,1),1:200));hold on; grid on; plot(radProfileSplitAll1(2,:,1), radProfileSplitAll1(1,:,1),'r'); hold off;
+
+[radProfileSplitAll2(:,:,1),~] = radAverageBigSquare(split2ImageAllAvg(:,:,1));
+gcoefsRSplitAll2(:,1) = gausFitHalf1D(radProfileSplitAll2(1,:,1),radProfileSplitAll2(2,:,1));
+figure(556); plot(fgr(gcoefsRSplitAll2(:,1),1:200));hold on; grid on; plot(radProfileSplitAll2(2,:,1), radProfileSplitAll2(1,:,1),'r'); hold off;
+
+imageArrayAvgAll = centerAndAverage(imageArrayAvgs(:,:,1:end));
+[radProfileAll(:,:,1),~] = radAverageBigSquare(imageArrayAvgAll(:,:,1));
+gcoefsRAll(:,1) = gausFitHalf1D(radProfileAll(1,:,1),radProfileAll(2,:,1));
+figure(556); plot(fgr(gcoefsRAll(:,1),1:200));hold on; grid on; plot(radProfileAll(2,:,1), radProfileAll(1,:,1),'r'); hold off;
+
+a2dThisSet = 44176.8*a0;
+%plot(splitD1Avg(1,:),'.'); hold on; plot(splitD2Avg(1,:),'.');
+%plot(splitDataArray1(2,:),splitDataArray1(1,:),'.');
+
+set1ToParishY = 0.02;
+set1ToParisherrorY = [0.0145 0.026]; %min max
+set1ToParisherrorMPY = [0.0055 0.0060]; %minus plus
+set1ToParishX = 1.78;
+set2ToParishY = 0.059;
+set2ToParisherrorY = [0.0012 0.1176]; %min max
+set2ToParisherrorMPY = [0.0578 0.0586]; %minus plus
+set2ToParishX = 1.74;
+figure(2020); errorbar(set1ToParishX,set1ToParishY,set1ToParisherrorMPY(1),set1ToParisherrorMPY(2),'.');
+hold on; errorbar(set2ToParishX,set2ToParishY,set2ToParisherrorMPY(1),set2ToParisherrorMPY(2),'.r');
+axis([0 5 -0.1 0.2]);
+end
+
+if(0)
+    radProfileAvgSplit = []; gcoefsRAvgSplit = []; widthsRsplit = [];
+    for i=1:length(splitI1Avg(1,1,:))
+    if(mod(i,1) == 0)       
+        figure(i);
+        
+        [radProfileAvgSplit(:,:,i),~] = radAverageBigSquare(splitI1Avg(:,:,i));
+        gcoefsRAvgSplit(:,i) = gausFitHalf1D(radProfileAvgSplit(1,:,i),radProfileAvgSplit(2,:,i));
+        plot(fgr(gcoefsRAvgSplit(:,i),1:200));hold on; grid on; plot(radProfileAvgSplit(2,:,i), radProfileAvgSplit(1,:,i),'r'); hold off;      
+    end
+    end
+    
+    widthsRsplit = gcoefsRAvgSplit(2,:);
+    
+    fitToPoint = 25;
+    [gcoefswidthsRfitSplit,gcoefswidthsRfitSpliterror] = sinExpDampFitFreqGuess(widthsRsplit(1:fitToPoint),splitD1Avg(2,1:fitToPoint),0.29);
+    freqWidthsRFitSplit = gcoefswidthsRfitSplit(3)/(10^(-3))/(2*pi);
+    freqWidthsRFitSplitMin = gcoefswidthsRfitSpliterror(3,1)/(10^(-3))/(2*pi);
+    freqWidthsRFitSplitMax = gcoefswidthsRfitSpliterror(3,2)/(10^(-3))/(2*pi);
+    
+    plot(fgsineDamp(gcoefswidthsRfitSplit,1:250)); hold on;
+    plot(splitD1Avg(2,1:fitToPoint),widthsRsplit(1:fitToPoint),'.','color',[0 0 0]);
+    text(20,22.5,['\omega = 2\pi \times ' num2str(freqWidthsRFitSplit,4) ' (' num2str(freqWidthsRFitSplitMin,4) ',' num2str(freqWidthsRFitSplitMax,4) ')']);
+    
+end
+
+
 plot(motFets(1:end),widthsR(1:end),'.');
+if(0)
+fitToPoint = 40;
+[gcoefswidthsRfit1,gcoefswidthsRfit1error] = sinExpDampFitFreqGuess(widthsR(1:fitToPoint),motFets(1:fitToPoint),0.30);
+freqWidthsRFit1 = gcoefswidthsRfit1(3)/(10^(-3))/(2*pi);
+freqWidthsRFit1Min = gcoefswidthsRfit1error(3,1)/(10^(-3))/(2*pi);
+freqWidthsRFit1Max = gcoefswidthsRfit1error(3,2)/(10^(-3))/(2*pi);
+plot(fgsineDamp(gcoefswidthsRfit1,1:200)); hold on;
+plot(motFets(1:fitToPoint),widthsR(1:fitToPoint),'.','color',[0 0 0]);
+text(22,37.2,['\omega = 2\pi \times ' num2str(freqWidthsRFit1,4) ' (' num2str(freqWidthsRFit1Min,4) ',' num2str(freqWidthsRFit1Max,4) ')']);
+end
+
 
 %------------ PCA Code ------------%
 
-        pcaEndPoint = 21; %Where to take the final holdtime array index
+        pcaEndPoint = 42; %Where to take the final holdtime array index
+        finalTimeStep = 250;
+
         imagesToReshape = [];
         %imagesToReshape = imageArrayC(:,:,1:35); %single images
         imagesToReshape = imageArrayAvgs(:,:,1:pcaEndPoint);
+        %imagesToReshape = splitI2Avg(:,:,1:pcaEndPoint);
         %imagesToReshape = imagesAvgSet2;
         %imagesToReshape = imagesAvgSet3;
         %imagesToReshape = imagesAvgSet4;
@@ -366,18 +501,18 @@ plot(motFets(1:end),widthsR(1:end),'.');
         fgsineDamp = @(p,x)(p(1).*exp(-p(2).*x).*sin(p(3).*x+p(4))+p(5));
         
         %Mode 1:
-        [gcoefsPCAmode1,gcoefsPCAerror1] = sinExpDampFitFreqGuess(Y01(:,1),motFets(1:pcaEndPoint),0.26);
+        [gcoefsPCAmode1,gcoefsPCAerror1] = sinExpDampFitFreqGuess(Y01(:,1)+Y01(:,2),motFets(1:pcaEndPoint),0.13);
         freqPCAmode1 = gcoefsPCAmode1(3)/(10^(-3))/(2*pi);
         freqPCAmode1ErrorMin = gcoefsPCAerror1(3,1)/(10^(-3))/(2*pi);
         freqPCAmode1ErrorMax = gcoefsPCAerror1(3,2)/(10^(-3))/(2*pi);
                 
-        figure(7);
-        subplot(1,2,1);
-        imagesc(imagesFromEVector(:,:,1));
-        subplot(1,2,2);
-        plot(fgsineDamp(gcoefsPCAmode1,1:70)); hold on;
-        plot(motFets(1:pcaEndPoint),Y01(:,1),'.','color',[0 0 0]); 
-        text(5,-0.34,['\omega = 2\pi \times ' num2str(freqPCAmode1,4) ' (' num2str(freqPCAmode1ErrorMin,4) ',' num2str(freqPCAmode1ErrorMax,4) ')']); 
+        figure(1111);
+        subplot(2,2,1);
+        imagesc(imagesFromEVector(:,:,1)+imagesFromEVector(:,:,2));
+        subplot(2,2,2);
+        plot(fgsineDamp(gcoefsPCAmode1,1:finalTimeStep)); hold on;
+        plot(motFets(1:pcaEndPoint),Y01(:,1)+Y01(:,2),'.','color',[0 0 0]); 
+        text(5,-0.24,['\omega = 2\pi \times ' num2str(freqPCAmode1,4) ' (' num2str(freqPCAmode1ErrorMin,4) ',' num2str(freqPCAmode1ErrorMax,4) ')']); 
         hold off;
         
    
@@ -391,9 +526,25 @@ plot(motFets(1:end),widthsR(1:end),'.');
         subplot(2,2,3);
         imagesc(imagesFromEVector(:,:,2));
         subplot(2,2,4);        
-        plot(fgsineDamp(gcoefsPCAmode2,1:520)); hold on;
+        plot(fgsineDamp(gcoefsPCAmode2,1:finalTimeStep)); hold on;
         plot(motFets(1:pcaEndPoint),Y01(:,2),'.','color',[0 0 0]);
         text(5,-0.28,['\omega = 2\pi \times ' num2str(freqPCAmode2,4) ' (' num2str(freqPCAmode2ErrorMin,4) ',' num2str(freqPCAmode2ErrorMax,4) ')']); 
         hold off;
 
 
+if(0)   
+        %Mode 3:
+        [gcoefsPCAmode3,gcoefsPCAerror3] = sinExpDampFitFreqGuess(Y01(:,3),motFets(1:pcaEndPoint),0.13);
+        freqPCAmode3 = gcoefsPCAmode3(3)/(10^(-3))/(2*pi);
+        freqPCAmode3ErrorMin = gcoefsPCAerror3(3,1)/(10^(-3))/(2*pi);
+        freqPCAmode3ErrorMax = gcoefsPCAerror3(3,2)/(10^(-3))/(2*pi);
+ 
+        %figure(3);
+        subplot(3,2,5);
+        imagesc(imagesFromEVector(:,:,3));
+        subplot(3,2,6);        
+        plot(fgsineDamp(gcoefsPCAmode3,1:480)); hold on;
+        plot(motFets(1:pcaEndPoint),Y01(:,3),'.','color',[0 0 0]);
+        text(5,-0.28,['\omega = 2\pi \times ' num2str(freqPCAmode3,4) ' (' num2str(freqPCAmode3ErrorMin,4) ',' num2str(freqPCAmode3ErrorMax,4) ')']); 
+        hold off;
+end

@@ -140,7 +140,7 @@ K0 = (massL6/(pi*(hbar^2))).*(1./((radProfile(1,1)*(10^-12))/(pixelLength^2).^2)
 P0 = (pi*(hbar^2)/(2*massL6))*((radProfile(1,1))^2);
 %P0D = (pi*(hbar^2)/(2*massL6))*((radDensity(1,1))^2);
 %P = trapz(radPotential(5:end-20),radProfile(1,5:end-20));
-P = sum(radPotential(5:end-20))*trapz(radProfile(1,5:end-20));
+P = sum(radPotential(5:end-20))*trapz(radProfile(1,5:end-20)); %trapz is integration
 %PD = sum(radDensity(2,1:end-20))*trapz(radDensity(1,1:end-20));
 
 

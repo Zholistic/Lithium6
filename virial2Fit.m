@@ -1,4 +1,4 @@
-function [ outputFunc, outputGof, outputFoutput ] = virial2Fit( profileToFit, xs, vcoefs )
+function [ outputFunc, outputGof, outputFoutput ] = virial2Fit( profileToFit, xs, vcoefs, omegaz)
 %Fit Virial2 Function with T and m0 as parameters to fit too; takes virial
 %co-efficients as constants.
 
@@ -8,8 +8,8 @@ b3 = vcoefs(2);
 massL6 = 9.988e-27; %9.988 x 10^27 kg
 hbar = 1.05457e-34; %1.05457*10^-34 m^2 kg/s
 kB = 1.38e-23; %m^2 kg s^-2 K^-1
-omegaz = 5789 * 2 * pi;
-omegar = 25 * 2 * pi; %Double check this weak trapping
+%omegazR = omegaz * 2 * pi;
+
 
 %CONVERSION to units that won't break because e^1000 is too much for matlab
 %to handle:
@@ -80,15 +80,15 @@ omegar = 25 * 2 * pi; %Double check this weak trapping
                     
                     
                     %plot(xs2,((1/(massL6*omegaz / hbar))*2/((2*pi*(1.05457e-34)^2)/((9.988e-27)*(1.38e-23)*tempGuess2))) * (log(1 + exp((1/((hbar*omegaz)/2))*(1/((1.38e-23)*tempGuess2)) * (mu0Guess2 - xs2))) + (2*b2*exp((1/((hbar*omegaz)/2))*2*(1/((1.38e-23)*tempGuess2))*(mu0Guess2 - xs2))) + ((1/((hbar*omegaz)/2))*3*b3*exp(3*(1/((1.38e-23)*tempGuess2))*(mu0Guess2 - xs2)))),'r')
-               end
+              end
     
     %Initial guesses:
     %[T mu0]
-    p0 = [29.8e-9 1.72e-30];
-    lb = [10e-9 1.3e-30];
-    ub = [60e-9 2.1e-30]; 
+    p0 = [30e-9 0.3e-30];
+    lb = [10e-9 0.01e-30];
+    ub = [110e-9 2.5e-30]; 
     
-    %CONV
+    %CONV to H.O. units
     p0(2) = p0(2)*(1/((hbar*omegaz)/2));
     lb(2) = lb(2)*(1/((hbar*omegaz)/2));
     ub(2) = ub(2)*(1/((hbar*omegaz)/2));
@@ -101,7 +101,7 @@ omegar = 25 * 2 * pi; %Double check this weak trapping
     y = profileToFit;
     
     %virialEqn = '((1/(9.988e-27*3.6373e+04 / 1.05457e-34))*(2/((2*pi*(1.05457e-34)^2)/((9.988e-27)*(1.38e-23)*a)))) * (log(1 + exp((((1.05457e-34*3.6373e+04)/2))*(1/((1.38e-23)*a)) * (b - x))) + (2*1.4259*exp((((1.05457e-34*3.6373e+04)/2))*2*(1/((1.38e-23)*a))*(b - x))) + (3*(-1.0561)*exp(((1.05457e-34*3.6373e+04)/2)*3*(1/((1.38e-23)*a))*(b - x))))';
-    virialEqn = ['((1/(9.988e-27*3.6373e+04 / 1.05457e-34))*(2/((2*pi*(1.05457e-34)^2)/((9.988e-27)*(1.38e-23)*a)))) * (log(1 + exp((((1.05457e-34*3.6373e+04)/2))*(1/((1.38e-23)*a)) * (b - x))) + (2*' num2str(vcoefs(1)) '*exp((((1.05457e-34*3.6373e+04)/2))*2*(1/((1.38e-23)*a))*(b - x))) + (3*(' num2str(vcoefs(2)) ')*exp(((1.05457e-34*3.6373e+04)/2)*3*(1/((1.38e-23)*a))*(b - x))))'];
+    virialEqn = ['((1/(9.988e-27*' num2str(omegaz) '/ 1.05457e-34))*(2/((2*pi*(1.05457e-34)^2)/((9.988e-27)*(1.38e-23)*a)))) * (log(1 + exp((((1.05457e-34*' num2str(omegaz) ')/2))*(1/((1.38e-23)*a)) * (b - x))) + (2*' num2str(vcoefs(1)) '*exp((((1.05457e-34*' num2str(omegaz) ')/2))*2*(1/((1.38e-23)*a))*(b - x))) + (3*(' num2str(vcoefs(2)) ')*exp(((1.05457e-34*' num2str(omegaz) ')/2)*3*(1/((1.38e-23)*a))*(b - x))))'];
     [f1,gof,foutput] = fit(x',y',virialEqn,'Start', p0,'Lower',lb,'Upper',ub,'MaxFunEvals',100000,'MaxIter',100000,'TolFun',1e-11,'TolX',1e-11);
     
     

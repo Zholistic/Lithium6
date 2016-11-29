@@ -1,12 +1,13 @@
-directory = 'C:\Data\160219_2D_EOS_865G_approx10katoms_HighIntensity_freq_5p78kHz\';
-date = '160219';
-camera = 'topcam';
-varstring = 'Isat';
+%directory = 'C:\Data\EOS_Data\140908_2d_eos_880G_10k_atoms_750ms_laser_ramp_0p25_10isat\';
+directory = 'C:\Data\EOS_Data\140910_2d_eos_920G_10us_0p25_isat_1us_10isat_750ms_laser_ramp\';
+date = '140910';
+camera = 'top';
+varstring = 'isat';
 %varstring2 = 'Holdtime';
 pixelLength = 2.84e-6; %13 um topcam, topcam magnification = 4.58, ie 2.84um effective
 massL6 = 9.988e-27; %9.988 x 10^27 kg
 hbar = 1.05457e-34; %1.05457*10^-34 m^2 kg/s
-Isat = 134*10; %134*x us
+Isat = 134*10; %135*x us
 %Isat = 10^6;
 kB = 1.38e-23; %Boltzmanns constant m^2 kg s^-2 K^-1
 imgArrayFresh = [];  lowIntRealAtomImg = [];
@@ -53,6 +54,10 @@ imageArray = []; imageState1Array = []; beamImageArray = [];
 %Pull images:
 for i=1:length(fileLocList)
     Isat = varData(i,1);
+    Isat = 134;
+    if(Isat < 1) 
+        Isat = 1340;
+    end
     [beamImage,atom1Image,atom2Image] = PullSPE(fileLocList{i},Isat,OD);
     imageArray(:,:,i) = atom2Image(:,:,1);
     imageState1Array(:,:,i) = atom1Image(:,:,1);
@@ -69,25 +74,25 @@ CrossROIx = 40:180; %The cross is inside the region specified above.
 CrossROIy = 1:100;
 CrossROIx = 1:110;
 
-TightROIx = 60:170;
-TightROIy = 50:150;
+TightROIx = 50:170;
+TightROIy = 30:140;
 %Split into high and low intensity arrays
 imageArrayC = imageArray(TightROIy,TightROIx,:);
 imageArrayTC = imageArray(TightROIy,TightROIx,:);
 
-imageArrayHighInt = imageArrayC(:,:,1:22);
-imageArrayLowInt = imageArrayC(:,:,23:end);
+imageArrayHighInt = imageArrayC(:,:,1:200);
+imageArrayLowInt = imageArrayC(:,:,201:end);
 
 %Display every X image:
 if(0)
 for i=1:length(imageArray(1,1,:))
-    if(mod(i,2) == 0)       
+    if(mod(i,10) == 0)       
         figure(i);
         imagesc(imageArray(:,:,i));        
     end
 end
 for i=1:length(imageArrayC(1,1,:))
-    if(mod(i,1) == 0)       
+    if(mod(i,10) == 0)       
         figure(i);
         imagesc(imageArrayTC(:,:,i));        
     end
@@ -165,10 +170,6 @@ end
 
 %show function fits:
 if(0)
-    
-    %plot(fgp(gcoefsPolyLog1(:,i),1:180));
-    
-    %data fit:
     plot(varData(1:30,1),sigmaX(1:30),'.'); hold on; plot(varData(31:end,1),sigmaX(31:end),'.r');
 end
 
@@ -299,17 +300,94 @@ for i=1:length(sortedVarData)
 end
 
 %Radially averaged average profiles:
-radProfilesAvg = []; radProfilesTAvg = []; centerAvgs = [];
+radProfilesAvgReorder = []; radProfilesTAvg = []; centerAvgs = [];
 disp('Radially averaging...');
 for i=1:length(imageArrayAvgs(1,1,:))
-    [radProfilesTAvg(:,:,i),centerAvgs(:,i)] = radAverageBigSquare(imageArrayAvgs(:,:,i));
-    radProfilesAvg(:,:,i) = radProfilesTAvg(:,1:end-5,i);
+    [radProfilesTAvg(:,:,i),centerAvgs(:,i)] = radAverageReorder(imageArrayAvgs(:,:,i));
+    radProfilesAvgReorder(:,:,i) = radProfilesTAvg(:,1:end-5,i);
 end
 
+radProfilesAvg = [];
+n=170;
+radProfilesAvg(2,:,1) = meanNelements(radProfilesAvgReorder(2,:,1),n);
+radProfilesAvg(1,:,1) = meanNelements(radProfilesAvgReorder(1,:,1),n);
+radProfilesAvg(2,:,2) = meanNelements(radProfilesAvgReorder(2,:,2),n);
+radProfilesAvg(1,:,2) = meanNelements(radProfilesAvgReorder(1,:,2),n);
+
+%EOSGenerate(radProfilesAvg(1,:,1)./(kpixelLength^2),radProfilesAvg(2,:,1),2:65,omegaRVector(3))
+
+atomNumBC = [];
+atomNumBC(1) = sum(sum(imageArrayAvgs(:,:,1)));
+atomNumBC(2) = sum(sum(imageArrayAvgs(:,:,2)));
+
+pixel2NROI = 1/(atomNumBC(1)/mean(varData(1:200,5)));
+NROI2HighInt = atomNumBC(2)/(atomNumBC(1)*pixel2NROI);
+HighInt2TwoSpinState = 2;
+
+atomCorr = pixel2NROI*NROI2HighInt*HighInt2TwoSpinState;
+correctedNum = atomNumBC(1)*pixel2NROI*NROI2HighInt*HighInt2TwoSpinState;
+
+radProfilesAvg(1,:,1) = radProfilesAvg(1,:,1).*atomCorr;
+
+%EOSGenerate(radProfilesAvg(1,:,1)./(kpixelLength^2),radProfilesAvg(2,:,1),2:65,omegaRVector(3))
+
+%Bulk:
+
+%Radially averaged profiles:
+radProfilesToReorder = []; radProfilesTT = []; center1 = []; radProfilesIndvToEOS = [];
+disp('Radially averaging...');
+for i=1:length(imageArrayC(1,1,:))
+    [radProfilesTT(:,:,i),center1(:,i)] = radAverageReorder(imageArrayC(:,:,i));
+    radProfilesToReorder(:,:,i) = radProfilesTT(:,1:end-5,i);
+    radProfilesIndvToEOS(1,:,i) = meanNelements(radProfilesToReorder(1,:,i),300);
+    radProfilesIndvToEOS(2,:,i) = meanNelements(radProfilesToReorder(2,:,i),300);
+end
+
+radProfilesIndvToEOS(1,:,1:200) = radProfilesIndvToEOS(1,:,1:200).*atomCorr;
+
 %Shift wings of radial profiles to zero:
+%shiftBy = [];
+%for i=1:length(radProfilesIndvToEOS(1,1,:))
+    %shiftBy(i) = mean(radProfilesIndvToEOS(1,39:66,i));
+    %radProfilesIndvToEOS(1,:,i) = radProfilesIndvToEOS(1,:,i) - shiftBy(i);
+    %radProfilesIndvToEOS(1,:,i) = radProfilesIndvToEOS(1,:,i) - min(radProfilesIndvToEOS(1,:,i));
+%end
+
+if(0)
+    for i=1:length(radProfilesIndvToEOS(1,1,:))
+        if(mod(i,10) == 0)
+            figure(i);
+            plot(radProfilesIndvToEOS(2,:,i),radProfilesIndvToEOS(1,:,i),'r'); hold off;
+        end
+    end
+end
+
+calcRegion = 3:45;
+a0 = 5.29e-11; %o.0
+a2dVector = a0.*[47194.1 66130.5 141838 302318];
+a2dVectorFiveOneFive = a0.*[52679 75445.1 169680 377935];
+a2d = a2dVectorFiveOneFive(3);
+omegaR = omegaRVector(3);
+saveOn = 0;
+smoothOn = 1;
+zeroOn = 1;
+savestring = 'indv clouds smoothed';
+%EOSGenerateBulk(radProfilesIndvToEOS(1,:,1:200)./(kpixelLength^2),radProfilesIndvToEOS(2,:,1:200),calcRegion,omegaR,920,a2d)
+%EOSGenerateBulk(radProfilesIndvToEOS(1,:,1:200)./(kpixelLength^2),radProfilesIndvToEOS(2,:,1:200),calcRegion,omegaR,920,a2d,smoothOn,zeroOn,saveOn,savestring)
+%single in bulk function:
+%EOSGenerateBulk(radProfilesAvg(1,:,1)./(kpixelLength^2),radProfilesAvg(2,:,1),2:50,omegaR,920,a2d)
+
+calcRegion = 2:65;
+omegaZ = 5150*2*pi;
+cutoffLeft = 12;
+cutoffRight = 40;
+%fitVirial(radProfilesAvg(1,:,1)./(kpixelLength^2), radProfilesAvg(2,:,1),calcRegion, omegaZ, omegaR, 920, a2d, smoothOn, zeroOn,cutoffLeft,cutoffRight)
+
+%Shift wings of radial profiles to zero:
+%radProfilesAvg(1,:,1) = radProfilesAvg(1,:,1) - min(radProfilesAvg(1,:,1));
 shiftByAvgs = [];
 for i=1:length(radProfilesAvg(1,1,:))
-    shiftByAvgs(i) = mean(radProfilesAvg(1,72:87,i));
+    shiftByAvgs(i) = mean(radProfilesAvg(1,85:95,i));
     radProfilesAvg(1,:,i) = radProfilesAvg(1,:,i) - shiftByAvgs(i);
 end
 
@@ -318,7 +396,6 @@ imageArrayAvgsZerod = [];
 for i=1:length(imageArrayAvgs(1,1,:))
     imageArrayAvgsZerod(:,:,i) = imageArrayAvgs(:,:,i) - shiftByAvgs(i);
 end
-
 
 if(0)
     for i=1:length(imageArrayAvgs(1,1,:))
@@ -329,33 +406,148 @@ if(0)
     end
 end
 
-radproftoFityReal = radProfilesAvg(1,:,2)./(pixelLength^2);
-%radproftoFityRealConv = radproftoFityReal.*10^(-11);
-%radproftoFitxReal = radProfilesAvg(2,58:76,2).*pixelLength;
+%%%%%%%%%%%%%%%%%----- Radially averaged density vs potential (individual)
+massL6 = 9.988e-27; %9.988 x 10^27 kg
+hbar = 1.05457e-34; %1.05457*10^-34 m^2 kg/s
+kB = 1.38e-23; %m^2 kg s^-2 K^-1
+radProfilesToParse = [];
+omegaRVector = 2.*pi.*[24.88224858 25.09885405 25.66767827 26.3891196];
+magVector = [865 880 920 972];
+kpixelLength = (13e-6*(83/400)); %kristian pixel length
 
-%Fit Virial:
+
+radProfilesToParse = radProfiles(:,:,1:200);
+
+%Zeroing
+shiftByAvgs = [];
+for i=1:length(radProfilesToParse(1,1,:))
+    shiftByAvgs(i) = mean(radProfilesToParse(1,59:70,i));
+    radProfilesToParse(1,:,i) = radProfilesToParse(1,:,i) - shiftByAvgs(i);
+end
+
+if(0)
+    for i=1:length(radProfilesLowInt(1,1,:))
+        if(mod(i,10) == 0)
+            figure(i);
+            hold on; line([0 100],[0 0]); plot(radProfilesToParse(2,:,i),radProfilesToParse(1,:,i),'r'); hold off;
+        end
+    end
+end
+
+%prepare the x-axis (potential in nk)
+radiusVectors = []; radiusVectorsMeters = []; potentials = []; potentials_nk = [];
+for i = 1:length(radProfilesToParse(2,1,:))
+    radiusVectors(:,i) = 1:(length(radProfilesToParse(2,:,i)));
+    radiusVectorsMeters(:,i) = radiusVectors(:,i).*kpixelLength;
+    
+    potentials(:,i) = 0.5 .* massL6 .* (omegaRVector(1)^2).* radiusVectorsMeters(:,i).^2; %Omega R to corresponding B Field
+    potentials_nk(:,i) = (potentials(:,i)./kB).*(10^9);
+end
+
+
+
+%prepare the y-axis (number density)
+radProfilesDensityAdjusted = []; radproftoFitReal = [];
+
+for i=1:length(radProfilesToParse(1,1,:))
+    radproftoFitReal(:,i) = radProfilesToParse(1,:,i)./(kpixelLength^2); %y values real units
+    
+    radProfilesDensityAdjusted(:,i) = radproftoFitReal(:,i).*2.*1.2; %2 for spin states and 1.2 for correction factor
+end
+
+%plot(potential_nk,radproftoFitReal);
+
+if(0)
+    for i=1:length(radProfilesToParse(1,1,:))
+        if(mod(i,10) == 0)
+            figure(i);
+            subplot(1,2,1);
+            imagesc(imageArrayC(:,:,i));
+            subplot(1,2,2);
+            hold on; line([0 600],[0 0]); plot(potentials_nk(:,i),radproftoFitReal(:,i),'.r'); hold off;
+        end
+    end
+end
+
+%kappa and p calculations:
+calcRegion = 5:55;
+kappaTilde = []; pTilde = []; p = [];
+for i=1:length(radProfilesToParse(1,1,:))
+    
+    kappaTilde(:,i) = (-1)*(pi * hbar^2 / massL6) * gradient(radproftoFitReal(calcRegion,i),potentials(calcRegion,i));
+           
+    
+    for j=1:length(calcRegion)
+        p(j,i) = trapz(potentials(j:calcRegion(end),i),radproftoFitReal(j:calcRegion(end),i)); %integral from end to j point
+        n = radproftoFitReal(j,i);     %n, density on j'th point (varies across the potential)
+        pTilde(j,i) = ((2*massL6)/(n^2 * hbar^2 * pi)) * p(j,i);
+    end
+
+end
+
+
+figure(1000);
+hold on;
+for i=1:length(pTilde(1,:))
+    hLine = plot(pTilde(5:40,i),kappaTilde(5:40,i),'.');
+    %scatter(pTilde(5:40,i),kappaTilde(5:40,i),'filled', ...
+        %'MarkerFaceAlpha','MarkerFaceColor','blue')
+    %plot(pTilde(5:50,i),'.');
+    %hMarkers = hLine.MarkerHandle;
+    %hMarkers.FaceColorData = uint8(255*[1;0;0;0.3]);  % Alpha=0.3 => 70% transparent red
+end
+axis([-4 2 -6 6])
+%axis([0 50 -1.5 5])
+hold off;
+
+cloudNumber = 2;
+figure(9); plot(pTilde(:,cloudNumber),kappaTilde(:,cloudNumber),'.');
+title('kappa vs p');
+figure(10); h1 = plot(pTilde(:,cloudNumber),'.');
+title('p vs r (pixel)');
+figure(11); plot(kappaTilde(:,cloudNumber),'.');
+title('kappa vs r (pixel)');
+figure(12); plot(potentials(calcRegion,cloudNumber),radproftoFitReal(calcRegion,cloudNumber),'.');
+title('density vs potential');
+
+%%%%%%%%%%%%%%%%%%%%----Fit Virial:
 massL6 = 9.988e-27; %9.988 x 10^27 kg
 hbar = 1.05457e-34; %1.05457*10^-34 m^2 kg/s
 kB = 1.38e-23; %m^2 kg s^-2 K^-1
 magfield = 865;
+magfield = 972;
 omegaz = 5789 * 2 * pi;
 omegar = 25 * 2 * pi; %Double check this weak trapping
+
+omegaRVector = 2.*pi.*[24.88224858 25.09885405 25.66767827 26.3891196];
+a0 = 5.29e-11; %o.0
+a2dVector = a0.*[47194.1 66130.5 141838 302318];
+magVector = [865 880 920 972];
 az = sqrt(hbar/(massL6*omegaz));
+
 pixelLength = 2.84e-6; %13 um topcam, topcam magnification = 4.58, ie 2.84um effective
-kpixelLength = (13e-6*(83/400));
+kpixelLength = (13e-6*(83/400)); %kristian pixel length
+
+radproftoFityReal = radProfilesAvg(1,:,1)./(kpixelLength^2);
+%radproftoFityRealConv = radproftoFityReal.*10^(-11);
+%radproftoFitxReal = radProfilesAvg(2,58:76,2).*pixelLength;
 radiusVector = 1:(length(radProfilesAvg(2,:,1)));
 radiusVectorMeters = radiusVector.*kpixelLength;
-potential = 0.5 .* massL6 .* omegar^2 .* radiusVectorMeters.^2;
+potential = 0.5 .* massL6 .* omegaRVector(3)^2 .* radiusVectorMeters.^2;
 potential_nk = (potential./kB).*(10^9);
+%plot(potential_nk,radProfilesAvg(1,:,i));
 
 %convert radProfile pixels to potential:
-radProfilesPotential = 0.5 .* massL6 .* omegar^2 .*(radProfilesAvg(2,:,2).*pixelLength).^2;
-%plot(radProfilesPotential,radProfilesAvg(1,:,2)./(pixelLength^2));
+radProfilesPotential = 0.5 .* massL6 .* omegaRVector(3)^2 .*(radProfilesAvg(2,:,1).*pixelLength).^2;
+%plot(radProfilesPotential,radProfilesAvg(1,:,1)./(pixelLength^2));
 %radProfilesPotentialConv = radProfilesPotential.*10^30;
 radProfilesDensityAdjusted = radproftoFityReal.*2.*1.2; %2 for spin states and 1.2 for correction factor
+%plot(potential_nk,radproftoFityReal);
+%plot(potential,radproftoFityReal);
 
 a0 = 5.29e-11; %o.0
 a2d = 47186.7 * a0; %From mathematica spreadsheet TODO generate text file
+a2d = 301946 * a0; %972G, 5.789*2pi hz
 eb = (hbar^2)/(a2d^2 * massL6);
 
 
@@ -364,8 +556,37 @@ eb = (hbar^2)/(a2d^2 * massL6);
 radProfilesDensityConv = radProfilesDensityAdjusted./(massL6*omegaz / hbar);
 %Potential SI = kg * s^-2 * m^2 // Energy units = kg * m^2 * s^-2
 radProfilesPotentialConv = radProfilesPotential./((hbar*omegaz)/2); 
+% plot(radProfilesPotentialConv,radProfilesDensityConv);
 
-fitrange = 60:75;
+%kappa and p calculations:
+calcRegion = 2:60;
+kappaTildeAvg = []; pTildeAvg = []; pAvg = []; dydx = [];
+
+%kappaTildeAvg = (-1)*(pi * hbar^2 / massL6) * gradient(radProfilesDensityAdjusted(calcRegion),potential(calcRegion));
+dydx = diff([eps radProfilesDensityAdjusted(calcRegion)])./diff([eps potential(calcRegion)]);
+%kappaTildeAvg = (-1)*(pi * hbar^2 / massL6) * gradient(radProfilesDensityAdjusted(calcRegion),potential(calcRegion));
+kappaTildeAvg = (-1)*(pi * hbar^2 / massL6) .* dydx;
+
+
+for j=1:length(calcRegion)
+    pAvg(j) = trapz(potential(j:calcRegion(end)),radProfilesDensityAdjusted(j:calcRegion(end))); %integral from end to j point
+    n = radProfilesDensityAdjusted(j);     %n, density on j'th point (varies across the potential)
+    pTildeAvg(j) = ((2*massL6)/(n^2 * hbar^2 * pi)) * pAvg(j);
+end
+
+close all;
+%averaged cloud kappa and p's
+figure(8); plot(radiusVectorMeters,radProfilesDensityAdjusted,'.');
+title('Density Adjusted vs radius (meters)');
+figure(9); plot(pTildeAvg,kappaTildeAvg,'.');
+title('kappaTilde vs pTilde'); axis([0 14 0 2]);
+figure(10); h1 = plot(potential(calcRegion),pTildeAvg,'.');
+title('pTilde vs potential (J)');
+figure(11); plot(potential(calcRegion),kappaTildeAvg,'.');
+title('kappaTilde vs potential (J)');
+figure(12); plot(potential_nk(calcRegion),radProfilesDensityAdjusted(calcRegion),'.');
+title('density vs potential');
+fitrange = 54:64;
 
 virialRsquares = []; tempGuess = []; virialTreturned = []; virialMu0returend = [];
 virialFitFuncs = [];
@@ -408,93 +629,3 @@ atomNum = [];
 for i=1:length(imageArrayAvgs(1,1,:))
     atomNum(i) = sum(sum(imageArrayAvgs(:,:,i)));
 end
-
-%{
-%----------------------------------------------------------------%
-%virial_fit_residuals(0.2, 0.6, eb, density(cutoff:endp), potential(cutoff:endp));
-
-
-    %Define BetaEb guess range:
-    beta_eb = [];
-    beta_eb(1) = beta_eb_lower;
-    beta_eb(2) = beta_eb_upper;
-    beta_eb(3) = beta_eb(1) + ((beta_eb_upper - beta_eb_lower) / 2);
-   
-    b2 = []; %Array of size 3
-    b3 = []; %Array of size 3
-
-       % Use virial coeffcients to find T and mu0 with virial coeffcients
-    def v_residuals(params, x, b2, b3, eps_data, y=None):
-        %T = params['T'].value;
-        %mu0 = params['mu0'].value;
-        %alpha = params['alpha'].value
-        %dens_fit = ((2/((2*pi*hbar**2)/((mass_li*kb*T)))) * 
-        %           (np.exp((1/(kb*T)) * (mu0 - x))) + 
-        %           (2*b2*np.exp(2*(1/(kb*T))*(mu0 -x))) + 
-        %           (3*b3*np.exp(3*(1/(kb*T))*(mu0 - x))))
-
-        dens_fit = ((2/((2*pi*hbar^2)/(mass_li*kb*T))) * ...
-                   (np.log( 1 + np.exp((1/(kb*T)) * (mu0 - x))) + ...
-                   (2*b2*np.exp(2*(1/(kb*T))*(mu0 - x))) + ...
-                   (3*b3*np.exp(3*(1/(kb*T))*(mu0 - x)))));
-        if y is None:
-            %return dens_fit
-        %return (y - dens_fit) 
-
-    eps_data = 1e-4;
-    % Repeat bisection procedure for 10 iterations
-    for i=1:25
-        %i is the enumeration, beb the value; i=1:3
-        for j=1:length(beta_eb) 
-           %run virial code to get b2 and b3 coeff
-           b2_proc = huicoeff(beta_eb(j),1,0); 
-           b3_proc = huicoeff(beta_eb(j),2,0);
-
-           %b2_out = b2_proc.communicate()[0]
-           %b3_out = b3_proc.communicate()[0]
-
-           b2(j) = b2_proc;
-           b3(j) = b3_proc;
-        end
-        beta_eb_fit = unp.uarray(np.zeros(3),np.zeros(3))
-        beta_eb_diff = unp.uarray(np.zeros(3),np.zeros(3))
-        % fit for upper, mid and lower beta_eb
-        for k=1:length(beta_eb)
-            params = lmfit.Parameters() %lmfit is fitting routine
-            params.add('T', value = 50e-9, min=5e-9, max=70e-9)
-            params.add('mu0', value = 1.7e-30, min=1.e-30, max=4e-30)
-            %params.add('alpha', value = 1.25, min = 1, max=2)
-            fit_output = lmfit.minimize(v_residuals, params, 
-                                 args=(potential, b2[k], b3[k], eps_data, density))
-
-            beta_fit = 1/(kb * params['T'].value)
-            beta_eb_fit[k] = eb * beta_fit
-            beta_eb_diff[k] = np.abs(beta_eb_fit[k] - beb)
-            %print(lmfit.fit_report(fit_output))
-
-            %print(beta_eb_diff[i]*100)
-
-        if (beta_eb_diff[0] - beta_eb_diff[1]) < (beta_eb_diff[2] -
-                beta_eb_diff[1]):
-            beta_eb[2] = beta_eb[1]
-            beta_eb[1] = beta_eb[0] + ((beta_eb[2] - beta_eb[0]) / 2)
-        else:
-            beta_eb[0] = beta_eb[1]
-            beta_eb[1] = beta_eb[0] + ((beta_eb[2] - beta_eb[0]) / 2)
-        end
-        end
-    end
-        
-    beta_eb_max = eb * 1/(kb * (params['T'].value+params['T'].stderr))
-    beta_eb_err = np.abs(beta_eb_max - beta_eb[1])
-    beta_eb_final = eb * 1/(kb * (params['T'].value))
-    fit_output = lmfit.minimize(v_residuals, params, 
-                                args=(potential, b2[1], b3[1], eps_data, density))
-    
-    print('Final betaEb: {0:f} +/- {1:f}'.format(beta_eb_final, beta_eb_err))
-    print(lmfit.fit_report(fit_output))
-    fit = v_residuals(params, potential, b2[1], b3[1], 1)
-    return fit, fit_output%, beta_eb[1]  
-        end
-
-%}
