@@ -374,7 +374,7 @@ savestring = 'indv clouds smoothed';
 %single in bulk function:
 %EOSGenerateBulk(radProfilesAvg(1,:,1)./(kpixelLength^2),radProfilesAvg(2,:,1),2:65,omegaR,865,a2d)
 
-calcRegion = 2:52;
+calcRegion = 2:72;
 omegaZ = 5150*2*pi;
 cutoffLeft = 23;
 cutoffRight = 0;

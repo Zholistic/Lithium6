@@ -1,5 +1,7 @@
-directory = 'C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\Datas3\';
+directory = 'C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\Datas4\';
 directorylist = dir(directory);
+
+dataNumSys = 4; %new data numbering system from set 4 on
 
 filenumber = length(directorylist)-2;
 
@@ -16,7 +18,7 @@ datafilename = [directory filename];
 
 fid = fopen(datafilename,'rt');
 %C = textscan(fid, '%s', 'Delimiter','\t'); %tokenize into tab seperated tokens
-if i==13 || i==12
+if i==13 || i==12 || i==14
 C = textscan(fid,'%f %f %f %f %f %f %f %f %f %f');   
 display(['hit 10 columns for' filename]);
 else
@@ -38,8 +40,18 @@ for k=1:length(C{3})
 end
 
 for j=1:length(TempCells{i})
-    BetaEBCells{i}(j) = str2num(filename(4:5))./100;
-    BetaEBArray(betaEBCount) = str2num(filename(4:5))./100;
+    if(dataNumSys == 4)
+        BetaEBCells{i}(j) = str2num(filename(6:7))./100;
+        BetaEBArray(betaEBCount) = str2num(filename(6:7))./100;
+        if(i > 37)
+            disp('hit 100 (ie 1.0 betaeb)');
+            BetaEBCells{i}(j) = str2num(filename(6:8))./100;
+            BetaEBArray(betaEBCount) = str2num(filename(6:8))./100;
+        end
+    else
+        BetaEBCells{i}(j) = str2num(filename(4:5))./100;
+        BetaEBArray(betaEBCount) = str2num(filename(4:5))./100;
+    end
     betaEBCount = betaEBCount +1;
 end
 
@@ -76,14 +88,12 @@ ylin = linspace(min(y),max(y),1000);
 
 Z = griddata(x,y,z,X,Y,'cubic'); %v4 cubic linear
 
-
-
 surf(X,Y,Z,'LineStyle','none','FaceColor','interp','FaceAlpha',0.6);
 axis([-11 5 0 0.5 0 2]); grid on;
 xlabel('Beta mu') % x-axis label
 ylabel('Beta Eb') % y-axis label
 zlabel('f_n') % y-axis label
-view([0.3 0.3 0.3]);
+view(3);
 
 if(0)
 x = []; y = []; z = []; xlin = []; ylin = []; Z = [];
@@ -96,8 +106,7 @@ z = reshape(zdatas, 1, length(zdatas(:,1))*length(zdatas(1,:)));
 %reshape(logkfa2ds, 1, length(logkfa2ds(:,1))*length(logkfa2ds(1,:)));
 
 xlin = linspace(min(x),max(x),50);
-ylin = linspace(min(y),max(y),50);
-        
+ylin = linspace(min(y),max(y),50);       
 
 [X,Y] = meshgrid(xlin,ylin);
 
@@ -200,7 +209,7 @@ for i=1:filenumber
 end
 grid on;
     
-    
+
 
 %-----------
 %Fit function to composite points:
@@ -252,7 +261,7 @@ plot3(compxs,ones(length(compxs),1).*betaebvirials(i,1),feval(fitFuncsComp{i}, c
 grid on;
 
 end
-axis([-11 15 0 0.5 0 2]); grid on;
+axis([-11 15 0 1 0 2]); grid on;
 xlabel('Beta mu') % x-axis label
 ylabel('Beta Eb') % y-axis label
 zlabel('F_n') % y-axis label

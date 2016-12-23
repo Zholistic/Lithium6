@@ -329,6 +329,7 @@ figure(2); imagesc(imageArrayAvgs(:,:,2));
 %OD correction: plot(radProfilesAvg(2,1:40,1),radProfilesAvg(1,1:40,2)./radProfilesAvg(1,1:40,1)); grid on;
 %Checked OD correction? Yes
 %mean(radProfilesAvg(1,10:20,2)./radProfilesAvg(1,10:20,1)) = 1.46
+%mean(varData(26:end,5))./mean(varData(1:25,5)) = 1.59;
 radProfilesAvg(1,:,1) = radProfilesAvg(1,:,1).*2.*1.46;
 
 omegaR = 22.95*2*pi;

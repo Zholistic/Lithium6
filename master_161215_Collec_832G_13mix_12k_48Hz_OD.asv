@@ -1,6 +1,6 @@
-directory = 'C:\Data\161003_CollectiveOsc_2D_725G_10katom_300mvPtoP_45Hz_5Cycles_13mix_ODcorr\';
+directory = 'C:\Data\161215_CollectiveOsc_2D_832G_12katom_500mvPtoP_48Hz_10Cycles_noninter_ODcrr\';
 
-date = '161003';
+date = '161215';
 camera = 'topcam';
 varstring = 'ShotNumber';
 %varstring2 = 'Holdtime';
@@ -328,18 +328,18 @@ figure(2); imagesc(imageArrayAvgs(:,:,2));
 %plot(radProfilesAvg(2,:,1),radProfilesAvg(1,:,1));
 %OD correction: plot(radProfilesAvg(2,1:40,1),radProfilesAvg(1,1:40,2)./radProfilesAvg(1,1:40,1)); grid on;
 %Checked OD correction? Yes
-%mean(radProfilesAvg(1,10:20,2)./radProfilesAvg(1,10:20,1)) = 1.39
-%mean(varData(26:end,5))./mean(varData(1:25,5)) = 1.47;
-radProfilesAvg(1,:,1) = radProfilesAvg(1,:,1).*2.*1.4;
+%mean(radProfilesAvg(1,10:20,2)./radProfilesAvg(1,10:20,1)) = 1.25
+%mean(varData(26:end,5))./mean(varData(1:25,5)) = 1.37;
+radProfilesAvg(1,:,1) = radProfilesAvg(1,:,1).*2.*1.25;
 
-omegaR = 22.55*2*pi;
+omegaR = 22.95*2*pi;
 omegaZ = 5580*2*pi;
 a0 = 5.29e-11; %o.0
-a2d = a0.*106638;
+a2d = a0.*234794;
 
-calcRegion = 2:76;
+calcRegion = 2:77;
 
-fitVirial(radProfilesAvg(1,:,1)./(kpixelLength^2), radProfilesAvg(2,:,1),calcRegion, omegaZ, omegaR, 725, a2d, smoothOn, zeroOn, 0, 0);
+%fitVirial(radProfilesAvg(1,:,1)./(kpixelLength^2), radProfilesAvg(2,:,1),calcRegion, omegaZ, omegaR, 750, a2d, smoothOn, zeroOn,0,0);
 
 %yVirialFit = radProfilesAvg(1,:,1)./(kpixelLength^2)./(massL6*omegaz / hbar);
 %radiusVector = radProfilesAvg(2,:,1); %x vector 
