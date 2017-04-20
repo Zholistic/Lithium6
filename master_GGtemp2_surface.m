@@ -80,8 +80,8 @@ x = ChemPotArray./TempArray;
 y = BetaEBArray;
 z = 1./(2.*pi.*TempArray);
 
-xlin = linspace(min(x),max(x),1000);
-ylin = linspace(min(y),max(y),1000);
+xlin = linspace(min(x),max(x),50);
+ylin = linspace(min(y),max(y),50);
         
 
 [X,Y] = meshgrid(xlin,ylin);
@@ -113,6 +113,18 @@ ylin = linspace(min(y),max(y),50);
 %Z = griddata(x,y,z,X,Y,'cubic');
 Z = griddata(x,y,z,X,Y,'cubic'); %v4 cubic linear
 end
+
+%------------------------
+
+betamuselect = 30;
+figure(2); plot(Y(:,betamuselect),Z(:,betamuselect)); %Fn vs betaEb for a
+figure(22); plot(Y(:,betamuselect),smooth(Z(:,betamuselect)));
+figure(23); plot(Y(:,betamuselect),smooth(Z(:,betamuselect))-Z(:,betamuselect));
+%given betamu
+figure(3); plot(Y(1:49,betamuselect),diff(Z(:,betamuselect)));
+figure(4); plot(Y(2:49,betamuselect),diff(Z(:,betamuselect),2));
+figure(33); plot(Y(1:49,betamuselect),diff(smooth(Z(:,betamuselect))));
+figure(44); plot(Y(2:49,betamuselect),diff(smooth(Z(:,betamuselect)),2));
 
 %---------------------------------------
 %Generate virial for same Beta_eb:

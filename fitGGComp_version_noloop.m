@@ -10,9 +10,8 @@ load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\fitFuncs
 load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\betaEb_virialsArray_151216.mat');
 %load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\betamuggs.mat');
 %load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\fnggs.mat');
-load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\betamuggs.mat');
-load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\fnggs.mat');
-load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\betamuggs.mat');
+load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\fnggs_151216.mat');
+load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\betamuggs_151216.mat');
 load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\Density_Profiles\kdata_880_density_SI.mat');
 load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\Density_Profiles\kdata_880_potential_SI.mat');
 load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\Density_Profiles\kdata_865_density_SI.mat');
@@ -31,8 +30,12 @@ load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\Density_
 load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\Density_Profiles\ColOsc_161006_706G_10k_Potential_SI.mat');
 load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\Density_Profiles\ColOsc_161004_735G_10k_Density_SI.mat');
 load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\Density_Profiles\ColOsc_161004_735G_10k_Potential_SI.mat');
-load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\virialtwos.mat');
-load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\virialthrees.mat');
+%load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\virialtwos.mat');
+%load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\virialthrees.mat');
+load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\virialtwos_151216.mat');
+load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\virialthrees_151216.mat');
+load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\GGSurface.mat');
+
 
 
 massL6 = 9.988e-27; %9.988 x 10^27 kg
@@ -41,7 +44,7 @@ kB = 1.38e-23; %m^2 kg s^-2 K^-1
 
 close all;
 %choices = [1,2,3,5,6,7,9]
-for choices = [1,2,3]
+for choices = [8]
 %--------------Init variables:
 %<<<<<<<
 datasetChoice = choices; % 1 = 880G, 2 = 920G, 3 = 865G
@@ -84,11 +87,11 @@ dataset2D{4}.name = 'ColOsc 160920 690G 7k'; %Resonance OD corr of Coll Osc
 dataset2D{4}.a2d = 1.1220e-06;
 dataset2D{4}.density = ColOsc_160920_690G_7k_Density;
 dataset2D{4}.potential = ColOsc_160920_690G_7k_Potential;
-dataset2D{4}.fitpoints = 28:45;
+dataset2D{4}.fitpoints = 27:33;
 dataset2D{4}.rezero.yesno = 0;
 dataset2D{4}.rezero.endminusleft = 0;
 dataset2D{4}.rezero.endminusright = 0;
-dataset2D{4}.betaEBidx = 25; %NO BETAEB DATA FOR THIS SET 
+dataset2D{4}.betaEBidx = 38; %NO BETAEB DATA FOR THIS SET 
 
 dataset2D{5}.name = 'ColOsc 161003 725G 10k'; %725G OD corr of Coll Osc
 dataset2D{5}.a2d = 5.6412e-06;
@@ -128,7 +131,7 @@ dataset2D{8}.fitpoints = 32:42;
 dataset2D{8}.rezero.yesno = 1;
 dataset2D{8}.rezero.endminusleft = 37;
 dataset2D{8}.rezero.endminusright = 30;
-dataset2D{8}.betaEBidx = 25; %NO BETAEB DATA FOR THIS SET 
+dataset2D{8}.betaEBidx = 28; %NO BETAEB DATA FOR THIS SET 
 
 dataset2D{9}.name = 'ColOsc 161004 735G 10k'; %735G OD corr of Coll Osc
 dataset2D{9}.a2d = 7.9622e-06;
@@ -139,6 +142,37 @@ dataset2D{9}.rezero.yesno = 0;
 dataset2D{9}.rezero.endminusleft = 37;
 dataset2D{9}.rezero.endminusright = 30;
 dataset2D{9}.betaEBidx = 2;
+
+%--------------Surface Init
+figure(631);
+surf(GGSurface{1}.x,GGSurface{1}.y,GGSurface{1}.z,'LineStyle','none','FaceColor','interp','FaceAlpha',0.6);
+axis([-5 2 0 1 0 1.5]);
+figure(632);
+%stop the surface at beta_eb ~ 5.0
+surf(GGSurface{1}.x(:,1:500),GGSurface{1}.y(:,1:500),GGSurface{1}.z(:,1:500),'LineStyle','none','FaceColor','interp','FaceAlpha',0.6);
+axis([-5 2 0 1 0 1.5]);
+
+surface_betaebs_all = GGSurface{1}.y(:,1);
+surface_betamus_all = GGSurface{1}.x(1,:);
+surface_fns_all = GGSurface{1}.z;
+
+surface_betaebs = GGSurface{1}.y(:,1);
+surface_betamus = GGSurface{1}.x(1,1:500);
+surface_fns = GGSurface{1}.z(:,1:500);
+
+%choose a beta_eb
+%evaluate
+%go to beta_eb + epsilon (maybe 0.1)
+%evaluate
+%check first evaluation versus second
+%whichever is better, go same direction epsilon
+%evaluate and check
+%if better again, continue, if worse, start honing in on best, by 
+%taking the interval and dividing by two
+%go again, etc
+
+betaEbInitialGuess = 0.54;
+[throwaway betaEb_surface_idx] = min(abs(betaEbInitialGuess-surface_betaebs));
 
 %--------------Pre-computation:
 betaEbEval = dataset2D{datasetChoice}.betaEBidx;
@@ -305,154 +339,6 @@ xlabel('\beta\mu');
 ylabel('F_N');
 axis([-6 4 -0.08 1]);
 
-end
-
-
-if(0)
-%----------------Brute force method (old):
-signature4to3 = []; signature4to2 = []; signature4to1 = []; signature4to0 = [];
-betaEbEval = 13;
-figure(1111);
-plot(compxs,feval(fitFuncsComp{10}, compxs),'.');
-hold on;
-plot(compxs,feval(fitFuncsComp{12}, compxs),'.');
-plot(compxs,feval(fitFuncsComp{13}, compxs),'.');
-k = 1;
-for i=1:50
-    for j=1:30
-    
-    mu0ThisGuess = 1.5e-30 + i*1e-32;
-    %mu0ThisGuess = 1.5e-30;
-    betaThisGuess = 3e30 + j*0.5e29;
-    
-    xThis = (mu0ThisGuess - inputPotentialArray).*(betaThisGuess);
-    yThis = (inputDensityArray.*((hbar^2)/(massL6)).*betaThisGuess);
-    
-    plot(xThis,yThis);
-    
-    %calculate residuals (subtract data from fit) at each point -4 to -1
-    %and -4 to -2 and -4 to 0 (betaMu)...
-    %'fit signature'
-    
-    pointsToSig4to3 = find(xThis < -3 & xThis > -4);
-    pointsToSig4to2 = find(xThis < -2 & xThis > -4);
-    pointsToSig4to1 = find(xThis < -1 & xThis > -4);
-    pointsToSig4to0 = find(xThis < -0 & xThis > -4);
-    
-    signature4to3{k}.sig = yThis(pointsToSig4to3) - feval(fitFuncsComp{betaEbEval},xThis(pointsToSig4to3))';
-    signature4to3{k}.mu0 = mu0ThisGuess;
-    signature4to3{k}.beta = betaThisGuess;
-    signature4to3{k}.x = xThis(pointsToSig4to3);
-    signature4to3{k}.y = yThis(pointsToSig4to3);
-    signature4to3{k}.score = abs(1/sum(signature4to3{k}.sig(:)));
-    surface4to3x(i) = mu0ThisGuess;
-    surface4to3y(j) = betaThisGuess;
-    surface4to3z(i,j) = signature4to3{k}.score;
-    
-    signature4to2{k}.sig = yThis(pointsToSig4to2) - feval(fitFuncsComp{betaEbEval},xThis(pointsToSig4to2))';
-    signature4to2{k}.mu0 = mu0ThisGuess;
-    signature4to2{k}.beta = betaThisGuess;
-    signature4to2{k}.x = xThis(pointsToSig4to2);
-    signature4to2{k}.y = yThis(pointsToSig4to2);
-    signature4to2{k}.score = abs(1/sum(signature4to2{k}.sig(:))); 
-    surface4to2x(i) = mu0ThisGuess;
-    surface4to2y(j) = betaThisGuess;
-    surface4to2z(i,j) = signature4to2{k}.score;
-    
-    signature4to1{k}.sig = yThis(pointsToSig4to1) - feval(fitFuncsComp{betaEbEval},xThis(pointsToSig4to1))';
-    signature4to1{k}.mu0 = mu0ThisGuess;
-    signature4to1{k}.beta = betaThisGuess;
-    signature4to1{k}.x = xThis(pointsToSig4to1);
-    signature4to1{k}.y = yThis(pointsToSig4to1);
-    signature4to1{k}.score = abs(1/sum(signature4to1{k}.sig(:)));
-    surface4to1x(i) = mu0ThisGuess;
-    surface4to1y(j) = betaThisGuess;
-    surface4to1z(i,j) = signature4to1{k}.score;
-    
-    signature4to0{k}.sig = yThis(pointsToSig4to0) - feval(fitFuncsComp{betaEbEval},xThis(pointsToSig4to0))';
-    signature4to0{k}.mu0 = mu0ThisGuess;
-    signature4to0{k}.beta = betaThisGuess;
-    signature4to0{k}.x = xThis(pointsToSig4to0);
-    signature4to0{k}.y = yThis(pointsToSig4to0);
-    signature4to0{k}.score = abs(1/sum(signature4to0{k}.sig(:)));
-    surface4to0x(i) = mu0ThisGuess;
-    surface4to0y(j) = betaThisGuess;
-    surface4to0z(i,j) = signature4to0{k}.score;    
-    
-    k = k+1;
-    end
-end
-grid on;
-
-%plot score
-for i=1:length(signature4to2)
-    scores4to3(i) = signature4to3{i}.score;
-    scores4to2(i) = signature4to2{i}.score;
-    scores4to1(i) = signature4to1{i}.score;
-    scores4to0(i) = signature4to0{i}.score;
-end
-figure(402);
-plot(scores4to3,'.');
-hold on;
-plot(scores4to2,'.');
-plot(scores4to1,'.');
-plot(scores4to0,'.');
-grid on;
-
-%where is the score maximum?
-maxScoreIndex = find(scores4to3 == max(scores4to3));
-thisIndex = find(scores4to1 > 500);
-goodIndex = 1219;
-
-figure(13121);
-plot(signature4to3{maxScoreIndex}.x,signature4to3{maxScoreIndex}.sig);
-figure(13122);
-%plot(signature4to3{maxScoreIndex}.x,signature4to3{maxScoreIndex}.y);
-hold on;
-plot(signature4to3{maxScoreIndex}.x,feval(fitFuncsComp{betaEbEval},signature4to3{maxScoreIndex}.x),'o');
-plot((signature4to3{maxScoreIndex}.mu0 - inputPotentialArray).*(signature4to3{maxScoreIndex}.beta),(inputDensityArray.*((hbar^2)/(massL6)).*signature4to3{maxScoreIndex}.beta));
-plot((signature4to3{maxScoreIndex}.mu0 - inputPotentialArray).*(signature4to3{maxScoreIndex}.beta),feval(fitFuncsComp{betaEbEval},(signature4to3{maxScoreIndex}.mu0 - inputPotentialArray).*(signature4to3{maxScoreIndex}.beta)));
-grid on;
-
-
-figure(13124);
-%plot(signature4to3{maxScoreIndex}.x,signature4to3{maxScoreIndex}.y);
-hold on;
-plot(signature4to1{goodIndex}.x,signature4to1{goodIndex}.y,'o');
-plot((signature4to1{goodIndex}.mu0 - inputPotentialArray).*(signature4to1{goodIndex}.beta),(inputDensityArray.*((hbar^2)/(massL6)).*signature4to1{goodIndex}.beta),'.');
-plot((signature4to1{goodIndex}.mu0 - inputPotentialArray).*(signature4to1{goodIndex}.beta),feval(fitFuncsComp{betaEbEval},(signature4to1{goodIndex}.mu0 - inputPotentialArray).*(signature4to1{goodIndex}.beta)));
-grid on;
-title(['880G Fit \beta\E_b = ' num2str(betaebvirials(betaEbEval,1)) ',  T = ' num2str((1/signature4to1{goodIndex}.beta)/kB) 'K,  \mu_0 = ' num2str(signature4to1{goodIndex}.mu0) ' J, Virial from -3.5 \beta\mu']);
-axis([-4.2 2 -0.08 0.5]);
-
-%score surface, based on mu0 and beta...
-figure(333);
-
-surf(surface4to3y,surface4to3x,surface4to3z);
-title('Fit from -4 to -3 betamu');
-figure(334);
-surf(surface4to2y,surface4to2x,surface4to2z);
-title('Fit from -4 to -2 betamu');
-figure(335);
-surf(surface4to1y,surface4to1x,surface4to1z);
-title('Fit from -4 to -1 betamu');
-figure(336);
-surf(surface4to0y,surface4to0x,surface4to0z);
-title('Fit from -4 to -0 betamu');
-
-
-%plot signatures
-figure(42);
-hold on;
-for i=1:length(signature4to2)
-    plot(signature4to2{i}.x,signature4to2{i}.sig);
-end
-grid on;
-
-
-%kdata_880_density_SI = inputDensityArray;
-%kdata_880_potential_SI = inputPotentialArray;
-    
 end
 
 

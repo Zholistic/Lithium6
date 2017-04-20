@@ -15,7 +15,12 @@ end
 disp('Reading in log file...');
 
 logfilename = [directory datestring '_log_camera.txt'];
+logfilename2 = [directory datestring '_log.txt'];
 fid = fopen(logfilename,'rt');
+if(fid == -1)
+    fid = fopen(logfilename2,'rt');
+end
+
 C = textscan(fid, '%s', 'Delimiter','\t'); %tokenize into tab seperated tokens
 C = C{1};
 fclose(fid);

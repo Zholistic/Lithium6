@@ -1,6 +1,9 @@
-directory = 'C:\Data\160818_CollectiveOsc_2D_860G_20katom_300mvPtoP_47Hz_5Cycles\';
+directory = 'C:\Data\OscillationDataDump\160826_CollectiveOsc_2D_725G_300mVp2p_44Hz_15kAtoms_13mixture\';
 
-date = '160818';
+savefig = 1;
+savename = '160826_CollectiveOsc_2D_725G_300mVp2p_44Hz_15kAtoms_13mixture';
+date = '160826';
+magfield = 725;
 camera = 'topcam';
 varstring = 'HoldTime';
 %varstring2 = 'Holdtime';
@@ -296,20 +299,43 @@ if(0)
     end
 end
 
-plot(motFets(1:end),widthsR(1:end),'.');
-[gcoefswidthsRfit1,gcoefswidthsRfit1error] = sinExpDampFitFreqGuess(widthsR(1:end),motFets(1:end),0.26);
+
+%if(0)
+avg_pixelnum = mean(pixelNumbers);
+OD_corr = 1.2;
+atomnum = OD_corr * avg_pixelnum;
+
+
+fitToPoint = length(motFets);
+[gcoefswidthsRfit1,gcoefswidthsRfit1error] = sinExpDampFitFreqGuess(widthsR(1:fitToPoint),motFets(1:fitToPoint),0.3);
 freqWidthsRFit1 = gcoefswidthsRfit1(3)/(10^(-3))/(2*pi);
 freqWidthsRFit1Min = gcoefswidthsRfit1error(3,1)/(10^(-3))/(2*pi);
 freqWidthsRFit1Max = gcoefswidthsRfit1error(3,2)/(10^(-3))/(2*pi);
-        plot(fgsineDamp(gcoefswidthsRfit1,1:480)); hold on;
-        plot(motFets(1:pcaEndPoint),Y01(:,1),'.','color',[0 0 0]); 
-        text(5,-0.24,['\omega = 2\pi \times ' num2str(freqWidthsRFit1,4) ' (' num2str(freqWidthsRFit1Min,4) ',' num2str(freqWidthsRFit1Max,4) ')']); 
+fa = figure(333);
+plot(fgsineDamp(gcoefswidthsRfit1,1:max(motFets))); hold on;
+plot(motFets(1:fitToPoint),widthsR(1:fitToPoint),'.','color',[0 0 0]);
+text(20,gcoefswidthsRfit1(5),['\omega = 2\pi \times ' num2str(freqWidthsRFit1,4) ' (' num2str(freqWidthsRFit1Min,4) ',' num2str(freqWidthsRFit1Max,4) ')']);
+text(20,gcoefswidthsRfit1(5) - 0.6, ['N = ' num2str(atomnum) ', OD corr = ' num2str(OD_corr) ', Mag Field = ' num2str(magfield) 'G ']);
 
+figure(334);
+plot(motFets(1:fitToPoint),widthsX(1:fitToPoint),'.');
+hold on; plot(motFets(1:fitToPoint),widthsY(1:fitToPoint),'.');
 
+%figure saving:
 
+figname = savename;
+figdirectory = 'C:\Users\tpeppler\Dropbox\PhD\2D_2017\ColOsc Data Review\';
+if(savefig)
+    saveas(fa,[figdirectory figname '.fig'],'fig');
+    saveas(fa,[figdirectory figname '.png'],'png');
+end
+%end
+
+%%
 %------------ PCA Code ------------%
 
-        pcaEndPoint = 50; %Where to take the final holdtime array index
+        %pcaEndPoint = 18;
+        pcaEndPoint = length(motFets); %Where to take the final holdtime array index
 
         imagesToReshape = [];
         %imagesToReshape = imageArrayC(:,:,1:35); %single images
@@ -376,40 +402,41 @@ freqWidthsRFit1Max = gcoefswidthsRfit1error(3,2)/(10^(-3))/(2*pi);
         fgsineDamp = @(p,x)(p(1).*exp(-p(2).*x).*sin(p(3).*x+p(4))+p(5));
         
         %Mode 1:
-        [gcoefsPCAmode1,gcoefsPCAerror1] = sinExpDampFitFreqGuess(Y01(:,1),motFets(1:pcaEndPoint),0.26);
+        [gcoefsPCAmode1,gcoefsPCAerror1] = sinExpDampFitFreqGuess(Y01(1:pcaEndPoint,1),motFets(1:pcaEndPoint),0.29);
         freqPCAmode1 = gcoefsPCAmode1(3)/(10^(-3))/(2*pi);
         freqPCAmode1ErrorMin = gcoefsPCAerror1(3,1)/(10^(-3))/(2*pi);
         freqPCAmode1ErrorMax = gcoefsPCAerror1(3,2)/(10^(-3))/(2*pi);
                 
-        figure(1111);
-        subplot(1,2,1);
+        hFig = figure(1111);
+        set(hFig, 'Position', [400 50 900 900])
+        subplot(3,2,1);
         imagesc(imagesFromEVector(:,:,1));
-        subplot(1,2,2);
-        plot(fgsineDamp(gcoefsPCAmode1,1:480)); hold on;
+        subplot(3,2,2);
+        plot(fgsineDamp(gcoefsPCAmode1,1:250)); hold on;
         plot(motFets(1:pcaEndPoint),Y01(:,1),'.','color',[0 0 0]); 
         text(5,-0.24,['\omega = 2\pi \times ' num2str(freqPCAmode1,4) ' (' num2str(freqPCAmode1ErrorMin,4) ',' num2str(freqPCAmode1ErrorMax,4) ')']); 
         hold off;
         
-if(0)   
+if(1)   
         %Mode 2:
-        [gcoefsPCAmode2,gcoefsPCAerror2] = sinExpDampFitFreqGuess(Y01(:,2),motFets(1:pcaEndPoint),0.13);
+        [gcoefsPCAmode2,gcoefsPCAerror2] = sinExpDampFitFreqGuess(Y01(1:pcaEndPoint,2),motFets(1:pcaEndPoint),0.28);
         freqPCAmode2 = gcoefsPCAmode2(3)/(10^(-3))/(2*pi);
         freqPCAmode2ErrorMin = gcoefsPCAerror2(3,1)/(10^(-3))/(2*pi);
         freqPCAmode2ErrorMax = gcoefsPCAerror2(3,2)/(10^(-3))/(2*pi);
  
         %figure(3);
-        subplot(2,2,3);
+        subplot(3,2,3);
         imagesc(imagesFromEVector(:,:,2));
-        subplot(2,2,4);        
-        plot(fgsineDamp(gcoefsPCAmode2,1:480)); hold on;
+        subplot(3,2,4);        
+        plot(fgsineDamp(gcoefsPCAmode2,1:250)); hold on;
         plot(motFets(1:pcaEndPoint),Y01(:,2),'.','color',[0 0 0]);
-        text(5,-0.28,['\omega = 2\pi \times ' num2str(freqPCAmode2,4) ' (' num2str(freqPCAmode2ErrorMin,4) ',' num2str(freqPCAmode2ErrorMax,4) ')']); 
+        text(5,-0.24,['\omega = 2\pi \times ' num2str(freqPCAmode2,4) ' (' num2str(freqPCAmode2ErrorMin,4) ',' num2str(freqPCAmode2ErrorMax,4) ')']); 
         hold off;
 end
 
-if(0)   
+if(1)   
         %Mode 3:
-        [gcoefsPCAmode3,gcoefsPCAerror3] = sinExpDampFitFreqGuess(Y01(:,3),motFets(1:pcaEndPoint),0.13);
+        [gcoefsPCAmode3,gcoefsPCAerror3] = sinExpDampFitFreqGuess(Y01(1:pcaEndPoint,3),motFets(1:pcaEndPoint),0.28);
         freqPCAmode3 = gcoefsPCAmode3(3)/(10^(-3))/(2*pi);
         freqPCAmode3ErrorMin = gcoefsPCAerror3(3,1)/(10^(-3))/(2*pi);
         freqPCAmode3ErrorMax = gcoefsPCAerror3(3,2)/(10^(-3))/(2*pi);
@@ -418,8 +445,8 @@ if(0)
         subplot(3,2,5);
         imagesc(imagesFromEVector(:,:,3));
         subplot(3,2,6);        
-        plot(fgsineDamp(gcoefsPCAmode3,1:480)); hold on;
+        plot(fgsineDamp(gcoefsPCAmode3,1:250)); hold on;
         plot(motFets(1:pcaEndPoint),Y01(:,3),'.','color',[0 0 0]);
-        text(5,-0.28,['\omega = 2\pi \times ' num2str(freqPCAmode3,4) ' (' num2str(freqPCAmode3ErrorMin,4) ',' num2str(freqPCAmode3ErrorMax,4) ')']); 
+        text(5,-0.24,['\omega = 2\pi \times ' num2str(freqPCAmode3,4) ' (' num2str(freqPCAmode3ErrorMin,4) ',' num2str(freqPCAmode3ErrorMax,4) ')']); 
         hold off;
 end

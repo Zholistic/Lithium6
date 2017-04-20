@@ -1,8 +1,18 @@
-directory = 'C:\Data\160920_CollectiveOsc_2D_690G_7kAtoms_13mixture_ODcorr\';
+function [freq, freqerror] = master_collOsc_function(inputDatacell, saveparam)
 
-date = '160920';
+directory = ['C:\Data\OscillationDataDump\' inputDatacell.name '\'];
+
+directory
+
+PCAparam = 0;
+savefig = 0;
+savefig = saveparam;
+name = inputDatacell.name;
+savename = name;
+date = inputDatacell.date;
+magfield = inputDatacell.magfield;
 camera = 'topcam';
-varstring = 'ShotNumber';
+varstring = 'HoldTime';
 %varstring2 = 'Holdtime';
 pixelLength = 2.84e-6; %13 um topcam, topcam magnification = 4.58, ie 2.84um effective
 massL6 = 9.988e-27; %9.988 x 10^27 kg
@@ -18,7 +28,11 @@ raw = 1;
 %Read in the log file:
 
 logfilename = [directory date '_log_camera.txt'];
+logfilename2 = [directory date '_log.txt'];
 fid = fopen(logfilename,'rt');
+if(fid == -1)
+    fid = fopen(logfilename2, 'rt');
+end
 C = textscan(fid, '%s', 'Delimiter','\t'); %tokenize into tab seperated tokens
 C = C{1};
 fclose(fid);
@@ -54,21 +68,17 @@ imageArray = [];
 %Pull images:
 for i=1:length(fileLocList)
     OD = 0;
-    if((varData(i,1)) == 1)
-        Isat = 1340;
-    else
-        Isat = 134;
-    end
+    %i
     [beamImage,atom1Image,atom2Image] = PullSPE(fileLocList{i},Isat,OD);
     imageArray(:,:,i) = atom2Image(:,:,1);
 end
 
 %Crop images:
 imageArrayC = []; imageArrayTC = [];
-ROIx = 40:length(imageArray(1,:,1));
+ROIx = 1:length(imageArray(1,:,1));
 ROIy = 1:length(imageArray(:,1,1));
 CrossROIy = 20:180; 
-CrossROIx = 1:145; %The cross is inside the region specified above.
+CrossROIx = 35:185; %The cross is inside the region specified above.
 TightROIx = 35:185;
 TightROIy = 30:170;
 %Split into high and low intensity arrays
@@ -90,8 +100,6 @@ for i=1:length(imageArrayC(1,1,:))
     end
 end
 end
-
-
 
 %Radially averaged profiles:
 radProfiles = []; radProfilesT = []; center = [];
@@ -120,6 +128,7 @@ fgp = @(p,x)(p(1).*log(1+exp((p(2)+(-1).*p(3).*x.^2)./(p(4)))));
 fgr2p5 = @(p,x)(p(1).*exp((-1).*((x).^(2.5)) ./ (2.*p(2).^(2.5))));
 %gaussian with 2 variables and fitted exponent:
 fgrfe = @(p,x)(p(1).*exp((-1).*((x).^(p(2))) ./ (2.*p(3).^(2.5)))); 
+fgsineDamp = @(p,x)(p(1).*exp(-p(2).*x).*sin(p(3).*x+p(4))+p(5));
 
 gcoefsX = []; gcoefsY = []; centers = []; gcoefsXi = []; gcoefsYi = [];
 gcoefsR = []; gcoefsR2p5 = []; sigmaR2p5 = []; gcoefsPolyLog1 = [];
@@ -303,43 +312,163 @@ if(0)
     end
 end
 
-%Radially averaged average profiles:
-radProfilesAvgReorder = []; radProfilesTAvg = []; centerAvgs = []; radProfilesAvg = [];
-disp('Radially averaging...');
-for i=1:length(imageArrayAvgs(1,1,:))
-    [radProfilesTAvg(:,:,i),centerAvgs(:,i)] = radAverageBigSquare(imageArrayAvgs(:,:,i));
-    radProfilesAvg(:,:,i) = radProfilesTAvg(:,1:end-5,i);
+
+%if(0)
+avg_pixelnum = mean(pixelNumbers);
+OD_corr = inputDatacell.ODcorr;
+atomnum = OD_corr * avg_pixelnum;
+
+
+fitToPoint = length(motFets);
+inputfreqguess = inputDatacell.freqguess *(10^(-3))*(2*pi); %datacell value in Hz
+[gcoefswidthsRfit1,gcoefswidthsRfit1error] = sinExpDampFitFreqGuess(widthsR(1:fitToPoint),motFets(1:fitToPoint),inputfreqguess);
+freqWidthsRFit1 = gcoefswidthsRfit1(3)/(10^(-3))/(2*pi); %47Hz *(10^(-3))*(2*pi)
+freqWidthsRFit1Min = gcoefswidthsRfit1error(3,1)/(10^(-3))/(2*pi);
+freqWidthsRFit1Max = gcoefswidthsRfit1error(3,2)/(10^(-3))/(2*pi);
+fa = figure(333);
+plot(fgsineDamp(gcoefswidthsRfit1,1:max(motFets))); hold on;
+plot(motFets(1:fitToPoint),widthsR(1:fitToPoint),'.','color',[0 0 0]);
+text(20,gcoefswidthsRfit1(5),['\omega = 2\pi \times ' num2str(freqWidthsRFit1,4) ' (' num2str(freqWidthsRFit1Min,4) ',' num2str(freqWidthsRFit1Max,4) ')']);
+text(20,gcoefswidthsRfit1(5) - 0.6, ['N = ' num2str(atomnum) ', OD corr = ' num2str(OD_corr) ', Mag Field = ' num2str(magfield) 'G ']);
+
+figure(334);
+plot(motFets(1:fitToPoint),widthsX(1:fitToPoint),'.');
+hold on; plot(motFets(1:fitToPoint),widthsY(1:fitToPoint),'.');
+
+%figure saving:
+
+figname = savename;
+figdirectory = 'C:\Users\tpeppler\Dropbox\PhD\2D_2017\ColOsc Data Review\';
+if(savefig)
+    saveas(fa,[figdirectory figname '.fig'],'fig');
+    saveas(fa,[figdirectory figname '.png'],'png');
+end
+%end
+
+freq = freqWidthsRFit1;
+freqerror = freqWidthsRFit1 - freqWidthsRFit1Min;
+
+%%
+%------------ PCA Code ------------%
+if(PCAparam)
+
+        %pcaEndPoint = 18;
+        pcaEndPoint = length(motFets); %Where to take the final holdtime array index
+
+        imagesToReshape = [];
+        %imagesToReshape = imageArrayC(:,:,1:35); %single images
+        imagesToReshape = imageArrayAvgs(:,:,1:pcaEndPoint);
+        %imagesToReshape = imagesAvgSet2;
+        %imagesToReshape = imagesAvgSet3;
+        %imagesToReshape = imagesAvgSet4;
+        
+        numberOfImages = length(imagesToReshape(1,1,:));
+        vectorLength = length(imagesToReshape(:,1,1))*length(imagesToReshape(1,:,1));
+        
+        %reshape images into vectors:
+        vectorImages = []; vectorSum = zeros(vectorLength,1);
+        for i=1:length(imagesToReshape(1,1,:))
+            vectorImages(:,i) = reshape(imagesToReshape(:,:,i),[],1);
+            vectorSum = vectorSum + vectorImages(:,i);
+        end
+        
+        %Mean Image:
+        meanImageVector = (1/numberOfImages).*vectorSum;
+        undividedImage = reshape(vectorSum,length(imagesToReshape(:,1,1)),length(imagesToReshape(1,:,1)));
+        meanImage = reshape(meanImageVector,length(imagesToReshape(:,1,1)),length(imagesToReshape(1,:,1)));
+        
+        normImages = [];
+        for i=1:length(imagesToReshape(1,1,:))
+            normImages(:,i) = vectorImages(:,i) - meanImageVector;
+        end
+        
+        %N x p Bmatrix (N = number of images, p = pixels per image)
+        Bmatrix = normImages;
+        
+        %[coeff, score, latent] = pca(ingredients)
+        %each column of score corresponds to one principal component
+        %latent stores the variances of the N principal components
+        [Y01,P01,E01,tsquared,percentV] = pca(Bmatrix);
+              
+        
+        %Reconstruct images using desired principle components
+        eigenVectorBmatrix = []; imagesFromEVector = [];
+        for i=1:numberOfImages
+            eigenVectorBmatrix = P01(:,i);
+            imagesFromEVector(:,:,i) = reshape(eigenVectorBmatrix,length(imagesToReshape(:,1,1)),length(imagesToReshape(1,:,1)));
+        end
+        
+        
+        %set of eigenmodes (principal components) large figure:
+        figure(1);
+        %set(gca,'XTickLabelMode', 'manual','XTickLabel', []);
+        %set(gca,'YTickLabelMode', 'manual','YTickLabel', []);
+        for i=1:numberOfImages
+            subplot(ceil(numberOfImages/5),5,i);
+            imagesc(imagesFromEVector(:,:,i));
+            set(gca,'XTickLabelMode', 'manual','XTickLabel', []);
+            set(gca,'YTickLabelMode', 'manual','YTickLabel', []);         
+        end
+        
+        for i=1:5
+            figure(i+100); imagesc(imagesFromEVector(:,:,i));
+        end
+        
+        %Fit to find frequency:
+        %make sure x in ... ms
+        fgsine = @(p,x)(p(1).*sin(p(2).*x+p(3))+p(4));
+        fgsineDamp = @(p,x)(p(1).*exp(-p(2).*x).*sin(p(3).*x+p(4))+p(5));
+        
+        %Mode 1:
+        [gcoefsPCAmode1,gcoefsPCAerror1] = sinExpDampFitFreqGuess(Y01(1:pcaEndPoint,1),motFets(1:pcaEndPoint),0.29);
+        freqPCAmode1 = gcoefsPCAmode1(3)/(10^(-3))/(2*pi);
+        freqPCAmode1ErrorMin = gcoefsPCAerror1(3,1)/(10^(-3))/(2*pi);
+        freqPCAmode1ErrorMax = gcoefsPCAerror1(3,2)/(10^(-3))/(2*pi);
+                
+        hFig = figure(1111);
+        set(hFig, 'Position', [400 50 900 900])
+        subplot(3,2,1);
+        imagesc(imagesFromEVector(:,:,1));
+        subplot(3,2,2);
+        plot(fgsineDamp(gcoefsPCAmode1,1:250)); hold on;
+        plot(motFets(1:pcaEndPoint),Y01(:,1),'.','color',[0 0 0]); 
+        text(5,-0.24,['\omega = 2\pi \times ' num2str(freqPCAmode1,4) ' (' num2str(freqPCAmode1ErrorMin,4) ',' num2str(freqPCAmode1ErrorMax,4) ')']); 
+        hold off;
+        
+if(1)   
+        %Mode 2:
+        [gcoefsPCAmode2,gcoefsPCAerror2] = sinExpDampFitFreqGuess(Y01(1:pcaEndPoint,2),motFets(1:pcaEndPoint),0.28);
+        freqPCAmode2 = gcoefsPCAmode2(3)/(10^(-3))/(2*pi);
+        freqPCAmode2ErrorMin = gcoefsPCAerror2(3,1)/(10^(-3))/(2*pi);
+        freqPCAmode2ErrorMax = gcoefsPCAerror2(3,2)/(10^(-3))/(2*pi);
+ 
+        %figure(3);
+        subplot(3,2,3);
+        imagesc(imagesFromEVector(:,:,2));
+        subplot(3,2,4);        
+        plot(fgsineDamp(gcoefsPCAmode2,1:250)); hold on;
+        plot(motFets(1:pcaEndPoint),Y01(:,2),'.','color',[0 0 0]);
+        text(5,-0.24,['\omega = 2\pi \times ' num2str(freqPCAmode2,4) ' (' num2str(freqPCAmode2ErrorMin,4) ',' num2str(freqPCAmode2ErrorMax,4) ')']); 
+        hold off;
 end
 
-if(0)
-%Shift wings of radial profiles to zero:
-shiftBy = [];
-for i=1:length(radProfiles(1,1,:))
-    shiftBy(i) = mean(radProfiles(1,55:75,i));
-    radProfiles(1,:,i) = radProfiles(1,:,i) - shiftBy(i);
+if(1)   
+        %Mode 3:
+        [gcoefsPCAmode3,gcoefsPCAerror3] = sinExpDampFitFreqGuess(Y01(1:pcaEndPoint,3),motFets(1:pcaEndPoint),0.28);
+        freqPCAmode3 = gcoefsPCAmode3(3)/(10^(-3))/(2*pi);
+        freqPCAmode3ErrorMin = gcoefsPCAerror3(3,1)/(10^(-3))/(2*pi);
+        freqPCAmode3ErrorMax = gcoefsPCAerror3(3,2)/(10^(-3))/(2*pi);
+ 
+        %figure(3);
+        subplot(3,2,5);
+        imagesc(imagesFromEVector(:,:,3));
+        subplot(3,2,6);        
+        plot(fgsineDamp(gcoefsPCAmode3,1:250)); hold on;
+        plot(motFets(1:pcaEndPoint),Y01(:,3),'.','color',[0 0 0]);
+        text(5,-0.24,['\omega = 2\pi \times ' num2str(freqPCAmode3,4) ' (' num2str(freqPCAmode3ErrorMin,4) ',' num2str(freqPCAmode3ErrorMax,4) ')']); 
+        hold off;
 end
+
 end
 
-
-figure(1); imagesc(imageArrayAvgs(:,:,1));
-figure(2); imagesc(imageArrayAvgs(:,:,2));
-
-%Atom number correction:
-radProfilesAvg(1,:,1) = radProfilesAvg(1,:,1).*2.*1.2;
-
-omegaR = 22.035*2*pi;
-omegaZ = 5650*2*pi;
-a0 = 5.29e-11; %o.0
-a2d = a0.*21210;
-
-calcRegion = 2:77;
-cutoffLeft = 23;
-cutoffRight = 0;
-
-fitVirial(radProfilesAvg(1,:,1)./(kpixelLength^2), radProfilesAvg(2,:,1),calcRegion, omegaZ, omegaR, 690, a2d, smoothOn, zeroOn,cutoffLeft,cutoffRight);
-
-%yVirialFit = radProfilesAvg(1,:,1)./(kpixelLength^2)./(massL6*omegaz / hbar);
-%radiusVector = radProfilesAvg(2,:,1); %x vector 
-%radiusVectorMeters = radiusVector.*kpixelLength; %convert x vector to m
-%potential = 0.5 .* massL6 .* omegar^2 .* radiusVectorMeters.^2;
-%xVirialFit = potential./((hbar*omegaz)/2);
+end
