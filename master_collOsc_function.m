@@ -1,4 +1,4 @@
-function [freq, freqerror] = master_collOsc_function(inputDatacell, saveparam)
+function [freq, freqerror, atomnumfinal, widthsrs, widthsxs] = master_collOsc_function(inputDatacell, saveparam)
 
 directory = ['C:\Data\OscillationDataDump\' inputDatacell.name '\'];
 
@@ -103,7 +103,7 @@ end
 
 %Radially averaged profiles:
 radProfiles = []; radProfilesT = []; center = [];
-disp('Radially averaging...');
+%disp('Radially averaging...');
 for i=1:length(imageArrayC(1,1,:))
     [radProfilesT(:,:,i),center(:,i)] = radAverageBigSquare(imageArrayC(:,:,i));
     radProfiles(:,:,i) = radProfilesT(:,1:end-20,i);
@@ -134,7 +134,7 @@ gcoefsX = []; gcoefsY = []; centers = []; gcoefsXi = []; gcoefsYi = [];
 gcoefsR = []; gcoefsR2p5 = []; sigmaR2p5 = []; gcoefsPolyLog1 = [];
 gcoefsRFreeExp = []; sigmaR = [];
 sigmaX = []; sigmaY = []; shiftFactor = []; shiftFactorR = [];
-disp('Function Fitting...');
+%disp('Function Fitting...');
 for i=1:length(imageArrayC(1,1,:))
     %Initial Fit for zeroing:
     gcoefsXi(:,i) = gausFit1D(mean(imageArrayC(CrossROIy,:,i),1)); %mean averages over y
@@ -325,6 +325,10 @@ inputfreqguess = inputDatacell.freqguess *(10^(-3))*(2*pi); %datacell value in H
 freqWidthsRFit1 = gcoefswidthsRfit1(3)/(10^(-3))/(2*pi); %47Hz *(10^(-3))*(2*pi)
 freqWidthsRFit1Min = gcoefswidthsRfit1error(3,1)/(10^(-3))/(2*pi);
 freqWidthsRFit1Max = gcoefswidthsRfit1error(3,2)/(10^(-3))/(2*pi);
+
+widthsrs = widthsR;
+widthsxs = motFets;
+
 fa = figure(333);
 plot(fgsineDamp(gcoefswidthsRfit1,1:max(motFets))); hold on;
 plot(motFets(1:fitToPoint),widthsR(1:fitToPoint),'.','color',[0 0 0]);
@@ -347,6 +351,7 @@ end
 
 freq = freqWidthsRFit1;
 freqerror = freqWidthsRFit1 - freqWidthsRFit1Min;
+atomnumfinal = atomnum;
 
 %%
 %------------ PCA Code ------------%

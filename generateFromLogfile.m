@@ -12,7 +12,7 @@ else
 end
 
 %Read in the log file:
-disp('Reading in log file...');
+%disp('Reading in log file...');
 
 logfilename = [directory datestring '_log_camera.txt'];
 logfilename2 = [directory datestring '_log.txt'];

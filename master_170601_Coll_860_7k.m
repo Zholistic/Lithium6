@@ -1,5 +1,5 @@
-directory = 'C:\Data\EOS_Data\160617_2d_eos_980G_10us_0p25_isat_1us_15isat_1000ms_laser_ramp_250ms_field_ramp_2s2devap_1p15v_10katoms\';
-date = '160617';
+directory = 'C:\Data\170530_CollectiveOsc_2D_860G_7katom_500mvPtoP_49Hz_5Cycles_13mix_5p93khz_OD_crr\';
+date = '170530';
 camera = 'top';
 varstring = 'Isat';
 %varstring2 = 'Holdtime';
@@ -79,8 +79,8 @@ TightROIy = 30:170;
 imageArrayC = imageArray(TightROIy,TightROIx,:);
 imageArrayTC = imageArray(TightROIy,TightROIx,:);
 
-imageArrayHighInt = imageArrayC(:,:,1:200); %1340
-imageArrayLowInt = imageArrayC(:,:,201:end);
+imageArrayHighInt = imageArrayC(:,:,1:24); %1340
+imageArrayLowInt = imageArrayC(:,:,25:end);
 
 %Display every X image:
 if(0)
@@ -319,22 +319,22 @@ atomNumBC(1) = sum(sum(imageArrayAvgs(:,:,1)));
 atomNumBC(2) = sum(sum(imageArrayAvgs(:,:,2)));
 
 
-pixel2NROI = 1/(atomNumBC(1)/mean(varData(1:200,5)));
+pixel2NROI = 1/(atomNumBC(1)/mean(varData(1:25,5)));
 NROI2HighInt = atomNumBC(2)/(atomNumBC(1)*pixel2NROI);
 HighInt2TwoSpinState = 2;
 
 atomCorr = pixel2NROI*NROI2HighInt*HighInt2TwoSpinState;
 correctedNum = atomNumBC(1)*pixel2NROI*NROI2HighInt*HighInt2TwoSpinState;
 
-atomCorrMarta = 1.49;
+atomCorrFinal = 1.28;
 
-radProfilesAvg(1,:,1) = radProfilesAvg(1,:,1).*atomCorrMarta;
+radProfilesAvg(1,:,1) = radProfilesAvg(1,:,1).*atomCorrFinal.*2;
 
 
 calcRegion = 3:45;
 a0 = 5.29e-11; %o.0
-a2dVectorOld = a0.*348652;
-omegaRVector = 2.*pi.*26.51;
+a2dVectorOld = a0.*99040;
+omegaRVector = 2.*pi.*25.49;
 
 a2d = a2dVectorOld;
 omegaR = omegaRVector;
@@ -347,9 +347,9 @@ savestring = 'indv clouds smoothed';
 %single in bulk function:
 %EOSGenerateBulk(radProfilesAvg(1,:,1)./(kpixelLength^2),radProfilesAvg(2,:,1),2:65,omegaR,980,a2d,smoothOn,saveOn,savestring)
 
-calcRegion = 2:52;
-omegaZ = 5650*2*pi;
-%fitVirial(radProfilesAvg(1,:,1)./(kpixelLength^2), radProfilesAvg(2,:,1),calcRegion, omegaZ, omegaR, 980, a2d, smoothOn, zeroOn)
+calcRegion = 2:62;
+omegaZ = 5930*2*pi;
+%fitVirial(radProfilesAvg(1,:,1)./(pixelLength^2), radProfilesAvg(2,:,1),calcRegion, omegaZ, omegaR, 725, a2d, smoothOn, zeroOn)
 
 
 

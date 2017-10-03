@@ -3,7 +3,7 @@ function [ outputImgArray ] = centerImgArray( inputImgArray )
 %first image. First find centers by fitting gaussians, then create a larger
 %ROI around the image and center, then strip off the extra ROI. 
 
-disp('Centering Image Array...');
+%disp('Centering Image Array...');
 
 %Find centers:
 gcoefsX = []; gcoefsY = []; centers = [];

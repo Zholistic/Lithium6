@@ -679,23 +679,138 @@ collOscData{111}.magfield = 712;
 collOscData{111}.ODcorr = 1.2;
 collOscData{111}.freqguess = 46;
 
+collOscData{112}.name = '170531_CollectiveOsc_2D_725G_7katom_300mvPtoP_46Hz_5Cycles_13mix_5p90khz';
+collOscData{112}.date = '170531';
+collOscData{112}.magfield = 725;
+collOscData{112}.ODcorr = 1.2;
+collOscData{112}.freqguess = 46;
+
+collOscData{113}.name = '170531_CollectiveOsc_2D_832G_7katom_100mvPtoP_50Hz_5Cycles_12mix_5p90khz';
+collOscData{113}.date = '170531';
+collOscData{113}.magfield = 832;
+collOscData{113}.ODcorr = 1.2;
+collOscData{113}.freqguess = 48;
+
+collOscData{114}.name = '170531_CollectiveOsc_2D_860G_7katom_500mvPtoP_49Hz_5Cycles_13mix_5p90khz';
+collOscData{114}.date = '170531';
+collOscData{114}.magfield = 860;
+collOscData{114}.ODcorr = 1.2;
+collOscData{114}.freqguess = 50;
+
+collOscData{115}.name = '170601_CollectiveOsc_2D_690G_5katom_80mvPtoP_46Hz_5Cycles_13mix_5p93khz';
+collOscData{115}.date = '170601';
+collOscData{115}.magfield = 690;
+collOscData{115}.ODcorr = 1.2;
+collOscData{115}.freqguess = 45;
+
+collOscData{116}.name = '170602_CollectiveOsc_2D_690G_5katom_80mvPtoP_46Hz_5Cycles_13mix_5p62khz';
+collOscData{116}.date = '170602';
+collOscData{116}.magfield = 690;
+collOscData{116}.ODcorr = 1.2;
+collOscData{116}.freqguess = 45;
+
+collOscData{117}.name = '170528_CollectiveOsc_2D_690G_7katom_55mvPtoP_46Hz_5Cycles_13mix_6p0khz';
+collOscData{117}.date = '170528';
+collOscData{117}.magfield = 690;
+collOscData{117}.ODcorr = 1.2;
+collOscData{117}.freqguess = 45;
+
+collOscData{118}.name = '170529_CollectiveOsc_2D_690G_5katom_80mvPtoP_46Hz_5Cycles_13mix_5p93khz';
+collOscData{118}.date = '170529';
+collOscData{118}.magfield = 690;
+collOscData{118}.ODcorr = 1.2;
+collOscData{118}.freqguess = 45;
+
+collOscData{119}.name = '170529_CollectiveOsc_2D_690G_8katom_80mvPtoP_46Hz_5Cycles_13mix_5p93khz';
+collOscData{119}.date = '170529';
+collOscData{119}.magfield = 690;
+collOscData{119}.ODcorr = 1.2;
+collOscData{119}.freqguess = 45;
+
+collOscData{120}.name = '170530_CollectiveOsc_2D_680G_5katom_80mvPtoP_46Hz_5Cycles_13mix_5p93khz';
+collOscData{120}.date = '170530';
+collOscData{120}.magfield = 680;
+collOscData{120}.ODcorr = 1.2;
+collOscData{120}.freqguess = 45;
+
+collOscData{121}.name = '170530_CollectiveOsc_2D_680G_5katom_80mvPtoP_46Hz_5Cycles_13mix_5p93khz';
+collOscData{121}.date = '170530';
+collOscData{121}.magfield = 680;
+collOscData{121}.ODcorr = 1.2;
+collOscData{121}.freqguess = 45;
+
+collOscData{122}.name = '170530_CollectiveOsc_2D_690G_5katom_80mvPtoP_46Hz_5Cycles_13mix_5p93khz';
+collOscData{122}.date = '170530';
+collOscData{122}.magfield = 690;
+collOscData{122}.ODcorr = 1.2;
+collOscData{122}.freqguess = 45;
+
+collOscData{123}.name = '170530_CollectiveOsc_2D_700G_7katom_100mvPtoP_46Hz_5Cycles_13mix_5p93khz_2';
+collOscData{123}.date = '170530';
+collOscData{123}.magfield = 700;
+collOscData{123}.ODcorr = 1.2;
+collOscData{123}.freqguess = 45;
+
+collOscData{124}.name = '170530_CollectiveOsc_2D_832G_7katom_100mvPtoP_50Hz_5Cycles_12mix_5p90khz';
+collOscData{124}.date = '170530';
+collOscData{124}.magfield = 832;
+collOscData{124}.ODcorr = 1.2;
+collOscData{124}.freqguess = 45;
+
+collOscData{125}.name = '170530_CollectiveOsc_2D_860G_7katom_500mvPtoP_49Hz_5Cycles_13mix_5p93khz';
+collOscData{125}.date = '170530';
+collOscData{125}.magfield = 860;
+collOscData{125}.ODcorr = 1.2;
+collOscData{125}.freqguess = 45;
+%2906 update >
+
+collOscData{126}.name = '170628_CollectiveOsc_2D_690G_7katom_80mvPtoP_45Hz_5Cycles_13mix_5p6khz';
+collOscData{126}.date = '170628';
+collOscData{126}.magfield = 690;
+collOscData{126}.ODcorr = 1.2;
+collOscData{126}.freqguess = 45;
+
+collOscData{127}.name = '170627_CollectiveOsc_2D_832G_7katom_100mvPtoP_50Hz_5Cycles_12mix_5p51khz';
+collOscData{127}.date = '170627';
+collOscData{127}.magfield = 832;
+collOscData{127}.ODcorr = 1.2;
+collOscData{127}.freqguess = 45;
+
+collOscData{128}.name = '170626_CollectiveOsc_2D_860G_5katom_500mvPtoP_50Hz_5Cycles_13mix_5p51khz';
+collOscData{128}.date = '170626';
+collOscData{128}.magfield = 860;
+collOscData{128}.ODcorr = 1.2;
+collOscData{128}.freqguess = 47;
+
+collOscData{129}.name = '170626_CollectiveOsc_2D_690G_5katom_80mvPtoP_45Hz_5Cycles_13mix_5p51khz';
+collOscData{129}.date = '170626';
+collOscData{129}.magfield = 690;
+collOscData{129}.ODcorr = 1.2;
+collOscData{129}.freqguess = 45;
+
+
 %------------Function call:
 saveparam = 1; % 1 is save on, 0 is save off
 numofdatas = length(collOscData);
 
 
 frequencyResults = []; frequencyResultsError =[];
-for i=1:numofdatas
+for i=126:numofdatas
     
-    [collOscData{i}.freqresult, collOscData{i}.freqresulterror, collOscData{i}.atomnum] = master_collOsc_function(collOscData{i},saveparam);
+    [collOscData{i}.freqresult, collOscData{i}.freqresulterror, collOscData{i}.atomnum, collOscData{i}.widthsr, collOscData{i}.widthsxs] = master_collOsc_function(collOscData{i},saveparam);
+    dispmessage = ['Completed dataset number: ' num2str(i) '/' num2str(numofdatas) ' '];
+    disp(dispmessage);
     
 end
 
-versionnumber = 4;
+versionnumber = 11;
+%v6 with updated sinExpDampFitFreqGuess (further updated by hand for 33,38)
+%v8 added data up to end of june 2017
+%v9 new run for images end of june
 fileNameforcsv = ['C:\Users\tpeppler\Dropbox\PhD\2D_2017\ColOsc Data Review\collOscDatacellv' num2str(versionnumber) '.csv']; 
 
 magfields = []; ODcorrs = []; freqguesss = []; freqresults = []; freqresultserror = []; atomnums = [];
-for i=1:numofdatas
+for i=126:numofdatas
     names{i} = collOscData{i}.name; 
     dates{i} = collOscData{i}.date; 
     magfields(i) = collOscData{i}.magfield; 

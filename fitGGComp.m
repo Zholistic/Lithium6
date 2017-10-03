@@ -30,6 +30,10 @@ load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\Density_
 load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\Density_Profiles\ColOsc_161006_706G_10k_Potential_SI.mat');
 load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\Density_Profiles\ColOsc_161004_735G_10k_Density_SI.mat');
 load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\Density_Profiles\ColOsc_161004_735G_10k_Potential_SI.mat');
+load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\Density_Profiles\ColOsc_170531_725G_7k_Density_SI.mat');
+load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\Density_Profiles\ColOsc_170531_725G_7k_Potential_SI.mat');
+load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\Density_Profiles\ColOsc_170530_700G_7k_Density_SI.mat');
+load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\Density_Profiles\ColOsc_170530_700G_7k_Potential_SI.mat');
 %load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\virialtwos.mat');
 %load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\virialthrees.mat');
 load('C:\Users\tpeppler\Dropbox\PhD\2D_2016\GGTemp\composite_curve_data\virialtwos_151216.mat');
@@ -44,7 +48,7 @@ kB = 1.38e-23; %m^2 kg s^-2 K^-1
 
 close all;
 %choices = [1,2,3,5,6,7,9]
-for choices = [8]
+for choices = [11] %<---- choose which datasets to fit
 %--------------Init variables:
 %<<<<<<<
 datasetChoice = choices; % 1 = 880G, 2 = 920G, 3 = 865G
@@ -55,13 +59,13 @@ datasetChoice = choices; % 1 = 880G, 2 = 920G, 3 = 865G
 %--------------Dataset creation (from *.mat loaded density/potentials):
 dataset2D{1}.name = '880 Kristian EOS'; %Kristian result: 17.5nK +-4
 dataset2D{1}.a2d = 3.9910e-06;
-dataset2D{1}.density = kdata_880_density_SI;
-dataset2D{1}.potential = kdata_880_potential_SI;
-dataset2D{1}.fitpoints = 38:60;
-dataset2D{1}.rezero.yesno = 0;
+dataset2D{1}.density = kdata_880_density_SI; %<---- density in SI units from .mat file
+dataset2D{1}.potential = kdata_880_potential_SI; %<---- potential (from LDA) in SI units from .mat file
+dataset2D{1}.fitpoints = 38:60; %<-------- Vary this for better fit
+dataset2D{1}.rezero.yesno = 0; %<----- would you like to zero? if so choose points from below
 dataset2D{1}.rezero.endminusleft = 1;
 dataset2D{1}.rezero.endminusright = 1;
-dataset2D{1}.betaEBidx = 14;
+dataset2D{1}.betaEBidx = 14; %<-------- Vary this if betaEB is not the same as returned
 
 dataset2D{2}.name = '920 Kristian EOS'; %Kristian result: 18.5nK +-3
 dataset2D{2}.a2d = 8.9761e-06;
@@ -142,6 +146,30 @@ dataset2D{9}.rezero.yesno = 0;
 dataset2D{9}.rezero.endminusleft = 37;
 dataset2D{9}.rezero.endminusright = 30;
 dataset2D{9}.betaEBidx = 2;
+
+dataset2D{10}.name = 'ColOsc 170531 725G 7k'; %725G OD corr
+dataset2D{10}.a2d = 5.2392e-06;
+%dataset2D{10}.density = ColOsc_170531_725G_7k_Density_SI;
+%dataset2D{10}.potential = ColOsc_170531_725G_7k_Potential_SI;
+dataset2D{10}.density = density_725G_170531.*1.0938;
+dataset2D{10}.potential = potential_725G_170531;
+dataset2D{10}.fitpoints = 31:46;
+dataset2D{10}.rezero.yesno = 1;
+dataset2D{10}.rezero.endminusleft = 30;
+dataset2D{10}.rezero.endminusright = 21;
+dataset2D{10}.betaEBidx = 5;
+
+dataset2D{11}.name = 'ColOsc 170530 700G 7k'; %725G OD corr
+dataset2D{11}.a2d = 1.8218e-06;
+dataset2D{11}.density = ColOsc_170530_700G_7k_Density_SI;
+dataset2D{11}.potential = ColOsc_170530_700G_7k_Potential_SI;
+dataset2D{11}.fitpoints = 35:49;
+dataset2D{11}.rezero.yesno = 1;
+dataset2D{11}.rezero.endminusleft = 13;
+dataset2D{11}.rezero.endminusright = 9;
+dataset2D{11}.betaEBidx = 35;
+
+
 
 %--------------Surface Init
 figure(631);

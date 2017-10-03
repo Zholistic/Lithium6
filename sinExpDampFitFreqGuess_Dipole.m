@@ -27,9 +27,9 @@ function [ outputCoefs, outputCoefError ] = sinExpDampFitFreqGuess( profileToFit
     end
     
     %For PCA/50Hz fits    
-    p0 = [6 0.00001 freqguess 0 mean(profileToFit)];
-    lb = [-30 -0.01 -1 -4 mean(profileToFit)-20];
-    ub = [30 0.1 1 4 mean(profileToFit)+20]; %0.5 is ~ 80Hz 0.32 ~ 50Hz
+    p0 = [0.28 0.00001 freqguess 0 mean(profileToFit)];
+    lb = [-25 -0.01 -1 -4 mean(profileToFit)-20];
+    ub = [25 0.2 1 4 mean(profileToFit)+20]; %0.5 is ~ 80Hz 0.32 ~ 50Hz
     
     %Fitting:
     %xs = [];

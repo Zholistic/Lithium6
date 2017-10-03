@@ -1,4 +1,4 @@
-function [ outputCoefs, outputCoefError ] = sinExpDampFitFreqGuess( profileToFit, xs, freqguess )
+function [ outputCoefs, outputCoefError ] = sinExpDampFitFreqGuessCustomDipole( profileToFit, xs, freqguess, ampguess )
 %Takes a 1D array half-profile with gaussian shape and fits using lsqcurvefit.
 %Returns the co-efficients of the fit. 
 
@@ -19,17 +19,10 @@ function [ outputCoefs, outputCoefError ] = sinExpDampFitFreqGuess( profileToFit
     centerIndex = find(profileToFit == peak);
     magicWidth = ceil((1/3)*length(profileToFit));
     
-    %For ~5kHz trap freq fits:
-    if(0)
-    p0 = [3.7 0.006 30000 -.18 mean(profileToFit)];
-    lb = [0.1 0.0001 25000 -12 mean(profileToFit)-4];
-    ub = [7 0.1 35000 12 mean(profileToFit)+4]; %0.5 is ~ 80Hz
-    end
-    
     %For PCA/50Hz fits    
-    p0 = [6 0.00001 freqguess 0 mean(profileToFit)];
-    lb = [-30 -0.01 -1 -4 mean(profileToFit)-20];
-    ub = [30 0.1 1 4 mean(profileToFit)+20]; %0.5 is ~ 80Hz 0.32 ~ 50Hz
+    p0 = [ampguess 0 freqguess 0 mean(profileToFit)];
+    lb = [(ampguess-(0.2*ampguess)) -0.001 (freqguess-0.04) -4 mean(profileToFit)-5];
+    ub = [(ampguess+(0.2*ampguess)) 0.001 (freqguess+0.04) 1 mean(profileToFit)+5]; %0.5 is ~ 80Hz 0.32 ~ 50Hz
     
     %Fitting:
     %xs = [];

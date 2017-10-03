@@ -58,6 +58,7 @@ figure(99); plot(radProfilesPotentialConv,radProfilesDensityConv,'.'); grid on; 
 %specify fitrange:
 %TWEAK THIS:
 %cutoffLeft = 40; cutoffRight = 12; (750G)
+cutoffLeft = 40; cutoffRight = 12;
 fitrange = calcRegion(end)-cutoffLeft:calcRegion(end)-cutoffRight;
 figure(100); plot(radProfilesPotentialConv(fitrange),radProfilesDensityConv(fitrange),'.'); grid on; title('H.O. units density vs potential fitrange');
 
