@@ -477,7 +477,7 @@ for i=datastart:dataend
     
 end
 
-versionnumber = 18;
+versionnumber = 19;
 %v4 is with first iteration of custom dipole, with the exponential set to 0
 %v5 included pca mode 1 frequency
 %v6,v7 is dummy, to gen pca images

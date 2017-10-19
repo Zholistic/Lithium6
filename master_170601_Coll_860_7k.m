@@ -333,7 +333,8 @@ radProfilesAvg(1,:,1) = radProfilesAvg(1,:,1).*atomCorrFinal.*2;
 
 calcRegion = 3:45;
 a0 = 5.29e-11; %o.0
-a2dVectorOld = a0.*99040;
+%a2dVectorOld = a0.*99040; 
+a2dVectorOld = a0.*1.18219E6;
 omegaRVector = 2.*pi.*25.49;
 
 a2d = a2dVectorOld;
@@ -349,7 +350,7 @@ savestring = 'indv clouds smoothed';
 
 calcRegion = 2:62;
 omegaZ = 5930*2*pi;
-%fitVirial(radProfilesAvg(1,:,1)./(pixelLength^2), radProfilesAvg(2,:,1),calcRegion, omegaZ, omegaR, 725, a2d, smoothOn, zeroOn)
+%fitVirial(radProfilesAvg(1,:,1)./(pixelLength^2), radProfilesAvg(2,:,1),calcRegion, omegaZ, omegaR, 860, a2d, smoothOn, zeroOn)
 
 
 

@@ -1,5 +1,5 @@
-directory = 'C:\Data\170530_CollectiveOsc_2D_700G_7katom_100mvPtoP_46Hz_5Cycles_13mix_5p93khz_ODcorr\';
-date = '170530';
+directory = 'C:\Data\TempForPaper\170513_CollectiveOsc_2D_725G_9katom_250mvPtoP_48Hz_5Cycles_13mix_6p2khz_ODcrr\';
+date = '170513';
 camera = 'top';
 varstring = 'Isat';
 %varstring2 = 'Holdtime';
@@ -79,8 +79,8 @@ TightROIy = 30:170;
 imageArrayC = imageArray(TightROIy,TightROIx,:);
 imageArrayTC = imageArray(TightROIy,TightROIx,:);
 
-imageArrayHighInt = imageArrayC(:,:,1:25); %1340
-imageArrayLowInt = imageArrayC(:,:,25);
+imageArrayHighInt = imageArrayC(:,:,1:24); %1340
+imageArrayLowInt = imageArrayC(:,:,25:end);
 
 %Display every X image:
 if(0)
@@ -311,30 +311,31 @@ end
 radProfilesAvg = [];
 radProfilesAvg(2,:,1) = meanNelements(radProfilesAvgReorder(2,:,1),200);
 radProfilesAvg(1,:,1) = meanNelements(radProfilesAvgReorder(1,:,1),200);
-%radProfilesAvg(2,:,2) = meanNelements(radProfilesAvgReorder(2,:,2),200);
-%radProfilesAvg(1,:,2) = meanNelements(radProfilesAvgReorder(1,:,2),200);
+radProfilesAvg(2,:,2) = meanNelements(radProfilesAvgReorder(2,:,2),200);
+radProfilesAvg(1,:,2) = meanNelements(radProfilesAvgReorder(1,:,2),200);
 
 atomNumBC = [];
 atomNumBC(1) = sum(sum(imageArrayAvgs(:,:,1)));
-%atomNumBC(2) = sum(sum(imageArrayAvgs(:,:,2)));
+atomNumBC(2) = sum(sum(imageArrayAvgs(:,:,2)));
 
 
 pixel2NROI = 1/(atomNumBC(1)/mean(varData(1:25,5)));
-%NROI2HighInt = atomNumBC(2)/(atomNumBC(1)*pixel2NROI);
+NROI2HighInt = atomNumBC(2)/(atomNumBC(1)*pixel2NROI);
 HighInt2TwoSpinState = 2;
 
-%atomCorr = pixel2NROI*NROI2HighInt*HighInt2TwoSpinState;
-%correctedNum = atomNumBC(1)*pixel2NROI*NROI2HighInt*HighInt2TwoSpinState;
+atomCorr = pixel2NROI*NROI2HighInt*HighInt2TwoSpinState;
+correctedNum = atomNumBC(1)*pixel2NROI*NROI2HighInt*HighInt2TwoSpinState;
 
-atomCorrFinal = 1.4;
+atomCorrFinal = 1.28;
 
 radProfilesAvg(1,:,1) = radProfilesAvg(1,:,1).*atomCorrFinal.*2;
 
 
 calcRegion = 3:45;
 a0 = 5.29e-11; %o.0
-a2dVectorOld = a0.*34438.9;
-omegaRVector = 2.*pi.*22.48;
+%a2dVectorOld = a0.*99040; 
+a2dVectorOld = a0.*99040;
+omegaRVector = 2.*pi.*25.49;
 
 a2d = a2dVectorOld;
 omegaR = omegaRVector;
@@ -347,9 +348,9 @@ savestring = 'indv clouds smoothed';
 %single in bulk function:
 %EOSGenerateBulk(radProfilesAvg(1,:,1)./(kpixelLength^2),radProfilesAvg(2,:,1),2:65,omegaR,980,a2d,smoothOn,saveOn,savestring)
 
-calcRegion = 2:70;
-omegaZ = 5930*2*pi;
-%fitVirial(radProfilesAvg(1,:,1)./(pixelLength^2), radProfilesAvg(2,:,1),calcRegion, omegaZ, omegaR, 725, a2d, smoothOn, zeroOn)
+calcRegion = 2:62;
+omegaZ = 6200*2*pi;
+%fitVirial(radProfilesAvg(1,:,1)./(pixelLength^2), radProfilesAvg(2,:,1),calcRegion, omegaZ, omegaR, 860, a2d, smoothOn, zeroOn)
 
 
 

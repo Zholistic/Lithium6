@@ -329,8 +329,7 @@ kfs = []; logkfa2ds = []; densityCloud = [];
 for i=1
     densityCloud(1,:,i) = inputDensityArray;
     fignumberdens = 6000 + choices;
-    figure(fignumberdens);
-    %plot(densityCloud(1,:,i),'.');
+    figure(fignumber
     for j=1:length(inputDensityArray)
         EFermiAcrossCloud(j,i) = ((pi*hbar^2)/(massL6)).*densityCloud(1,j,i);
         TFermiAcrossCloud(j,i) = EFermiAcrossCloud(j,i)/kB;
@@ -393,7 +392,7 @@ plot(betaMusGG{betaEbEval},fnGG{betaEbEval},'-.'); %real GG points
 titlestring{choices} = {[' ' dataset2D{datasetChoice}.name ' Fit']};
 textstring{choices} = {'Properties: ',['\beta E_B = ' num2str(betaebvirials(betaEbEval,1),4) ' (T_{\beta E_B} = ' num2str(thisBetaEbTemperature./(1e-9),4) ' nK)'],['T_{fit} = ' num2str(f1(1),4) ' (' num2str(outputCoefError(1,1),4) ', ' num2str(outputCoefError(1,2),4) ') nK     ' ...
         ''],['\mu_0 = ' num2str(f1(2),4) ' (' num2str(outputCoefError(2,1),4) ', ' num2str(outputCoefError(2,2),4) ') nK'],['Fit quality = ' num2str(1-gof,4) ''],['T/T_F = ' num2str(mean(TonTFAcrossCloud(1:4,1)),4) ' (' num2str((outputCoefError(1,1).*10^-9)./mean(TFermiAcrossCloud(1:4,1)),4) ', ' num2str((outputCoefError(1,2).*10^-9)./mean(TFermiAcrossCloud(1:4,1)),4) ') '],...
-        ['n_{peak} = ' num2str(mean(densityCloud(1,1:5,1)),4)], ['log(kfa2d) = ' num2str(mean(logkfa2ds(2:5),1),4)]};
+        ['n_{peak} = ' num2str(mean(densityCloud(1,1:5,1)),4)]};
 title(titlestring{choices});
 text(-5.5,0.5,textstring{choices});
 xlabel('\beta\mu');

@@ -1,0 +1,22 @@
+a0 = 5.29e-11;
+abg = -1405*a0./(1000*a0);
+deltaB = 300;
+B0 = 832.2;
+alpha = 0.004;
+
+if(1)
+abg = -1405*a0./(1000*a0);
+deltaB = 30;
+B0 = 83.41;
+alpha = 0.004;    
+end
+
+xs = 1:2000;
+a = abg .* (1+ (deltaB./(xs - B0))).*(1+alpha.*(xs - B0));
+%a = abg .* (1+ (deltaB./(xs - B0)));
+
+
+plot(xs,a,'.');
+grid on;
+axis([60 100 -20 20]);
+
